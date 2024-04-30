@@ -1,30 +1,29 @@
-import express from "express";
+import express, { Request, Response, ErrorRequestHandler, Errback} from "express";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
-import cors from "cors";
 import dotenv from "dotenv";
-import multer from "multer";
-import helmet from "helmet";
-// import morgan from "morgan";
-import path, { dirname } from "path";
-import { fileURLToPath } from "url";
+import authRoutes from "./routes/auth.js"
+
+
+
 
 
 // CONFIGURATIONS
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(bodyParser.json({ limit: "30mb" }));
-app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }))
-app.use(cors());
+// app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }))
+// app.use(cors());
 
 // ROUTES
+app.use("/api/auth", authRoutes )
+
+
 
 
 // MONGOOSE SETUP
-const PORT = process.env.PORT || 6001;
+const PORT = process.env.PORT || "6001" as string;
 if (process.env.MONGODB_URL) {
     mongoose.connect(process.env.MONGODB_URL)
     .then(() => {
