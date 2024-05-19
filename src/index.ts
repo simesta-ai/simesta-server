@@ -2,7 +2,8 @@ import express, { Request, Response, ErrorRequestHandler, Errback} from "express
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import authRoutes from "./routes/auth.js"
+import authRoutes from "./routes/auth.ts"
+import userRoutes from "./routes/user.ts"
 
 
 
@@ -18,6 +19,7 @@ app.use(bodyParser.json({ limit: "30mb" }));
 
 // ROUTES
 app.use("/api/auth", authRoutes )
+app.use("/api/users", userRoutes )
 
 
 

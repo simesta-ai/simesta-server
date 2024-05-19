@@ -1,4 +1,6 @@
-interface Lecture {
+import { Document } from "mongoose";
+
+interface Lecture extends Document{
     _id: string;
     name: string;
     estCompletionTime: number;

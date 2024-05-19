@@ -1,7 +1,8 @@
-import Lecture from "./lectures.js";
+import Lecture from "./lectures.ts";
+import { Document } from "mongoose";
 
 
-interface Topic {
+interface Topic extends Document{
     _id: string;
     name: string;
     lectures: Array<Lecture>;

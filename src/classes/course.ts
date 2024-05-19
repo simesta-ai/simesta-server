@@ -1,20 +1,24 @@
-import Topic from "./topics.js";
+import Topic from "./topics.ts";
+import { Document } from "mongoose";
 
-interface Course {
+
+
+
+interface Course extends Document{
     _id: string;
     title: string;
     description: string;
     category: string;
-    completed: boolean;
+    completed: number;
     inProgress: boolean;
     topics: Array<Topic>;
     image: string;
     notes: string;
-    type: "recommended" | "created";
-    difficultyLevel: "beginner" | "intermediate" | "advanced";
-    estCompletionTime: number
-
-    
+    courseType: string;
+    difficultyLevel: string;
+    estCompletionTime: number    
 }
+
+
 
 export default Course;

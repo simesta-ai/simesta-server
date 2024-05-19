@@ -1,7 +1,8 @@
-import Course from "./course.js";
+import Course from "./course";
+import { Document } from "mongoose";
 
 
-interface User {
+interface User extends Document {
     _id: string;
     name: string;
     password: string;
@@ -9,5 +10,6 @@ interface User {
     profilePicture?: string;
     interests: string[];
     courses: Array<Course>
+
 }
 export default User
