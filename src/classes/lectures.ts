@@ -2,7 +2,7 @@ import { Document } from "mongoose";
 
 interface Lecture extends Document{
     _id: string;
-    name: string;
+    title: string;
     estCompletionTime: number;
     videos: string[];
     lectureText: string;

@@ -6,17 +6,29 @@ const LectureSchema = new Schema({
         type: String,
         required: true,
     },
-    description: {
+    position: {
+        type: Number,
+        required: true,
+    },
+    lectureText: {
         type: String,
         default: "",
     },
-    course: {
+    videos: {
+        type: [String],
+        default: [],
+    },
+    topic: {
         type: Schema.Types.ObjectId,
-        ref: "Course",
+        ref: "Topic",
     },
     completed: {
         type: Boolean,
         default: false,
+    },
+    estCompletionTime: {
+        type: Number,
+        default: 0,
     },
     inProgress: {
         type: Boolean,
@@ -33,3 +45,7 @@ const LectureSchema = new Schema({
         default: null,
     },
     });
+
+type LectureType = Lecture;
+const LectureModel = model<LectureType>("Lecture", LectureSchema);
+export default LectureModel;

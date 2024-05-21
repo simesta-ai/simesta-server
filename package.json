@@ -23,13 +23,22 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "express-rate-limit": "^7.2.0",
+    "express-session": "^1.18.0",
     "google-auth-library": "^9.7.0",
     "googleapis": "^134.0.0",
     "helmet": "^7.1.0",
+    "joi": "^17.13.1",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.3.1",
     "morgan": "^1.10.0",
-    "multer": "^1.4.5-lts.1"
+    "multer": "^1.4.5-lts.1",
+    "passport": "^0.7.0",
+    "passport-apple": "^2.0.2",
+    "passport-facebook": "^3.0.0",
+    "passport-google-oauth": "^2.0.0",
+    "passport-jwt": "^4.0.1",
+    "passport-local": "^1.0.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",

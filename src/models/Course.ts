@@ -42,10 +42,6 @@ const CourseSchema = new Schema(
             type: Number,
             default: 0
         },
-        topics: {
-            type: [TopicModel],
-            default: []
-        },
         notes: {
             type: String,
             default: ""

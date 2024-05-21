@@ -6,10 +6,11 @@ const TopicSchema = new Schema({
     type: String,
     required: true,
   },
-  description: {
-    type: String,
-    default: "",
+  position: {
+    type: Number,
+    required: true,
   },
+  
   course: {
     type: Schema.Types.ObjectId,
     ref: "Course",

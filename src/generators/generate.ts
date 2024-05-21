@@ -31,19 +31,56 @@ const generateCoursecategory = async (courseTitle: string) : Promise<string> => 
 
 
 const generateTopics = async(courseTitle: string) => {
-  const topicNames = []
+  const topics: string[] = []
+  const model = genAI.getGenerativeModel({ model: "gemini-pro"});
+  const prompt = `generate a list of topics(in text only, numbered form without description and removing the subtopics) needed to completely learn ${courseTitle} course`
+  
+    const result = await model.generateContent(prompt);
+    const response = result.response;
+    const text = response.text();
+    
+    const topicsList = text.trim().split(/\r?\n/);
+    topicsList.forEach((topic) => {
+      const components = topic.trim().split(".")
+      const title = components[1].trim()
+      topics.push(title)
+    })
+
+    return topics
+}
+
+const generateLectures = async(courseTitle: string, topicTitle: string) => {
+  const lectures: string[] = []
+  const model = genAI.getGenerativeModel({ model: "gemini-pro"});
+  const prompt = `generate a list of lectures only(in text only, numbered form without description and removing the sub lectures) needed to completely learn ${topicTitle} topic in ${courseTitle} course`
+  
+    const result = await model.generateContent(prompt);
+    const response = result.response;
+    const text = response.text();
+    
+    const lecturesList = text.trim().split(/\r?\n/);
+    lecturesList.forEach((lecture) => {
+      const components = lecture.trim().split(".")
+      const title = components[1].trim()
+      lectures.push(title)
+    })
+
+    return lectures
+
 }
 
 const generateLectureText = async(lectureTitle: string) => {
+  
   const model = genAI.getGenerativeModel({ model: "gemini-pro"});
   const prompt = `generate a comprehensive but well explanatory lecture in form of paragraphed texts with necessary bullet points and formatted texts teaching ${lectureTitle}`
   
     const result = await model.generateContent(prompt);
     const response = result.response;
     const text = response.text();
+
     return text
 
 }
 
-const generators = { generateCourseDescription, generateCoursecategory, generateLectureText }
+const generators = { generateCourseDescription, generateCoursecategory, generateLectureText, generateTopics, generateLectures }
 export default generators;
