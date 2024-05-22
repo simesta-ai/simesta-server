@@ -1,11 +1,13 @@
 import express from "express"
-import mongoose from "mongoose"
-import cors from "cors"
-import { rateLimit } from "express-rate-limit"
-import bodyParser from "body-parser"
-import helmet from "helmet"
-import passport from "passport"
 import dotenv from "dotenv"
+import AppController from "./initiators/appContoller"
+
+// CONFIGURE ENVIRONMENT VARIABLES
+dotenv.config()
 
 
-// APP CONFIGURATIONS
+// Start Application Server
+const app = express()
+const PORT = process.env.PORT as string
+const appController = new AppController(app, PORT)
+appController.startApp()
