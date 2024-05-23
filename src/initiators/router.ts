@@ -15,7 +15,7 @@ class Router {
         this.jwtService = new JwtService()
     }
     private isLoggedIn(req: any, res: express.Response, next: express.NextFunction) {
-        req.user ? next() : res.sendStatus(401);
+        req.user ? next() : res.status(401).json({message: "User is not logged in"})
     }
 
     public configAuthRoutes() {

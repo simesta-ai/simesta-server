@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import ILecture from "./interfaces/lecture.interface.ts";
+import ILecture from "./interfaces/lecture.interface";
 
 const LectureSchema = new Schema({
     title: {

@@ -1,7 +1,7 @@
 import passport from "passport";
 import LocalStrategy from "passport-local";
 import bcrypt from "bcrypt";
-import User from "../../models/user.model.ts";
+import User from "../../models/user.model";
 
 const saltRounds = 10;
 const localStrategy = LocalStrategy.Strategy;

@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose"
-import ICourse from "./interfaces/course.interface.ts"
+import ICourse from "./interfaces/course.interface"
 
 
 

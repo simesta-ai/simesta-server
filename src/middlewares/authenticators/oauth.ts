@@ -4,7 +4,7 @@ import dotenv from "dotenv"
 import GoogleStrategy, { VerifyCallback } from "passport-google-oauth2"
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import User from "../../models/user.model.ts";
+import User from "../../models/user.model";
 
 
 // CONFIGURE ENVIRONMENT VARIABLES

@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import ITopic from "./interfaces/topic.interface.ts";
+import ITopic from "./interfaces/topic.interface";
 
 const TopicSchema = new Schema({
   title: {
