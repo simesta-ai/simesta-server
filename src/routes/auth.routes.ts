@@ -1,4 +1,6 @@
 import express from "express"
+import passport from "passport";
+import jwt from "jsonwebtoken";
 import AuthController from "../controllers/authcontroller/auth.controller"
 
 const router = express.Router()

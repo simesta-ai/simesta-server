@@ -1,27 +1,32 @@
 import express, { IRouter } from "express"
+import jwt from "jsonwebtoken"
 import authRoutes from "../routes/auth.routes"
+import JwtService, { IJwt } from "../utils/jwtService"
 
 
 
 
 class Router {
     private app: express.Application
+    private jwtService: IJwt;
 
     constructor( app: express.Application) {
         this.app = app
+        this.jwtService = new JwtService()
     }
-    private isLoggedIn(req: express.Request, res: express.Response, next: express.NextFunction) {
+    private isLoggedIn(req: any, res: express.Response, next: express.NextFunction) {
         req.user ? next() : res.sendStatus(401);
     }
 
     public configAuthRoutes() {
-        this.app.use('/api/auth', authRoutes)
+        this.app.use('/auth', authRoutes)
         this.app.get('/', (req, res) => {
-            res.send('<a href="/api/auth/google">Authenticate with Google</a>');
+            res.send('<a href="/auth/google">Authenticate with Google</a>');
           });
-        this.app.get('/protected', this.isLoggedIn, (req, res) => {
-            const name = req.user;
-            res.send(name)
+
+        this.app.get('/dashboard', this.isLoggedIn, this.jwtService.grantToken, (req: any, res) => {
+            const user = req.user
+            res.status(200).json({ id: user._id, name: user.name})
         })
     }
     

@@ -71,12 +71,3 @@ passport.use(
   )
 )
 
-passport.serializeUser((user: any, done) => {
-  done(null, user._id);
-});
-
-passport.deserializeUser((_id, done) => {
-  User.findById(_id, (err: Error, user: typeof User) => { 
-      done(err, user);
-  });
-});
