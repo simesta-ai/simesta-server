@@ -49,7 +49,7 @@ passport.use(
           const user = await User.findOne({ email });
 
           if (!user) {
-            return done(null, false, { message: 'Incorrect email or password' });
+            return done(null, false, { message: 'User does not exist' });
           }
 
           // Compare password
@@ -60,7 +60,7 @@ passport.use(
             if(result){
                 done(null, user, { message: "Successfully logged in"})
             } else {
-                done({ message: "Invalid credentials" })
+                done(null, false, { message: "Invalid credentials" })
             }
         }
     );

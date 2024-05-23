@@ -24,7 +24,7 @@ class Router {
             res.send('<a href="/auth/google">Authenticate with Google</a>');
           });
 
-        this.app.get('/dashboard', this.isLoggedIn, this.jwtService.grantToken, (req: any, res) => {
+        this.app.get('/dashboard', this.isLoggedIn,this.jwtService.grantToken, (req: any, res) => {
             const user = req.user
             res.status(200).json({ id: user._id, name: user.name})
         })

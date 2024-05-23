@@ -22,9 +22,23 @@ class AuthController {
   ) {
     passport.authenticate(
       "login",
-      { failureRedirect: "/login", successRedirect: "/dashboard" },
-      
-    )(req, res);
+      (err: any, user: any, info: any) => {
+        if(err){
+          res.status(400).json(info)
+        }
+        if(!user) {
+          res.status(400).json(info)
+        } else {
+        req.login(user, (err) => {
+          if(err) {
+            res.status(400).json(err)
+          }else {
+            res.redirect('/dashboard')
+          }
+          
+        })}
+      }
+    )(req, res, next);
   }
 
   // GOOGLE OAUTH
