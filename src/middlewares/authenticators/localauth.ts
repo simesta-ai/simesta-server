@@ -15,6 +15,14 @@ passport.use(
     async (req, email, password, done) => {
       try {
         const { name, email, password } = req.body;
+
+        // Find the user by email
+        const user = await User.findOne({ email });
+
+        if (user) {
+          return done(null, false, { message: 'User already exists, Login instead' });
+        }
+
         bcrypt.hash(password, saltRounds, async (err, hash) => {
           if (err) {
             done(err);
