@@ -19,15 +19,13 @@ class Router {
     }
 
     public configAuthRoutes() {
-        this.app.use('/auth', authRoutes)
-        this.app.get('/', (req, res) => {
-            res.send('<a href="/auth/google">Authenticate with Google</a>');
-          });
-
-        this.app.get('/dashboard', this.isLoggedIn,this.jwtService.grantToken, (req: any, res) => {
+        this.app.use('/auth', authRoutes, this.isLoggedIn,this.jwtService.grantToken, (req: any, res) => {
             const user = req.user
             res.status(200).json({ id: user._id, name: user.name})
         })
+        this.app.get('/', (req, res) => {
+            res.send('<a href="/auth/google">Authenticate with Google</a>');
+          });
     }
     
     

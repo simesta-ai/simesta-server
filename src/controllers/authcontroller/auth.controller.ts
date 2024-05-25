@@ -10,7 +10,23 @@ class AuthController {
     next: express.NextFunction
   ) {
     passport.authenticate(
-      "signup", { failureRedirect: "/login", successRedirect: "/dashboard" }
+      "signup", 
+      (err: any, user: any, info: any) => {
+        if(err){
+          res.status(400).json(info)
+        }
+        if(!user) {
+          res.status(400).json(info)
+        } else {
+          req.logIn(user, (err) => {
+            if(err){
+              res.status(400).json(info)
+            }
+            next()
+          })
+          
+        }
+      }
     )(req, res);
   }
 
@@ -18,7 +34,7 @@ class AuthController {
   public async login(
     req: express.Request,
     res: express.Response,
-    next: express.NextFunction
+    next: any
   ) {
     passport.authenticate(
       "login",
@@ -29,14 +45,14 @@ class AuthController {
         if(!user) {
           res.status(400).json(info)
         } else {
-        req.login(user, (err) => {
-          if(err) {
-            res.status(400).json(err)
-          }else {
-            res.redirect('/dashboard')
-          }
+          req.logIn(user, (err) => {
+            if(err){
+              res.status(400).json(info)
+            }
+            next()
+          })
           
-        })}
+        }
       }
     )(req, res, next);
   }
@@ -56,8 +72,24 @@ class AuthController {
   ) {
     passport.authenticate(
       "google",
-      { failureRedirect: "/", successRedirect: "/dashboard", session: true },
-    )(req, res) 
+      { session: true },
+      (err: any, user: any, info: any) => {
+        if(err){
+          res.status(400).json(info)
+        }
+        if(!user) {
+          res.status(400).json(info)
+        } else {
+          req.logIn(user, (err: any) => {
+            if(err){
+              res.status(400).json(info)
+            }
+            next()
+          })
+          
+        }
+      }
+    )(req, res, next) 
   }
 }
 
