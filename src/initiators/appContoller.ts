@@ -1,5 +1,6 @@
 import express from "express"
 import mongoose, { ConnectOptions } from "mongoose"
+import redis from "redis"
 import cors from "cors"
 import { rateLimit } from "express-rate-limit"
 import session from "express-session"
@@ -9,20 +10,35 @@ import helmet from "helmet"
 import passport from "passport"
 import dotenv from "dotenv"
 import Router from "./router"
+import { errorHandler } from "../utils/handlers/error"
 require("../middlewares/authenticators/localauth")
 require("../middlewares/authenticators/oauth")
 
 // CONFIGURE ENVIRONMENT VARIABLES
 dotenv.config()
 
+interface IcorsOptions {
+    origin: string;
+    credentials: boolean;
+    methods: string[];
+    allowHeaders: string[]
+}
+
 
 class AppController {
     private app: express.Application;
     private port: string;
+    private readonly corsOptions: IcorsOptions
     
     constructor(app: express.Application, port: string) {
         this.app = app;
         this.port = port;
+        this.corsOptions = {
+            origin: "*",
+            credentials: true,
+            methods: ["GET", "POST", "PUT", "DELETE"],
+            allowHeaders: ["Content-Type", "Authorization", "Access-Control-Allow-Credentials"]
+        }
     }
 
     private configureLimiter() {
@@ -43,6 +59,8 @@ class AppController {
         }))
     }
 
+
+
     private configureRouting() {
         const appRouter = new Router(this.app)
         appRouter.configAuthRoutes()
@@ -53,7 +71,6 @@ class AppController {
     private enableMiddlewares(){
         
         this.app.use(helmet())
-        // this.app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin"}));
         this.app.use(helmet({
             crossOriginResourcePolicy: false,
         }))
@@ -64,7 +81,8 @@ class AppController {
         this.app.use(passport.session())
         this.app.use(bodyParser.json())
         this.app.use(bodyParser.urlencoded({ extended: true }))
-        this.app.use(cors())
+        this.app.use(cors(this.corsOptions))
+        this.app.use(errorHandler)
         
         
     } 
@@ -75,10 +93,34 @@ class AppController {
         return db
     }
 
+    // Connect to Redis data-store
+    // private async setupRedis () {
+    //     const client = redis.createClient({
+    //         socket: {
+    //             host: 'http://localhost',
+    //             port: 3000,
+    //           }
+    //     })
+    //     client.on('ready', () => {
+    //         console.log('Redis store connected');
+    //       });
+          
+    //     client.on('error', (err) => {
+    //         console.log('Redis is disconnected: ', err);
+    //     });
+    //     try {
+    //         await client.connect()
+    //     } catch (err) {
+    //         console.log({ err: err, message: "Error while connecting to redis store" })
+    //     }
+    // }
+
     // Initialize Application
     public startApp() {
         this.enableMiddlewares()
+        
         this.configureRouting()
+        
         this.setupDatabase().then((db) => {
             this.app.listen(this.port, () => {
                 console.log(`Server listening on the port ${this.port}`);

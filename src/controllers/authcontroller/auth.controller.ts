@@ -1,5 +1,6 @@
 import express from "express";
 import passport from "passport";
+import { AuthError } from "../../utils/handlers/error";
 
 
 class AuthController {
@@ -12,19 +13,23 @@ class AuthController {
     passport.authenticate(
       "signup", 
       (err: any, user: any, info: any) => {
-        if(err){
-          res.status(400).json(info)
-        }
-        if(!user) {
-          res.status(400).json(info)
-        } else {
-          req.logIn(user, (err) => {
-            if(err){
-              res.status(400).json(info)
-            }
-            next()
-          })
-          
+        try {
+          if(err){
+            throw new AuthError(info.message)
+          }
+          if(!user) {
+            throw new AuthError(info.message)
+          } else {
+            req.logIn(user, (err) => {
+              if(err){
+                throw new AuthError(info.message)
+              }
+              next()
+            })
+            
+          }
+        } catch (error) {
+          next(error)
         }
       }
     )(req, res);
@@ -34,24 +39,28 @@ class AuthController {
   public async login(
     req: express.Request,
     res: express.Response,
-    next: any
+    next: express.NextFunction
   ) {
     passport.authenticate(
       "login",
       (err: any, user: any, info: any) => {
-        if(err){
-          res.status(400).json(info)
-        }
-        if(!user) {
-          res.status(400).json(info)
-        } else {
-          req.logIn(user, (err) => {
-            if(err){
-              res.status(400).json(info)
-            }
-            next()
-          })
-          
+        try {
+          if(err){
+            throw new AuthError(info.message)
+          }
+          if(!user) {
+            throw new AuthError(info.message)
+          } else {
+            req.logIn(user, (err) => {
+              if(err){
+                throw new AuthError(info.message)
+              }
+              next()
+            })
+            
+          }
+        } catch (error) {
+          next(error)
         }
       }
     )(req, res, next);
@@ -74,19 +83,23 @@ class AuthController {
       "google",
       { session: true },
       (err: any, user: any, info: any) => {
-        if(err){
-          res.status(400).json(info)
-        }
-        if(!user) {
-          res.status(400).json(info)
-        } else {
-          req.logIn(user, (err: any) => {
-            if(err){
-              res.status(400).json(info)
-            }
-            next()
-          })
-          
+        try {
+          if(err){
+            throw new AuthError(info.message)
+          }
+          if(!user) {
+            throw new AuthError(info.message)
+          } else {
+            req.logIn(user, (err: any) => {
+              if(err){
+                throw new AuthError(info.message)
+              }
+              next()
+            })
+            
+          }
+        } catch (error) {
+          next(error)
         }
       }
     )(req, res, next) 

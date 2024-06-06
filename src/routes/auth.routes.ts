@@ -2,9 +2,11 @@ import express from "express"
 import passport from "passport";
 import jwt from "jsonwebtoken";
 import AuthController from "../controllers/authcontroller/auth.controller"
+import Uservalidator from "../middlewares/validators/user.validator";
 
 const router = express.Router()
 const authenticator = new AuthController()
+const userValidator = new Uservalidator()
 
 router.post("/signup", authenticator.register)
 router.post("/login", authenticator.login)

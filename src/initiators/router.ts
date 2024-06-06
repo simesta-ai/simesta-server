@@ -1,7 +1,8 @@
 import express, { IRouter } from "express"
 import jwt from "jsonwebtoken"
 import authRoutes from "../routes/auth.routes"
-import JwtService, { IJwt } from "../utils/jwtService"
+import JwtService, { IJwt } from "../utils/services/jwtService"
+import { AuthError } from "../utils/handlers/error"
 
 
 
@@ -14,8 +15,18 @@ class Router {
         this.app = app
         this.jwtService = new JwtService()
     }
+    
     private isLoggedIn(req: any, res: express.Response, next: express.NextFunction) {
-        req.user ? next() : res.status(401).json({message: "User is not logged in"})
+        try {
+            if(req.user){
+                next()
+            } else {
+                throw new AuthError("User is not logged in")
+            }
+        } catch (error) {
+            next(error)
+        }
+        
     }
 
     public configAuthRoutes() {
