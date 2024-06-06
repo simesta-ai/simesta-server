@@ -1,4 +1,4 @@
-import { Response, Request, ErrorRequestHandler, NextFunction } from "express";
+import { Response, Request, NextFunction } from "express";
 
 export abstract class CustomError extends Error {
     statusCode: number;
@@ -38,9 +38,8 @@ export class ValidateError extends CustomError {
     }
 }
 
-export const errorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
+export const errorHandler = (err: CustomError, req: Request, res: Response, next: NextFunction) => {
     if(err){
-        res.status(500).json("error")
+        return res.status(err.statusCode).json({ message: err.message })
     }
-    // return res.status(err.statusCode).json({ message: err.message })
 }
