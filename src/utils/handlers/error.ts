@@ -40,6 +40,6 @@ export class ValidateError extends CustomError {
 
 export const errorHandler = (err: CustomError, req: Request, res: Response, next: NextFunction) => {
     if(err){
-        return res.status(err.statusCode).json({ message: err.message })
+        return res.status(err.statusCode || 500).json({ message: err.message })
     }
 }
