@@ -8,8 +8,8 @@ const router = express.Router()
 const authenticator = new AuthController()
 const userValidator = new Uservalidator()
 
-router.post("/signup", authenticator.register)
-router.post("/login", authenticator.login)
+router.post("/signup", authenticator.register, userValidator.validate)
+router.post("/login", authenticator.login, userValidator.validate)
 router.get("/google", authenticator.googleSignIn)
 router.get("/google/callback", authenticator.googleCallback)
 

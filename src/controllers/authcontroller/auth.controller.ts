@@ -72,6 +72,7 @@ class AuthController {
     res: express.Response,
     next: express.NextFunction
   ) {
+    
     passport.authenticate('google', { session: true, scope: ["email", "profile"] })(req, res, next);
   }
   public async googleCallback(

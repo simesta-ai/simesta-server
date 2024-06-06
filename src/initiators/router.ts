@@ -9,12 +9,10 @@ import { errorHandler } from "../utils/handlers/error";
 class Router {
   private app: express.Application;
   private jwtService: IJwt;
-  private userValidator: Uservalidator;
 
   constructor(app: express.Application) {
     this.app = app;
     this.jwtService = new JwtService();
-    this.userValidator = new Uservalidator();
   }
 
   private isLoggedIn(
@@ -37,7 +35,6 @@ class Router {
     this.app.use(
       "/auth",
       authRoutes,
-      this.userValidator.validate,
       this.isLoggedIn,
       this.jwtService.grantToken,
       (req: any, res) => {
