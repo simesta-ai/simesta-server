@@ -1,7 +1,7 @@
 import express, { IRouter } from "express";
 import jwt from "jsonwebtoken";
 import authRoutes from "../routes/auth.routes";
-import JwtService, { IJwt } from "../utils/services/jwtService";
+import JwtService, { IJwt } from "../utils/services/jwt";
 import Uservalidator from "../middlewares/validators/user.validator";
 import { AuthError } from "../utils/handlers/error";
 import { errorHandler } from "../utils/handlers/error";
