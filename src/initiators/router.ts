@@ -1,8 +1,8 @@
 import express, { IRouter } from "express";
 import jwt from "jsonwebtoken";
 import authRoutes from "../routes/auth.routes";
+import userRoutes from "../routes/user.routes"
 import JwtService, { IJwt } from "../utils/services/jwt";
-import Uservalidator from "../middlewares/validators/user.validator";
 import { AuthError } from "../utils/handlers/error";
 import { errorHandler } from "../utils/handlers/error";
 
@@ -42,9 +42,13 @@ class Router {
         res.status(200).json({ id: user._id, name: user.name });
       }
     );
-    this.app.get("/", (req, res) => {
-      res.send('<a href="/auth/google">Authenticate with Google</a>');
-    });
+    // this.app.get("/", (req, res) => {
+    //   res.send('<a href="/auth/google">Authenticate with Google</a>');
+    // });
+  }
+
+  public configUserRoutes() {
+    this.app.use("/users", this.isLoggedIn, this.jwtService.verifyToken, userRoutes)
     this.app.use(errorHandler);
   }
 }
