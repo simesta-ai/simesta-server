@@ -46,7 +46,13 @@ class CourseController {
         }
     }
     async getAllCourses(req: Request, res: Response, next: NextFunction) {
-
+        try {
+            const userEmail = req.params.email;
+            const allCourses = await this.getCourseService.getAllCourses(userEmail)
+            res.status(200).json({ courses: allCourses})
+        } catch (error) {
+            throw new ServerError("Unable to fetch course")
+        }
     }
     async shareCourse(req: Request, res: Response, next: NextFunction) {
 

@@ -30,12 +30,13 @@ class GetLectureService {
                     await Lecture.findByIdAndUpdate(lectureId, { lectureText: generatedLecture });
                     lectureContent.lectureText = generatedLecture;
                 }
+                 
                 if(lecture.videos.length > 0 && lecture.videos[0].length > 0){
                     lectureContent.videos = lecture.videos;
                 }else {
                     // Generate video content if no video content is available
                     const generatedVideos = await this.VideoGenerator.generateVideos(lecture.title)
-                    const filteredVideos = generatedVideos.filter((videoId) => videoId !== null);
+                    const filteredVideos = generatedVideos.filter((videoId) => videoId);
                     await Lecture.findByIdAndUpdate(lectureId, { videos: filteredVideos });
                     lectureContent.videos = filteredVideos;
                     

@@ -34,6 +34,13 @@ class UserController {
             throw new ServerError("Trouble fetching lecture")
         }
     }
+    async getAllCourses(req: Request, res: Response, next: NextFunction) {
+        try{
+            await courseService.getAllCourses(req, res, next);
+        }catch(error){
+            throw new ServerError("Trouble fetching courses")
+        }
+    }
 
 }
 

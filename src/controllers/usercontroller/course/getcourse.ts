@@ -1,3 +1,4 @@
+import User from "../../../models/user.model";
 import Course from "../../../models/course.model";
 import Topic from "../../../models/topic.model";
 import { ServerError } from "../../../utils/handlers/error";
@@ -54,6 +55,24 @@ class GetCourseService {
       }
     } catch (error) {
       throw new ServerError("Could not fetch course");
+    }
+  }
+  async getAllCourses(userEmail: string){
+    try {
+      const coursesList = [];
+      const user = await User.findOne({ email: userEmail })
+      if(user){
+        const courses = await Course.find({ user: user._id });
+        for (const course of courses) {
+          coursesList.push({
+            id: course._id,
+            title: course.title
+          });
+        }
+        return coursesList;
+      }
+    } catch (error) {
+      throw new ServerError("Error fetching courses")
     }
   }
 }
