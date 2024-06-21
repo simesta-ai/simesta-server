@@ -1,12 +1,21 @@
 import { NextFunction, Request, Response } from "express";
 import CourseCreationService from "./createcourse";
 import { ServerError } from "../../../utils/handlers/error";
+import GetCourseService from "./getcourse";
+import GetTopicService from "./gettopic";
+import GetLectureService from "./getlecture";
 
 class CourseController {
     private courseCreationService: CourseCreationService;
+    private getCourseService: GetCourseService;
+    private getTopicService: GetTopicService;
+    private getLectureService: GetLectureService
 
     constructor(){
         this.courseCreationService = new CourseCreationService();
+        this.getCourseService = new GetCourseService();
+        this.getTopicService = new GetTopicService();
+        this.getLectureService = new GetLectureService();
     }
     async createCourse(req: Request, res: Response, next: NextFunction) {
         const creationDetails = req.body;
@@ -28,7 +37,13 @@ class CourseController {
 
     }
     async getCourse(req: Request, res: Response, next: NextFunction) {
-
+        try {
+            const courseId = req.params.courseId;
+            const courseDetailsWithTopics = await this.getCourseService.getCourseFromStore(courseId)
+            res.status(200).json(courseDetailsWithTopics)
+        } catch (error) {
+            throw new ServerError("Unable to fetch course")
+        }
     }
     async getAllCourses(req: Request, res: Response, next: NextFunction) {
 
@@ -40,10 +55,22 @@ class CourseController {
 
     }
     async getLecture(req: Request, res: Response, next: NextFunction) {
-
+        try {
+            const lectureId = req.params.lectureId;
+            const lectureContent = await this.getLectureService.getLecture(lectureId)
+            res.status(200).json(lectureContent)
+        } catch (error) {
+            throw new ServerError("Unable to fetch course")
+        }
     }
     async getTopic(req: Request, res: Response, next: NextFunction) {
-
+        try {
+            const topicId = req.params.topicId;
+            const topicLectures = await this.getTopicService.getTopic(topicId)
+            res.status(200).json(topicLectures)
+        } catch (error) {
+            throw new ServerError("Unable to fetch course")
+        }
     }
     async getTopics(req: Request, res: Response, next: NextFunction) {
 
