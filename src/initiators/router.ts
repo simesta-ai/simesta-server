@@ -48,9 +48,11 @@ class Router {
   }
 
   public configUserRoutes() {
-    this.app.use("/users", this.isLoggedIn, this.jwtService.verifyToken, userRoutes)
+    this.app.use("/users",  userRoutes)
     this.app.use(errorHandler);
   }
 }
+
+// this.isLoggedIn, this.jwtService.verifyToken,
 
 export default Router;
