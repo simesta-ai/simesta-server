@@ -19,11 +19,11 @@ class CourseController {
     }
     async createCourse(req: Request, res: Response, next: NextFunction) {
         const creationDetails = req.body;
-        const { email } = req.params;
+        const { id } = req.params;
         try {
             let courseId;
             if(Object.keys(creationDetails).length == 1 && Object.keys(creationDetails)[0] == "courseTitle"){
-                courseId = await this.courseCreationService.createCourseFromTitle(creationDetails.courseTitle, email)
+                courseId = await this.courseCreationService.createCourseFromTitle(creationDetails.courseTitle, id)
             }
             res.status(200).json({ courseId: courseId})
         } catch (error) {
@@ -47,8 +47,8 @@ class CourseController {
     }
     async getAllCourses(req: Request, res: Response, next: NextFunction) {
         try {
-            const userEmail = req.params.email;
-            const allCourses = await this.getCourseService.getAllCourses(userEmail)
+            const userId = req.params.id;
+            const allCourses = await this.getCourseService.getAllCourses(userId)
             res.status(200).json({ courses: allCourses})
         } catch (error) {
             throw new ServerError("Unable to fetch course")

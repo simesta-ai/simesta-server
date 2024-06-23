@@ -9,11 +9,11 @@ class CourseCreationService {
     constructor(){
         this.AIGenerator = new AIGenerator();
     }
-    async createCourseFromTitle(courseTitle: string, userEmail: string): Promise<string>{
+    async createCourseFromTitle(courseTitle: string, userId: string): Promise<string>{
         
         const courseDescription = await this.AIGenerator.generateCourseDescription(courseTitle)
         const courseCategory = await this.AIGenerator.generateCoursecategory(courseTitle)
-        const user = await User.findOne({ email: userEmail})
+        const user = await User.findById(userId)
         if(!user){
             throw new AuthError("User not found")
         } else {

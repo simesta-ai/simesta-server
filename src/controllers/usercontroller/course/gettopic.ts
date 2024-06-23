@@ -13,6 +13,7 @@ class GetTopicService {
     } 
     async getTopic(topicId: string) {
         try {
+            const originalTopic: any = await Topic.findById(topicId)
             const topicLectures = [];
             const existingLectures = await Lecture.find({ topic: topicId })
 
@@ -24,7 +25,7 @@ class GetTopicService {
             
             // if the topic does not have existing lectures, create new ones 
             }else{
-                const originalTopic: any = await Topic.findById(topicId)
+                
                 const originalCourse: any = await Course.findById(originalTopic.course)
                 const newLectures = await this.AIGenerator.generateLectures(originalCourse.title, originalTopic.title)
                 for(const lecture of newLectures){
@@ -39,7 +40,7 @@ class GetTopicService {
                     topicLectures.push({ id: newLecture._id, title: newLecture.title, position: newLecture.position })
                 }
             }
-            return { lectures: topicLectures }
+            return { topic: originalTopic.title,  lectures: topicLectures }
         } catch (error) {
             throw new ServerError("Could not fetch lectures")
         }

@@ -30,6 +30,8 @@ class GetCourseService {
               id: topic._id,
               title: topic.title,
               position: topic.position,
+              completed: topic.completed,
+              inProgress: topic.inProgress
             });
           }
           // Create new topics if the course does not have any
@@ -41,11 +43,14 @@ class GetCourseService {
               title: topic,
               position: topicPosition,
               course: courseId,
+              inProgress: topicPosition === 1 ? true : false
             }).save();
             topicsInfo.push({
               id: newTopic._id,
               title: newTopic.title,
               position: newTopic.position,
+              completed: newTopic.completed,
+              inProgress: newTopic.inProgress
             });
           }
         }
@@ -57,12 +62,12 @@ class GetCourseService {
       throw new ServerError("Could not fetch course");
     }
   }
-  async getAllCourses(userEmail: string){
+  async getAllCourses(userId: string){
     try {
       const coursesList = [];
-      const user = await User.findOne({ email: userEmail })
+      const user = await User.findById(userId)
       if(user){
-        const courses = await Course.find({ user: user._id });
+        const courses = await Course.find({ user: userId });
         for (const course of courses) {
           coursesList.push({
             id: course._id,

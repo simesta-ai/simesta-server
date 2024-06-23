@@ -14,9 +14,9 @@ Key Features:
 
 Technologies Used:
 
--Backend: Express, Typescript
--AI Models:
+- Backend: Express, Typescript
+- AI Models:
 Text to Text: Gemini Pro
 Text to Image: Imagen
-External API: Youtube API
+- External API: Youtube API
 Authentication: Google OAuth2, JWT
