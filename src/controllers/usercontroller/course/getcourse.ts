@@ -16,6 +16,7 @@ class GetCourseService {
       let courseInfo;
       const course = await Course.findById(courseId);
       if (course) {
+        this.AIGenerator.generateCourseImage(course.title)
         courseInfo = {
           id: course._id,
           title: course.title,
@@ -69,9 +70,19 @@ class GetCourseService {
       if(user){
         const courses = await Course.find({ user: userId });
         for (const course of courses) {
+          const topics: any = await Topic.find({ course: course._id });
+          const numberOfTopics = topics.length
+          let i = 0;
+          for(const topic of topics){
+            if(topic.completed){
+              i++;
+            }
+          }
           coursesList.push({
             id: course._id,
-            title: course.title
+            title: course.title,
+            progress: (i / numberOfTopics) * 100,
+            topicsCompleted: `${i} / ${numberOfTopics}`
           });
         }
         return coursesList;

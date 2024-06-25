@@ -20,6 +20,8 @@
     "axios": "^1.6.8",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
+    "clarifai-nodejs": "^0.0.2",
+    "clarifai-nodejs-grpc": "^10.5.3",
     "cloudinary": "^2.1.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -36,6 +38,7 @@
     "mongoose": "^8.3.1",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
+    "openai": "^4.52.0",
     "passport": "^0.7.0",
     "passport-apple": "^2.0.2",
     "passport-facebook": "^3.0.0",
@@ -43,7 +46,8 @@
     "passport-google-oauth2": "^0.2.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
-    "redis": "^4.6.14"
+    "redis": "^4.6.14",
+    "streamifier": "^0.1.1"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.7",
@@ -58,6 +62,7 @@
     "@types/passport-google-oauth": "^1.0.45",
     "@types/passport-google-oauth2": "^0.1.8",
     "@types/passport-local": "^1.0.38",
+    "@types/streamifier": "^0.1.2",
     "nodemon": "^3.1.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
