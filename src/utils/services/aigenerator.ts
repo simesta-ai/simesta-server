@@ -1,15 +1,10 @@
-import {
-  GoogleGenerativeAI,
-  GenerativeModel,
-} from "@google/generative-ai";
-import OpenAI from "openai";
-const { ClarifaiStub, grpc } = require("clarifai-nodejs-grpc");
-import { v2 as cloudinary } from "cloudinary";
-import streamifier from "streamifier"
-import fs from "fs";
+import { GoogleGenerativeAI, GenerativeModel } from "@google/generative-ai";
+import { ClarifaiStub, grpc } from "clarifai-nodejs-grpc";
+import CloudinaryService from "./cloudinary";
 import { ServerError } from "../handlers/error";
 import dotenv from "dotenv";
 import Converter from "../handlers/converter";
+import { resolve } from "path";
 
 // CONFIGURE ENVIRONMENT VARIABLES
 dotenv.config();
@@ -17,16 +12,20 @@ dotenv.config();
 class AIGenerator {
   private readonly genAI: GoogleGenerativeAI;
   private readonly textModel: GenerativeModel;
-  private readonly imageModel: GenerativeModel;
+  private readonly clarifaiDalleImageModel: typeof ClarifaiStub;
+  private readonly clarifaiMetadata;
   private converter: Converter;
+  private cloudinaryService: CloudinaryService;
 
   constructor() {
     this.genAI = new GoogleGenerativeAI(
       process.env.GOOGLE_CLOUD_API_KEY as string
     );
     this.textModel = this.genAI.getGenerativeModel({ model: "gemini-pro" });
-    this.imageModel = this.genAI.getGenerativeModel({ model: "imagen" });
+    this.clarifaiDalleImageModel = ClarifaiStub.grpc();
+    this.clarifaiMetadata = new grpc.Metadata();
     this.converter = new Converter();
+    this.cloudinaryService = new CloudinaryService();
   }
 
   private async generateText(prompt: string): Promise<string> {
@@ -40,6 +39,28 @@ class AIGenerator {
       throw new ServerError(message);
     }
   }
+
+  private clarifaiImageModelConfig(prompt: string) {
+    return {
+      user_app_id: {
+        user_id: process.env.USER_ID,
+        app_id: process.env.APP_ID,
+      },
+      model_id: process.env.MODEL_ID,
+      version_id: process.env.MODEL_VERSION_ID,
+      inputs: [
+        {
+          data: {
+            text: {
+              raw: prompt,
+            },
+          },
+        },
+      ],
+    };
+  }
+
+
 
   // Generate Course Category
   async generateCoursecategory(courseTitle: string): Promise<string> {
@@ -86,60 +107,31 @@ class AIGenerator {
   }
 
   //  Generate course Image
-  async generateCourseImage(courseTitle: string): Promise<void> {
+  async generateCourseImage(courseTitle: string): Promise<string> {
     try {
       const prompt = `generate an graphical illustration that represents the concept of ${courseTitle}`;
-      const stub = ClarifaiStub.grpc();
-      const metadata = new grpc.Metadata();
-      metadata.set("authorization", "Key " + process.env.PAT);
-      stub.PostModelOutputs(
-        {
-          user_app_id: {
-            user_id: process.env.USER_ID,
-            app_id: process.env.APP_ID,
-          },
-          model_id: process.env.MODEL_ID,
-          version_id: process.env.MODEL_VERSION_ID, 
-          inputs: [
-            {
-              data: {
-                text: {
-                  raw: prompt,
-                },
-              },
-            },
-          ],
-        },
-        metadata,
-        (err: any, response: any) => {
-          if (err) {
-            throw new ServerError(err);
-          }
-
-          if (response.status.code !== 10000) {
-            throw new ServerError(
-              "Post models failed, status: " + response.status.description
-            );
-          }
-          const output = response.outputs[0].data.image.base64;
-          cloudinary.config({
-            cloud_name: process.env.CLOUDINARY_NAME,
-            api_key: process.env.CLOUDINARY_API_KEY,
-            api_secret: process.env.CLOUDINARY_API_SECRET
-          })
-
-          let cld_upload_stream = cloudinary.uploader.upload_stream(
-            {
-              folder: "course-images"
-            },
-            function(error, result) {
-                console.log(result?.secure_url);
+      this.clarifaiMetadata.set("authorization", "Key " + process.env.PAT);
+      const imageResponse = await new Promise((resolve, reject) => {
+        this.clarifaiDalleImageModel.PostModelOutputs(
+          this.clarifaiImageModelConfig(prompt),
+          this.clarifaiMetadata,
+          async (err: any, response: any) => {
+            if (err) {
+              reject(err);
             }
+            if (response.status.code !== 10000) {
+              reject(err)
+            }
+            const imageBuffer = response.outputs[0].data.image.base64;
+            const secureImageUrl = await this.cloudinaryService.uploadImageBufferToCloud(imageBuffer);
+            resolve(secureImageUrl)
+          }
         );
-        
-        streamifier.createReadStream(output).pipe(cld_upload_stream);
-        }
-      );
+      })
+      if(typeof imageResponse === "string"){
+        return imageResponse
+      }
+      return ""
     } catch (error: any) {
       const message = error.message;
       throw new ServerError(message);

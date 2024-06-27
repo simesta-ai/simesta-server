@@ -13,6 +13,7 @@ class CourseCreationService {
         
         const courseDescription = await this.AIGenerator.generateCourseDescription(courseTitle)
         const courseCategory = await this.AIGenerator.generateCoursecategory(courseTitle)
+        const courseImage = await this.AIGenerator.generateCourseImage(courseTitle)
         const user = await User.findById(userId)
         if(!user){
             throw new AuthError("User not found")
@@ -21,6 +22,7 @@ class CourseCreationService {
                 title: courseTitle,
                 description: courseDescription,
                 category: courseCategory,
+                image: courseImage,
                 user: user!._id,
               })
               await newCourse.save()
