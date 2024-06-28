@@ -20,7 +20,8 @@ class GetCourseService {
           id: course._id,
           title: course.title,
           description: course.description,
-          image: course.image
+          image: course.image,
+          progress: 0
         };
         const topics: any = await Topic.find({ course: courseId });
 
@@ -55,6 +56,14 @@ class GetCourseService {
             });
           }
         }
+        const numberOfTopics = topics.length
+          let i = 0;
+          for(const topic of topics){
+            if(topic.completed){
+              i++;
+            }
+          }
+          courseInfo.progress = (i / numberOfTopics) * 100
         return { course: courseInfo, topics: topicsInfo };
       } else {
         throw new Error("Course not found");
@@ -82,6 +91,7 @@ class GetCourseService {
             id: course._id,
             title: course.title,
             image: course.image,
+            description: course.description,
             progress: (i / numberOfTopics) * 100,
             topicsCompleted: `${i} / ${numberOfTopics}`
           });
