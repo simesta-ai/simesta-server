@@ -24,12 +24,12 @@ class RedisService implements IRedisService {
           });
           
         this.client.on('error', (err) => {
-            console.log('Redis is disconnected: ', err);
+            console.log('Redis is disconnected');
         });
         try {
             await this.client.connect()
         } catch (err) {
-            console.log({ err: err, message: "Error while connecting to redis store" })
+            console.log("Error while connecting to redis store")
         }
     }
 
