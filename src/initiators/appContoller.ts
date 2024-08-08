@@ -109,7 +109,7 @@ class AppController {
   public startApp() {
     this.enableMiddlewares();
     this.configureRouting();
-    // this.setupRedis();
+    this.setupRedis();
     this.setupDatabase()
       .then((db) => {
         this.app.listen(this.port, () => {
