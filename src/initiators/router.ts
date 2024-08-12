@@ -20,6 +20,7 @@ class Router {
     res: express.Response,
     next: express.NextFunction
   ) {
+    console.log(req)
     try {
       if (req.user) {
         next();

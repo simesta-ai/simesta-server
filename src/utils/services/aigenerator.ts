@@ -77,8 +77,14 @@ class AIGenerator {
   }
 
   //  Generate Course Topics
-  async generateTopics(courseTitle: string): Promise<Array<string>> {
-    const prompt = `generate a list of topics(in text only, numbered form without description and removing the subtopics) needed to completely learn ${courseTitle} course`;
+  async generateCourseTopics(courseTitle: string, topics?: any): Promise<Array<string>> {
+    let topicsString: string
+    if(topics) {
+      topicsString = `, also include these topics: ${this.converter.arrayToText(topics)}, if they are relevant to the course`
+    } else {
+      topicsString = "."
+    }
+    const prompt = `generate a list of topics(in text only, numbered form without description and removing the subtopics) needed to completely learn ${courseTitle} course${topicsString}`;
     const topicsText = await this.generateText(prompt);
 
     // Convert text list to array of topics

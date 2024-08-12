@@ -48,7 +48,11 @@ const CourseSchema = new Schema(
         user: {
             type: Schema.Types.ObjectId,
             ref: "User"
-        }
+        },
+        topics: [{
+            type: Schema.Types.ObjectId,
+            ref: "Topic"
+        }],
     }
 )
 

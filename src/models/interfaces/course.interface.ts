@@ -15,7 +15,8 @@ interface Course extends Document{
     notes: string;
     courseType: string;
     difficultyLevel: string;
-    estCompletionTime: number    
+    estCompletionTime: number;
+    topics: any[]
 }
 
 

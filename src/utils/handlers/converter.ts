@@ -9,6 +9,13 @@ class Converter {
         })
         return textArray
     }
+
+    arrayToText(array: string[]): string {
+        const arrayText: string = array.join(", ")
+        arrayText.slice(-2)
+
+        return arrayText
+    }
 }
 
 export default Converter

@@ -37,7 +37,7 @@ class GetCourseService {
           }
           // Create new topics if the course does not have any
         } else {
-          const newTopics = await this.AIGenerator.generateTopics(course.title);
+          const newTopics = await this.AIGenerator.generateCourseTopics(course.title);
           for (const topic of newTopics) {
             const topicPosition = newTopics.indexOf(topic) + 1;
             const newTopic: any = await new Topic({

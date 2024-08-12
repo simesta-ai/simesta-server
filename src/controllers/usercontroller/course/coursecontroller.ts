@@ -20,13 +20,18 @@ class CourseController {
     async createCourse(req: Request, res: Response, next: NextFunction) {
         const creationDetails = req.body;
         const { id } = req.params;
+        const topics = creationDetails.topics
         try {
             let courseId;
-            if(Object.keys(creationDetails).length == 1 && Object.keys(creationDetails)[0] == "courseTitle"){
+            // This function is fired if the user includes topics when creating course
+            if(topics) {
+                courseId = await this.courseCreationService.createCourseFromTitleAndTopics(creationDetails.courseTitle, topics, id)
+            } else if (Object.keys(creationDetails).length == 1 && Object.keys(creationDetails)[0] == "courseTitle"){
                 courseId = await this.courseCreationService.createCourseFromTitle(creationDetails.courseTitle, id)
             }
             res.status(200).json({ courseId: courseId})
         } catch (error) {
+            console.log(error)
             throw new ServerError("Problem creating course, wait and retry")
         }
     }
