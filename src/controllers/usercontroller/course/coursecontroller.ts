@@ -1,9 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import CourseCreationService from "./createcourse";
-import { ServerError } from "../../../utils/handlers/error";
+import { ServerError, ValidateError } from "../../../utils/handlers/error";
 import GetCourseService from "./getcourse";
 import GetTopicService from "./gettopic";
 import GetLectureService from "./getlecture";
+import CourseWithFile from "../../../models/course-with-file.model";
+
 
 class CourseController {
     private courseCreationService: CourseCreationService;
@@ -20,16 +22,21 @@ class CourseController {
     async createCourse(req: Request, res: Response, next: NextFunction) {
         const creationDetails = req.body;
         const { id } = req.params;
+        const files = req.files;
         try {
             let courseId;
-            if(Object.keys(creationDetails).length == 1 && Object.keys(creationDetails)[0] == "courseTitle"){
+            if(files){
+                courseId = await this.courseCreationService.createCourseFromTitleAndFile(creationDetails.courseTitle, id, files)
+            }else if(Object.keys(creationDetails).length == 1 && Object.keys(creationDetails)[0] == "courseTitle"){
                 courseId = await this.courseCreationService.createCourseFromTitle(creationDetails.courseTitle, id)
             }
             res.status(200).json({ courseId: courseId})
         } catch (error) {
+            console.log(error)
             throw new ServerError("Problem creating course, wait and retry")
         }
     }
+
     async deleteCourse(req: Request, res: Response, next: NextFunction) {
 
     }
@@ -39,8 +46,22 @@ class CourseController {
     async getCourse(req: Request, res: Response, next: NextFunction) {
         try {
             const courseId = req.params.courseId;
+            const courseWithFile = await CourseWithFile.findById(courseId).select('courseFiles')
+
+            if(!courseWithFile){
+                console.log("I came here")    
+                throw new ServerError("Course not found")
+            }
+            
+            const courseFiles = courseWithFile?.courseFiles
+
+            if(courseFiles.length > 0){
+                const courseDetailsWithTopics = await this.getCourseService.getCourseWithFile(courseId, courseFiles)
+                return res.status(200).json(courseDetailsWithTopics)
+            }
+
             const courseDetailsWithTopics = await this.getCourseService.getCourseFromStore(courseId)
-            res.status(200).json(courseDetailsWithTopics)
+           return res.status(200).json(courseDetailsWithTopics)
         } catch (error) {
             throw new ServerError("Unable to fetch course")
         }
