@@ -46,7 +46,8 @@ class CourseCreationService {
           );
 
         filePaths.forEach((filePath: string) => {
-            fs.unlinkSync(filePath);});
+            fs.unlinkSync(filePath);
+        });
 
         const courseDescription = await this.AIGenerator.generateCourseDescription(courseTitle)
         const courseCategory = await this.AIGenerator.generateCoursecategory(courseTitle)
@@ -55,6 +56,7 @@ class CourseCreationService {
         const user = await User.findById(userId)
         if(!user){
             throw new AuthError("User not found")
+            throw new Error
         } else {
             const newCourse = new CourseWithFile({
                 title: courseTitle,

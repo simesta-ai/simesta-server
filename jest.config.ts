@@ -3,4 +3,8 @@ module.exports = {
     testEnvironment: 'node',
     testPathIgnorePatterns: ['/node_modules/'],
     coveragePathIgnorePatterns: ['/node_modules/', '/test/'],
+    moduleFileExtensions: ['ts', 'js'],
+    transform: {
+      '^.+\\.ts$': 'ts-jest',
+    },
   };
