@@ -1,12 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import CourseController from "./course/coursecontroller";
-import ProfileController from "./profile/profilecontroller";
-import QuizController from "./quiz/quizcontroller";
 import { ServerError } from "../../utils/handlers/error";
 
-const courseService = new CourseController;
-const profileService = new ProfileController;
-const quizService = new QuizController;
+const courseService = new CourseController
 
 class UserController {
     
@@ -45,8 +41,6 @@ class UserController {
             throw new ServerError("Trouble fetching courses")
         }
     }
-    async getUserProfile() {}
-    async createQuiz() {}
 
 }
 
