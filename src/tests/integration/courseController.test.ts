@@ -1,27 +1,30 @@
 import request from 'supertest';
 import { app } from '../../app';
-import { Course } from '../../models/course';
-import { signin } from '../test-helper';
+import CourseModel from '../../models/course.model';
 
-it('has a route handler listening to /api/courses', async () => {
-  const response = await request(app).get('/api/courses').send({});
-  expect(response.status).not.toEqual(404);
-});
-
-it('can only be accessed if signed in', async () => {
-  await request(app).get('/api/courses').send({}).expect(401);
-});
-
-it('returns a list of courses if signed in', async () => {
-  await Course.create({
-    name: 'Test Course',
-    description: 'Test Course Description',
-    teacherId: 'testTeacherId',
+describe("COURSE CONTROLLER TEST", ()=>{
+  it('has a route handler listening to /users/courses', async () => {
+    const response = await request(app).get('/users/courses').send({});
+    expect(response.status).not.toEqual(404);
   });
-  const cookie = await signin();
-  const response = await request(app)
-    .get('/api/courses')
-    .set('Cookie', cookie)
-    .send({});
-  expect(response.body.length).toBeGreaterThan(0);
-});
+  it('can only be accessed if signed in', async () => {
+    await request(app).get('/api/courses').send({}).expect(401);
+  });
+  
+  it('returns a list of courses if signed in', async () => {
+    await CourseModel.create({
+      name: 'Test Course',
+      description: 'Test Course Description',
+      teacherId: 'testTeacherId',
+    });
+    // const cookie = await signin();
+    const response = await request(app)
+      .get('/api/courses')
+      // .set('Cookie', cookie)
+      .send({});
+    expect(response.body.length).toBeGreaterThan(0);
+  });  
+})
+
+
+

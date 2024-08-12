@@ -5,6 +5,7 @@ import userRoutes from "../routes/user.routes"
 import JwtService, { IJwt } from "../utils/services/jwt";
 import { AuthError } from "../utils/handlers/error";
 import { errorHandler } from "../utils/handlers/error";
+import { RequestWithUser } from "../types";
 
 class Router {
   private app: express.Application;
@@ -16,7 +17,7 @@ class Router {
   }
 
   private isLoggedIn(
-    req: any,
+    req: RequestWithUser,
     res: express.Response,
     next: express.NextFunction
   ) {

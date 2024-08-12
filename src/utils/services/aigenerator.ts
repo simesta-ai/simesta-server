@@ -1,7 +1,8 @@
 import { GoogleGenerativeAI, GenerativeModel } from "@google/generative-ai";
 
 // Check the clarifai-nodejs module and include these classes in the index.d.ts file
-import { ClarifaiStub, grpc } from "clarifai-nodejs-grpc";
+// import { ClarifaiStub, grpc } from "clarifai-nodejs-grpc";
+const {ClarifaiStub, grpc} = require("clarifai-nodejs-grpc");
 import CloudinaryService from "./cloudinary";
 import { ServerError } from "../handlers/error";
 import dotenv from "dotenv";
