@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI, GenerativeModel } from "@google/generative-ai";
 
 // Check the clarifai-nodejs module and include these classes in the index.d.ts file
-import { ClarifaiStub, grpc } from "clarifai-nodejs-grpc";
+const {ClarifaiStub, grpc} = require("clarifai-nodejs-grpc");
 import CloudinaryService from "./cloudinary";
 import { ServerError } from "../handlers/error";
 import dotenv from "dotenv";
@@ -62,6 +62,8 @@ class AIGenerator {
     };
   }
 
+
+
   // Generate Course Category
   async generateCoursecategory(courseTitle: string): Promise<string> {
     const prompt = `generate a 1 word category for a ${courseTitle} course`;
@@ -85,6 +87,17 @@ class AIGenerator {
     const topicList = this.converter.textToArray(topicsText);
     return topicList;
   }
+
+  //Generate Topics With File
+  async generateTopicsWithFile(courseTitle: string, courseFiles: string[]): Promise<Array<string>> {
+    const prompt = `generate a list of topics(in text only, numbered form without description and removing the subtopics) needed to completely learn ${courseTitle} you can go through this array of ${courseFiles} and generate topics as needed`;
+    const topicsText = await this.generateText(prompt);
+
+    // Convert text list to array of topics
+    const topicList = this.converter.textToArray(topicsText);
+    return topicList;
+  }
+
 
   // Generate Topic Lectures
   async generateLectures(

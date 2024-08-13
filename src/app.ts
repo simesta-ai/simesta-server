@@ -7,7 +7,7 @@ dotenv.config()
 
 
 // Start Application Server
-const app = express()
+export const app = express()
 const PORT = process.env.PORT as string
 const appController = new AppController(app, PORT)
 appController.startApp()
