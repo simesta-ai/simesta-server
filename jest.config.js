@@ -4,8 +4,4 @@ module.exports = {
   transform: {
     "^.+.tsx?$": ["ts-jest",{}],
   },
-  testMatch: ["**/**/*.test.ts"],
-    forceExit: true,
-    clearMocks: true,
-    verbose: true
 };

@@ -15,7 +15,6 @@
 
   # Search for the extensions you want on https://open-vsx.org/ and use "publisher.id"
   idx.extensions = [
-    "angular.ng-template"
     "esbenp.prettier-vscode"
     "Orta.vscode-jest"
   ];
