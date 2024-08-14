@@ -1,9 +1,9 @@
-import User from "../../../models/user.model";
-import Course from "../../../models/course.model";
-import CourseWithFile from "../../../models/course-with-file.model";
-import Topic from "../../../models/topic.model";
-import { ServerError } from "../../../utils/handlers/error";
-import AIGenerator from "../../../utils/services/aigenerator";
+import User from "../../models/user.model";
+import Course from "../../models/course.model";
+import CourseWithFile from "../../models/course-with-file.model";
+import Topic from "../../models/topic.model";
+import { ServerError } from "../../utils/handlers/error";
+import AIGenerator from "../../utils/services/aigenerator";
 
 class GetCourseService {
   private AIGenerator: AIGenerator;

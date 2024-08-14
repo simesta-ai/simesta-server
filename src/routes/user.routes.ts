@@ -1,5 +1,5 @@
 import express from "express";
-import UserController from "../controllers/usercontroller/main";
+import UserController from "../controllers/UserController";
 import upload from "../utils/services/multer";
 import checkTotalFileSize from "../middlewares/validators/file.validator";
 
