@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
-import ICourse from "./interfaces/course.interface";
+import ICourseWithFile from "./interfaces/course-with-file.interface";
 
-const CourseSchema = new Schema({
+const CourseWithFileSchema = new Schema({
   title: {
     type: String,
     required: true,
@@ -42,13 +42,20 @@ const CourseSchema = new Schema({
     type: String,
     default: "",
   },
+  courseFiles: {
+    type: [String],
+    default: [],
+  },
   user: {
     type: Schema.Types.ObjectId,
     ref: "User",
   },
 });
 
-type CourseType = ICourse;
+type CourseType = ICourseWithFile;
 
-const CourseModel = model<CourseType>("Course", CourseSchema);
-export default CourseModel;
+const CourseWithFileModel = model<CourseType>(
+  "CourseWithFile",
+  CourseWithFileSchema
+);
+export default CourseWithFileModel;

@@ -1,6 +1,6 @@
 import User from "../../models/user.model";
 import Course from "../../models/course.model";
-import CourseWithFile from "../../models/course-with-file.model";
+import CourseWithFile from "../../models/courseWithFile.model";
 import AIGenerator from "../../utils/services/aigenerator";
 import { AuthError } from "../../utils/handlers/error";
 import { FileService } from "../../utils/services/parseFile";

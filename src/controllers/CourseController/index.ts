@@ -4,7 +4,7 @@ import { ServerError, ValidateError } from "../../utils/handlers/error";
 import GetCourseService from "./getcourse";
 import GetTopicService from "./gettopic";
 import GetLectureService from "./getlecture";
-import CourseWithFile from "../../models/course-with-file.model";
+import CourseWithFile from "../../models/courseWithFile.model";
 
 class CourseController {
   private courseCreationService: CourseCreationService;
