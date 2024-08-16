@@ -10,6 +10,14 @@ const options: swaggerJsdoc.Options = {
       version: '1.0.0',
       description: 'API for simesta AI platform',
     },
-    components: {},
+    components: {
+      securitySchemas: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        },
+      },
+    },
   },
 };
