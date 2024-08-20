@@ -70,10 +70,14 @@ class GetTopicService {
           originalTopic.title,
           originalCourse.courseFiles.join(" ")
         );
-        if (!createdLectures)
+        
+        if (!createdLectures) {
           error = new ServerError(
             "Unable to create topic content, could not generate lectures"
           );
+        } else {
+          topicLectures = createdLectures;
+        }
       } else {
         error = new ServerError("This topic does not exist anymore");
       }
