@@ -1,17 +1,20 @@
-import express from "express";
-import mongoose, { ConnectOptions } from "mongoose";
-import cors from "cors";
-import { rateLimit } from "express-rate-limit";
-import session from "express-session";
-import cookiepParser from "cookie-parser";
-import bodyParser from "body-parser";
-import helmet from "helmet";
-import passport from "passport";
-import dotenv from "dotenv";
-import Router from "./router";
-import RedisService from "../utils/services/redis";
-require("../middlewares/authenticators/localauth");
-require("../middlewares/authenticators/oauth");
+import express from 'express';
+import mongoose, { ConnectOptions } from 'mongoose';
+import cors from 'cors';
+import { rateLimit } from 'express-rate-limit';
+import session from 'express-session';
+import cookiepParser from 'cookie-parser';
+import bodyParser from 'body-parser';
+import helmet from 'helmet';
+import passport from 'passport';
+import dotenv from 'dotenv';
+import Router from './router';
+import RedisService from '../utils/services/redis';
+require('../middlewares/authenticators/localauth');
+require('../middlewares/authenticators/oauth');
+import swaggerJSDoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
+import { documentationSetup } from '../docs/setup';
 
 // CONFIGURE ENVIRONMENT VARIABLES
 dotenv.config();
@@ -32,13 +35,13 @@ class AppController {
     this.app = app;
     this.port = port;
     this.corsOptions = {
-      origin: "*",
+      origin: '*',
       credentials: true,
-      methods: ["GET", "POST", "PUT", "DELETE"],
+      methods: ['GET', 'POST', 'PUT', 'DELETE'],
       allowHeaders: [
-        "Content-Type",
-        "Authorization",
-        "Access-Control-Allow-Credentials",
+        'Content-Type',
+        'Authorization',
+        'Access-Control-Allow-Credentials',
       ],
     };
   }
@@ -52,6 +55,10 @@ class AppController {
         legacyHeaders: false,
       })
     );
+  }
+
+  private setupDocumentation() {
+    this.app.use('/docs', swaggerUi.serve, swaggerUi.setup(documentationSetup));
   }
 
   private sessionConfig() {
@@ -68,7 +75,7 @@ class AppController {
   private configureRouting() {
     const appRouter = new Router(this.app);
     appRouter.configAuthRoutes();
-    appRouter.configUserRoutes()
+    appRouter.configUserRoutes();
   }
 
   // Setup Express Middlewares
@@ -109,6 +116,7 @@ class AppController {
   public startApp() {
     this.enableMiddlewares();
     this.configureRouting();
+    this.setupDocumentation();
     // this.setupRedis();
     this.setupDatabase()
       .then((db) => {
@@ -117,7 +125,7 @@ class AppController {
         });
       })
       .catch((error) => {
-        console.log("Error starting server");
+        console.log('Error starting server');
       });
   }
 }
