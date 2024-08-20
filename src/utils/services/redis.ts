@@ -1,4 +1,5 @@
 import { RedisClientType, createClient } from "redis";
+import logger from "../logger";
 
 
 interface IRedisService {
@@ -20,16 +21,16 @@ class RedisService implements IRedisService {
 
     async createConnection(): Promise<void> {
         this.client.on('ready', () => {
-            console.log('Redis store connected');
+            logger.info('Redis store connected')
           });
           
         this.client.on('error', (err) => {
-            console.log('Redis is disconnected: ', err);
+            logger.error("Redis is disconnected: ", err)
         });
         try {
             await this.client.connect()
         } catch (err) {
-            console.log({ err: err, message: "Error while connecting to redis store" })
+            logger.error("Error while connecting to redis store: ", err)
         }
     }
 

@@ -1,5 +1,5 @@
 import express from "express";
-import mongoose, { ConnectOptions } from "mongoose";
+import mongoose from "mongoose";
 import cors from "cors";
 import { rateLimit } from "express-rate-limit";
 import session from "express-session";
@@ -10,6 +10,7 @@ import passport from "passport";
 import dotenv from "dotenv";
 import Router from "./router";
 import RedisService from "../utils/services/redis";
+import logger from "../utils/logger";
 require("../middlewares/authenticators/localauth");
 require("../middlewares/authenticators/oauth");
 
@@ -86,7 +87,7 @@ class AppController {
     this.app.use(passport.session());
     this.app.use(bodyParser.json());
     this.app.use(bodyParser.urlencoded({ extended: true }));
-    this.app.use(cors());
+    this.app.use(cors(this.corsOptions));
   }
 
   // Connect To Database
@@ -109,15 +110,15 @@ class AppController {
   public startApp() {
     this.enableMiddlewares();
     this.configureRouting();
-    // this.setupRedis();
+    this.setupRedis();
     this.setupDatabase()
       .then((db) => {
         this.app.listen(this.port, () => {
-          console.log(`Server listening on the port ${this.port}`);
+          logger.info(`Server listening on the port ${this.port}`)
         });
       })
       .catch((error) => {
-        console.log("Error starting server");
+        logger.error("Error starting server: ", error)
       });
   }
 }

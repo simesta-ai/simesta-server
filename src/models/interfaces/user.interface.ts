@@ -8,7 +8,8 @@ interface User extends Document {
     password: string;
     email: string;
     profilePicture?: string;
-    interests: string[];
+    appropriateLMethod: string;
+    otherLMethods: string[];
 
 }
 export default User

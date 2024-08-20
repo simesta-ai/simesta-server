@@ -27,6 +27,15 @@ export class AuthError extends CustomError {
         this.statusCode = 401
     }
 }
+export class ClientError extends CustomError {
+    statusCode: number;
+    constructor(message: string) {
+        super(message)
+        this.name = "ClientError"
+        this.message = message
+        this.statusCode = 403
+    }
+}
 
 export class ValidateError extends CustomError {
     statusCode: number;
@@ -41,5 +50,7 @@ export class ValidateError extends CustomError {
 export const errorHandler = (err: CustomError, req: Request, res: Response, next: NextFunction) => {
     if(err){
         return res.status(err.statusCode || 500).json({ message: err.message })
+    } else {
+        return res.status(500).json({ message: "An unexpected error occured, please retry the process. There's nothing wrong."})
     }
 }

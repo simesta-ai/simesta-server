@@ -1,20 +1,20 @@
-import express from "express";
+import { Request, Response, NextFunction} from "express";
 import passport from "passport";
 import { AuthError } from "../../../utils/handlers/error";
 
 export interface IRegisterService {
   registerUser(
-    req: express.Request,
-    res: express.Response,
-    next: express.NextFunction
+    req: Request,
+    res: Response,
+    next: NextFunction
   ): void;
 }
 
 class UserRegistrationService implements IRegisterService {
   registerUser(
-    req: express.Request,
-    res: express.Response,
-    next: express.NextFunction
+    req: Request,
+    res: Response,
+    next: NextFunction
   ) {
     passport.authenticate("signup", (err: any, user: any, info: any) => {
       try {
@@ -22,11 +22,11 @@ class UserRegistrationService implements IRegisterService {
           throw new AuthError(info.message);
         }
         if (!user) {
-          throw new AuthError(info.message);
+          throw new AuthError("User cound not be found while trying to signup");
         } else {
           req.logIn(user, (err) => {
             if (err) {
-              throw new AuthError(info.message);
+              throw new AuthError("Error logging in user to session after signup, please retry process");
             }
             next();
           });

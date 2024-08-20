@@ -5,40 +5,47 @@ import { ServerError } from "../../utils/handlers/error";
 const courseService = new CourseController();
 
 class UserController {
-  async createCourse(req: Request, res: Response, next: NextFunction) {
-    try {
-      await courseService.createCourse(req, res, next);
-    } catch (error) {
-      throw new ServerError("Trouble creating course");
+  async createCourse(err: Error, req: Request, res: Response, next: NextFunction) {
+    if(err){
+      next(err)
     }
+    await courseService.createCourse(req, res, next);
   }
-  async getCourse(req: Request, res: Response, next: NextFunction) {
-    try {
-      await courseService.getCourse(req, res, next);
-    } catch (error) {
-      throw new ServerError("Trouble fetching course");
+  async getCourse(err: Error, req: Request, res: Response, next: NextFunction) {
+    if(err){
+      next(err)
     }
+    await courseService.getCourse(req, res, next);
   }
-  async getTopic(req: Request, res: Response, next: NextFunction) {
-    try {
-      await courseService.getTopic(req, res, next);
-    } catch (error) {
-      throw new ServerError("Trouble fetching topic");
+  async createTopic(err: Error, req: Request, res: Response, next: NextFunction) {
+    if(err){
+      next(err)
     }
+    await courseService.createTopic(req, res, next);
   }
-  async getLecture(req: Request, res: Response, next: NextFunction) {
-    try {
-      await courseService.getLecture(req, res, next);
-    } catch (error) {
-      throw new ServerError("Trouble fetching lecture");
+  async getTopic(err: Error, req: Request, res: Response, next: NextFunction) {
+    if(err){
+      next(err)
     }
+    await courseService.getTopic(req, res, next);
   }
-  async getAllCourses(req: Request, res: Response, next: NextFunction) {
-    try {
-      await courseService.getAllCourses(req, res, next);
-    } catch (error) {
-      throw new ServerError("Trouble fetching courses");
+  async createLecture(err: Error, req: Request, res: Response, next: NextFunction){
+    if(err){
+      next(err)
     }
+    await courseService.createLecture(req, res, next);
+  }
+  async getLecture(err: Error, req: Request, res: Response, next: NextFunction) {
+    if(err){
+      next(err)
+    }
+    await courseService.getLecture(req, res, next);
+  }
+  async getAllCourses(err: Error, req: Request, res: Response, next: NextFunction) {
+    if(err){
+      next(err)
+    }
+    await courseService.getAllCourses(req, res, next);
   }
 }
 

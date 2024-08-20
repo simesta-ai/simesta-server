@@ -1,7 +1,6 @@
-import express, { IRouter } from "express";
-import jwt from "jsonwebtoken";
+import express, { ErrorRequestHandler, NextFunction, Response } from "express";
 import authRoutes from "../routes/auth.routes";
-import userRoutes from "../routes/user.routes"
+import userRoutes from "../routes/user.routes";
 import JwtService, { IJwt } from "../utils/services/jwt";
 import { AuthError } from "../utils/handlers/error";
 import { errorHandler } from "../utils/handlers/error";
@@ -17,11 +16,15 @@ class Router {
   }
 
   private isLoggedIn(
+    err: Error,
     req: RequestWithUser,
-    res: express.Response,
+    res: Response,
     next: express.NextFunction
   ) {
     try {
+      if (err) {
+        next(err);
+      }
       if (req.user) {
         next();
       } else {
@@ -38,22 +41,29 @@ class Router {
       authRoutes,
       this.isLoggedIn,
       this.jwtService.grantToken,
-      (req: any, res) => {
-        const user = req.user;
-        res.status(200).json({ id: user._id, name: user.name });
+      (err: Error, req: RequestWithUser, res: Response, next: NextFunction) => {
+        try {
+          if (err) {
+            next(err);
+          }
+          const user = req.user;
+          if (!user) {
+            throw new AuthError(
+              "Unable to login user because user doesn't exist"
+            );
+          }
+          res.status(200).json({ id: user._id, name: user.name });
+        } catch (error) {
+          next(error);
+        }
       }
     );
-    // this.app.get("/", (req, res) => {
-    //   res.send('<a href="/auth/google">Authenticate with Google</a>');
-    // });
   }
 
   public configUserRoutes() {
-    this.app.use("/users",  userRoutes)
+    this.app.use("/users", this.jwtService.verifyToken, userRoutes);
     this.app.use(errorHandler);
   }
 }
-
-// this.isLoggedIn, this.jwtService.verifyToken,
 
 export default Router;

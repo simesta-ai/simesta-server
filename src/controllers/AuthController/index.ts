@@ -1,5 +1,4 @@
-import passport from "passport";
-import { AuthError } from "../../utils/handlers/error";
+
 import {Request, Response, NextFunction } from "express";
 import UserLoginService from "./localauth/login";
 import UserRegistrationService from "./localauth/register";
@@ -12,12 +11,18 @@ const googleAuthenticator = new GoogleOAuthService()
 class AuthController {
 
   // REGISTER USER
-  public async register(req:Request, res: Response, next: NextFunction) {
+  public async register(err: Error, req:Request, res: Response, next: NextFunction) {
+    if(err){
+      next(err)
+    }
     registrationService.registerUser(req, res, next)
   }
 
   // LOGIN USER
-  public async login(req:Request, res: Response, next: NextFunction) {
+  public async login(err: Error, req:Request, res: Response, next: NextFunction) {
+    if(err){
+      next(err)
+    }
     loginService.loginUser(req, res, next)
   }
 
