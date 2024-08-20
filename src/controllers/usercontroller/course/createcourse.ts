@@ -33,6 +33,7 @@ class CourseCreationService {
     createCourseFromTitleAndFile(){
 
     }
+    // Id for testing endpoints: 66ba52f704928c27f76d5e7f
     async createCourseFromTitleAndTopics(courseTitle: string, topics: any[], userId: string){
         const courseDescription = await this.AIGenerator.generateCourseDescription(courseTitle)
         const courseCategory = await this.AIGenerator.generateCoursecategory(courseTitle)
@@ -50,11 +51,9 @@ class CourseCreationService {
             })
             await newCourse.save()
 
-            // Only working with titles now, will find a way to implement subtopics later
-            const topicTitles = topics.map((topic) => (topic.title))
-            const topicList = await this.AIGenerator.generateCourseTopics(courseTitle, topicTitles)
-            for (const topic of topicList) {
-                const topicPosition = topicList.indexOf(topic) + 1;
+            const courseTopics = await this.AIGenerator.generateCourseTopics(courseTitle, topics)
+            for (const topic of courseTopics) {
+                const topicPosition = courseTopics.indexOf(topic) + 1;
                 const newTopic: any = new Topic({
                   title: topic,
                   position: topicPosition,
@@ -63,11 +62,8 @@ class CourseCreationService {
                 })
                 
                 await newTopic.save();
-
-                newCourse.topics.push(newTopic)
             }
 
-            await newCourse.save()
             return newCourse._id
         }
 

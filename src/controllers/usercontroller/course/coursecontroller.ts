@@ -23,11 +23,11 @@ class CourseController {
         const topics = creationDetails.topics
         try {
             let courseId;
-            // This function is fired if the user includes topics when creating course
-            if(topics) {
-                courseId = await this.courseCreationService.createCourseFromTitleAndTopics(creationDetails.courseTitle, topics, id)
-            } else if (Object.keys(creationDetails).length == 1 && Object.keys(creationDetails)[0] == "courseTitle"){
+            if (Object.keys(creationDetails).length == 1 && Object.keys(creationDetails)[0] == "courseTitle"){
                 courseId = await this.courseCreationService.createCourseFromTitle(creationDetails.courseTitle, id)
+            } else if (topics.length) {
+                console.log("This course has topics")
+                courseId = await this.courseCreationService.createCourseFromTitleAndTopics(creationDetails.courseTitle, topics, id)
             }
             res.status(200).json({ courseId: courseId})
         } catch (error) {
