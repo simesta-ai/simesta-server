@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI, GenerativeModel } from "@google/generative-ai";
 
 // Check the clarifai-nodejs module and include these classes in the index.d.ts file
-const {ClarifaiStub, grpc} = require("clarifai-nodejs-grpc");
+import { ClarifaiStub, grpc } from "clarifai-nodejs-grpc";
 import CloudinaryService from "./cloudinary";
 import { ServerError } from "../handlers/error";
 import dotenv from "dotenv";
@@ -111,6 +111,19 @@ class AIGenerator {
     const lectureList = this.converter.textToArray(lecturesText);
     return lectureList;
   }
+  // Generate Topic Lectures with course files
+  async generateLecturesWithFiles(
+    courseTitle: string,
+    topicTitle: string,
+    courseFiles: string
+  ): Promise<string[]> {
+    const prompt = `generate a list of lectures only(in text only, numbered form without description and removing the sub lectures) needed to completely learn ${topicTitle} topic in ${courseTitle} course, using these learning materials provided: ${courseFiles}`;
+    const lecturesText = await this.generateText(prompt);
+
+    // Convert text list to array of lectures
+    const lectureList = this.converter.textToArray(lecturesText);
+    return lectureList;
+  }
 
   //   Generate Lecture text
   async generateLectureText(lectureTitle: string): Promise<string> {
@@ -118,6 +131,14 @@ class AIGenerator {
     const lectureText = await this.generateText(prompt);
     return lectureText;
   }
+  //   Generate Lecture text
+  async generateLectureTextWithFiles(lectureTitle: string, courseFiles: string): Promise<string> {
+    const prompt = `generate a comprehensive but well explanatory lecture in form of sectioned texts that each teach a main idea with necessary bullet points and formatted texts teaching ${lectureTitle}. Read the course material provided here and extract the content related to this lecture and use it to teach the lecture. Material: ${courseFiles}`;
+    const lectureText = await this.generateText(prompt);
+    return lectureText;
+  }
+
+
 
   //  Generate course Image
   async generateCourseImage(courseTitle: string): Promise<string> {

@@ -6,8 +6,8 @@ const router = express.Router();
 const authenticator = new AuthController();
 const userValidator = new Uservalidator();
 
-router.post("/signup", authenticator.register, userValidator.validate);
-router.post("/login", authenticator.login, userValidator.validate);
+router.post("/signup", userValidator.validate, authenticator.register);
+router.get("/login", userValidator.validate, authenticator.login);
 router.get("/google", authenticator.googleSignIn);
 router.get("/google/callback", authenticator.googleCallback);
 

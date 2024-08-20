@@ -25,10 +25,14 @@ const UserSchema = new Schema(
       type: String,
       default: "",
     },
-    interests: {
-      type: Array,
-      default: [],
+    appropriateLMethod: {
+      type: String,
+      default: ""
     },
+    otherLMethods: {
+      type: Array<string>,
+      default: []
+    }
 
   },
   { timestamps: true, collection: "users" }

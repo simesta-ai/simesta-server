@@ -1,20 +1,20 @@
-import express from "express";
+import { Request, Response, NextFunction} from "express";
 import passport from "passport";
 import { AuthError } from "../../../utils/handlers/error";
 
 export interface ILoginService {
   loginUser(
-    req: express.Request,
-    res: express.Response,
-    next: express.NextFunction
+    req: Request,
+    res: Response,
+    next: NextFunction
   ): void;
 }
 
 class UserLoginService implements ILoginService {
   public async loginUser(
-    req: express.Request,
-    res: express.Response,
-    next: express.NextFunction
+    req: Request,
+    res: Response,
+    next: NextFunction
   ) {
     passport.authenticate("login", (err: any, user: any, info: any) => {
       try {
@@ -22,11 +22,11 @@ class UserLoginService implements ILoginService {
           throw new AuthError(info.message);
         }
         if (!user) {
-          throw new AuthError(info.message);
+          throw new AuthError("User could not be found while trying to login");
         } else {
           req.logIn(user, (err) => {
             if (err) {
-              throw new AuthError(info.message);
+              throw new AuthError("Error logging in user to session, please retry process");
             }
             next();
           });

@@ -6,15 +6,16 @@ import checkTotalFileSize from "../middlewares/validators/file.validator";
 const router = express.Router();
 const userController = new UserController();
 
+// Create new course
 router.post(
-  "/create-course/:id",
+  "/:userId/create-course",
   upload.array("files", 25),
   checkTotalFileSize,
   userController.createCourse
 );
 router.get("/course/:courseId", userController.getCourse);
-router.get("/:id/courses", userController.getAllCourses);
-router.get("/course/topic/:topicId", userController.getTopic);
-router.get("/course/topic/lecture/:lectureId", userController.getLecture);
+router.get("/:userId/courses", userController.getAllCourses);
+router.route("/course/topic/:topicId").get( userController.getTopic).post(userController.createTopic);
+router.route("/course/:courseId/topic/lecture/:lectureId").get(userController.getLecture).post( userController.createLecture);
 
 export default router;

@@ -26,10 +26,6 @@ const LectureSchema = new Schema({
     type: Boolean,
     default: false,
   },
-  estCompletionTime: {
-    type: Number,
-    default: 0,
-  },
   inProgress: {
     type: Boolean,
     default: false,

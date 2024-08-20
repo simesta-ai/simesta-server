@@ -34,13 +34,13 @@ const CourseSchema = new Schema({
     type: String,
     default: "",
   },
-  estCompletionTime: {
-    type: Number,
-    default: 0,
-  },
   notes: {
     type: String,
     default: "",
+  },
+  courseFiles: {
+    type: [String],
+    default: [],
   },
   user: {
     type: Schema.Types.ObjectId,

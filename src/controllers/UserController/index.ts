@@ -6,39 +6,25 @@ const courseService = new CourseController();
 
 class UserController {
   async createCourse(req: Request, res: Response, next: NextFunction) {
-    try {
-      await courseService.createCourse(req, res, next);
-    } catch (error) {
-      throw new ServerError("Trouble creating course");
-    }
+    await courseService.createCourse(req, res, next);
   }
   async getCourse(req: Request, res: Response, next: NextFunction) {
-    try {
-      await courseService.getCourse(req, res, next);
-    } catch (error) {
-      throw new ServerError("Trouble fetching course");
-    }
+    await courseService.getCourse(req, res, next);
+  }
+  async createTopic(req: Request, res: Response, next: NextFunction) {
+    await courseService.createTopic(req, res, next);
   }
   async getTopic(req: Request, res: Response, next: NextFunction) {
-    try {
-      await courseService.getTopic(req, res, next);
-    } catch (error) {
-      throw new ServerError("Trouble fetching topic");
-    }
+    await courseService.getTopic(req, res, next);
+  }
+  async createLecture(req: Request, res: Response, next: NextFunction){
+    await courseService.createLecture(req, res, next);
   }
   async getLecture(req: Request, res: Response, next: NextFunction) {
-    try {
-      await courseService.getLecture(req, res, next);
-    } catch (error) {
-      throw new ServerError("Trouble fetching lecture");
-    }
+    await courseService.getLecture(req, res, next);
   }
   async getAllCourses(req: Request, res: Response, next: NextFunction) {
-    try {
-      await courseService.getAllCourses(req, res, next);
-    } catch (error) {
-      throw new ServerError("Trouble fetching courses");
-    }
+    await courseService.getAllCourses(req, res, next);
   }
 }
 

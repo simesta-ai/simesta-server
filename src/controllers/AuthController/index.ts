@@ -1,5 +1,4 @@
-import passport from "passport";
-import { AuthError } from "../../utils/handlers/error";
+
 import {Request, Response, NextFunction } from "express";
 import UserLoginService from "./localauth/login";
 import UserRegistrationService from "./localauth/register";
