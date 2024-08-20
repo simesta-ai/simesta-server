@@ -117,7 +117,7 @@ class AIGenerator {
 
   //  Generate Course Topics
   async generateTopics(courseTitle: string): Promise<Array<string>> {
-    const prompt = `generate a list of topics(in text only, numbered form without description or prelude or formatting and removing the subtopics) needed to completely learn ${courseTitle} course`;
+    const prompt = `generate a list of topics(not more than 15, in text only, numbered form without description or prelude or formatting and removing the subtopics) needed to completely learn ${courseTitle} course`;
     const topicsText = await this.generateText(prompt);
 
     // Convert text list to array of topics
@@ -130,7 +130,7 @@ class AIGenerator {
     courseTitle: string,
     courseFiles: string[]
   ): Promise<Array<string>> {
-    const prompt = `generate a list of topics(in text only, numbered form without description or prelude or formatting and removing the subtopics) needed to completely learn ${courseTitle} you can go through this array of ${courseFiles} and generate topics as needed`;
+    const prompt = `generate a list of topics(not more than 15, in text only, numbered form without description or prelude or formatting and removing the subtopics) needed to completely learn ${courseTitle} you can go through this array of ${courseFiles} and generate topics as needed`;
     const topicsText = await this.generateText(prompt);
 
     // Convert text list to array of topics
@@ -143,7 +143,7 @@ class AIGenerator {
     courseTitle: string,
     topicTitle: string
   ): Promise<string[]> {
-    const prompt = `generate a list of lectures only(in text only, numbered form without description or prelude or formatting and removing the sub lectures) needed to completely learn ${topicTitle} topic in ${courseTitle} course`;
+    const prompt = `generate a list of lectures only(not more than 15, in text only, numbered form without description or prelude or formatting and removing the sub lectures) needed to completely learn ${topicTitle} topic in ${courseTitle} course`;
     const lecturesText = await this.generateText(prompt);
 
     // Convert text list to array of lectures
@@ -156,7 +156,7 @@ class AIGenerator {
     topicTitle: string,
     courseFiles: string
   ): Promise<string[]> {
-    const prompt = `generate a list of lectures only(in text only, numbered form without description or prelude or formatting and removing the sub lectures) needed to completely learn ${topicTitle} topic in ${courseTitle} course, using these learning materials provided: ${courseFiles}`;
+    const prompt = `generate a list of lectures only(not more than 15, in text only, numbered form without description or prelude or formatting and removing the sub lectures) needed to completely learn ${topicTitle} topic in ${courseTitle} course, using these learning materials provided: ${courseFiles}`;
     const lecturesText = await this.generateText(prompt);
 
     // Convert text list to array of lectures

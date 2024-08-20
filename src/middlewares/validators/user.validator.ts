@@ -21,15 +21,17 @@ class Uservalidator {
           )
           .required(),
       });
-      const isValid = await schema.validateAsync(userpayload);
-      if (isValid) {
+      const { error } =  schema.validate(userpayload);
+      if (!error) {
         next();
       } else {
-        throw new ValidateError(
-          "User payload does not match the required schema. Rules: valid email, Name of length more than 3 chars, password:[ min of 8 characters, at least 2 uppercase, at least 3 lowercase, at least 2 digits, at least one special char]"
-        );
+        const errorMessages = [];
+        for (const err of error.details) {
+          errorMessages.push(err.message);
+        }
+        throw new ValidateError(errorMessages.join(","));
       }
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   }

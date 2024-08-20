@@ -22,7 +22,7 @@ class UserRegistrationService implements IRegisterService {
           throw new AuthError(info.message);
         }
         if (!user) {
-          throw new AuthError("User cound not be found while trying to signup");
+          throw new AuthError(info.message);
         } else {
           req.logIn(user, (err) => {
             if (err) {
