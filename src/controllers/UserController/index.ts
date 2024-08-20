@@ -5,46 +5,25 @@ import { ServerError } from "../../utils/handlers/error";
 const courseService = new CourseController();
 
 class UserController {
-  async createCourse(err: Error, req: Request, res: Response, next: NextFunction) {
-    if(err){
-      next(err)
-    }
+  async createCourse(req: Request, res: Response, next: NextFunction) {
     await courseService.createCourse(req, res, next);
   }
-  async getCourse(err: Error, req: Request, res: Response, next: NextFunction) {
-    if(err){
-      next(err)
-    }
+  async getCourse(req: Request, res: Response, next: NextFunction) {
     await courseService.getCourse(req, res, next);
   }
-  async createTopic(err: Error, req: Request, res: Response, next: NextFunction) {
-    if(err){
-      next(err)
-    }
+  async createTopic(req: Request, res: Response, next: NextFunction) {
     await courseService.createTopic(req, res, next);
   }
-  async getTopic(err: Error, req: Request, res: Response, next: NextFunction) {
-    if(err){
-      next(err)
-    }
+  async getTopic(req: Request, res: Response, next: NextFunction) {
     await courseService.getTopic(req, res, next);
   }
-  async createLecture(err: Error, req: Request, res: Response, next: NextFunction){
-    if(err){
-      next(err)
-    }
+  async createLecture(req: Request, res: Response, next: NextFunction){
     await courseService.createLecture(req, res, next);
   }
-  async getLecture(err: Error, req: Request, res: Response, next: NextFunction) {
-    if(err){
-      next(err)
-    }
+  async getLecture(req: Request, res: Response, next: NextFunction) {
     await courseService.getLecture(req, res, next);
   }
-  async getAllCourses(err: Error, req: Request, res: Response, next: NextFunction) {
-    if(err){
-      next(err)
-    }
+  async getAllCourses(req: Request, res: Response, next: NextFunction) {
     await courseService.getAllCourses(req, res, next);
   }
 }

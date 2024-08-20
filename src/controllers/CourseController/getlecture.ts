@@ -1,7 +1,7 @@
 import AIGenerator from "../../utils/services/aigenerator";
 import Lecture from "../../models/lecture.model";
 import VideoGenerator from "../../utils/services/videogenerator";
-import { ServerError } from "../../utils/handlers/error";
+import { CustomError, ServerError } from "../../utils/handlers/error";
 import Course from "../../models/course.model";
 import logger from "../../utils/logger";
 
@@ -30,11 +30,12 @@ class GetLectureService {
   }
 
   async createNewLecture(courseId: string, lectureId: string){
+    let error: CustomError | null = null;
+    const lectureContent = {
+      lectureText: "",
+      videos: [""],
+    };
     try {
-      const lectureContent = {
-        lectureText: "",
-        videos: [""],
-      };
       const lecture = await Lecture.findById(lectureId);
       const course = await Course.findById(courseId)
       // Check if the lecture has text and video content
@@ -60,41 +61,44 @@ class GetLectureService {
           lectureContent.videos = filteredVideos;
         
       } else {
-        throw new ServerError("Lecture not found");
+        error = new ServerError("Lecture not found");
       }
-      return lectureContent;
+      
     } catch (error) {
       logger.error(error)
     }
+    return { lectureContent, error }
   }
 
   async getLecture(lectureId: string) {
+    let error: CustomError | null = null;
+    const lectureContent = {
+      lectureText: "",
+      videos: [""],
+    };
     try {
-      const lectureContent = {
-        lectureText: "",
-        videos: [""],
-      };
+      
       const lecture = await Lecture.findById(lectureId);
       // Check if the lecture has text and video content
       if (lecture) {
         if (lecture.lectureText.length > 0) {
           lectureContent.lectureText = lecture.lectureText;
         } else {
-          throw new ServerError("Lecture content does not exist")
+          error = new ServerError("Lecture content does not exist")
         }
 
         if (lecture.videos.length > 0 && lecture.videos[0].length > 0) {
           lectureContent.videos = lecture.videos;
         } else {
-          throw new ServerError("Lecture videos do no exist")
+          error = new ServerError("Lecture videos do no exist")
         }
       } else {
-        throw new ServerError("Lecture not found");
+        error = new ServerError("Lecture not found");
       }
-      return lectureContent;
     } catch (error) {
       logger.error(error);
     }
+    return { lectureContent, error }
   }
 }
 

@@ -22,7 +22,7 @@ class UserLoginService implements ILoginService {
           throw new AuthError(info.message);
         }
         if (!user) {
-          throw new AuthError("User cound not be found while trying to login");
+          throw new AuthError("User could not be found while trying to login");
         } else {
           req.logIn(user, (err) => {
             if (err) {

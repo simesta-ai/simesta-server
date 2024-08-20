@@ -11,18 +11,12 @@ const googleAuthenticator = new GoogleOAuthService()
 class AuthController {
 
   // REGISTER USER
-  public async register(err: Error, req:Request, res: Response, next: NextFunction) {
-    if(err){
-      next(err)
-    }
+  public async register(req:Request, res: Response, next: NextFunction) {
     registrationService.registerUser(req, res, next)
   }
 
   // LOGIN USER
-  public async login(err: Error, req:Request, res: Response, next: NextFunction) {
-    if(err){
-      next(err)
-    }
+  public async login(req:Request, res: Response, next: NextFunction) {
     loginService.loginUser(req, res, next)
   }
 

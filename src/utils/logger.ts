@@ -10,7 +10,7 @@ const logger = winston.createLogger({
       stack: true,
     }),
     winston.format.printf(({ level, message, timestamp }) => {
-      return `[${timestamp}] ${level.toUpperCase}: ${message}`;
+      return `[${timestamp}] ${level}: ${message}`;
     })
   ),
   transports: [

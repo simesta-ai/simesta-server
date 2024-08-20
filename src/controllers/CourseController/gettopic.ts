@@ -2,14 +2,14 @@ import Course from "../../models/course.model";
 import Topic from "../../models/topic.model";
 import Lecture from "../../models/lecture.model";
 import AIGenerator from "../../utils/services/aigenerator";
-import { ServerError } from "../../utils/handlers/error";
+import { CustomError, ServerError } from "../../utils/handlers/error";
 import { string } from "joi";
 import logger from "../../utils/logger";
 
 interface ITopicLecture {
   id: string;
   title: string;
-  position: number
+  position: number;
 }
 
 class GetTopicService {
@@ -18,15 +18,20 @@ class GetTopicService {
   constructor() {
     this.AIGenerator = new AIGenerator();
   }
-  private async createLectures(topicId: string, courseTitle: string, topicTitle: string, courseFiles?: string){
+  private async createLectures(
+    topicId: string,
+    courseTitle: string,
+    topicTitle: string,
+    courseFiles?: string
+  ) {
     const topicLectures: Array<ITopicLecture> = [];
     let newLectures: string[] = [];
-    if(courseFiles && courseFiles.length > 10){
+    if (courseFiles && courseFiles.length > 10) {
       newLectures = await this.AIGenerator.generateLecturesWithFiles(
         courseTitle,
         topicTitle,
         courseFiles
-      )
+      );
     } else {
       newLectures = await this.AIGenerator.generateLectures(
         courseTitle,
@@ -48,44 +53,68 @@ class GetTopicService {
         position: newLecture.position,
       });
     }
-    return topicLectures
+    return topicLectures;
   }
   async createNewTopic(topicId: string) {
+    let error: CustomError | null = null;
+    let topicTitle: string = "";
+    let topicLectures: ITopicLecture[] = [];
     try {
       const originalTopic: any = await Topic.findById(topicId);
-
-      const originalCourse: any = await Course.findById(originalTopic.course);
-      const createdLectures = await this.createLectures(topicId, originalCourse.title, originalTopic.title, originalCourse.courseFiles.join(" "))
-      if(!createdLectures) throw new ServerError("Unable to create topic content, could not generate lectures")
-      return { topic: originalTopic.title, lectures: createdLectures };
+      if (originalTopic) {
+        topicTitle = originalTopic.title;
+        const originalCourse: any = await Course.findById(originalTopic.course);
+        const createdLectures = await this.createLectures(
+          topicId,
+          originalCourse.title,
+          originalTopic.title,
+          originalCourse.courseFiles.join(" ")
+        );
+        if (!createdLectures)
+          error = new ServerError(
+            "Unable to create topic content, could not generate lectures"
+          );
+      } else {
+        error = new ServerError("This topic does not exist anymore");
+      }
+      
     } catch (error) {
       logger.error(error);
     }
+    return { topic: topicTitle, lectures: topicLectures, error: error };
   }
   async getTopic(topicId: string) {
+    let error: CustomError | null = null;
+    let topicTitle: string = "";
+    let topicLectures: ITopicLecture[] = [];
     try {
-      const originalTopic: any = await Topic.findById(topicId);
-      const topicLectures = [];
-      const existingLectures = await Lecture.find({ topic: topicId });
+      const originalTopic = await Topic.findById(topicId);
+      if (originalTopic) {
+        topicTitle = originalTopic.title;
+        const existingLectures = await Lecture.find({ topic: topicId });
+        // If the topic has lectures already return them
+        if (existingLectures.length > 0) {
+          for (const lecture of existingLectures) {
+            topicLectures.push({
+              id: lecture._id,
+              title: lecture.title,
+              position: lecture.position,
+            });
+          }
 
-      // If the topic has lectures already return them
-      if (existingLectures.length > 0) {
-        for (const lecture of existingLectures) {
-          topicLectures.push({
-            id: lecture._id,
-            title: lecture.title,
-            position: lecture.position,
-          });
+          // if the topic does not have existing lectures, create new ones
+        } else {
+          error = new ServerError(
+            "Unable to fetch topic content, no lectures exist"
+          );
         }
-
-        // if the topic does not have existing lectures, create new ones
       } else {
-        throw new ServerError("Unable to fetch topic content, no lectures exist")
+        error = new ServerError("This topic does not exist");
       }
-      return { topic: originalTopic.title, lectures: topicLectures };
     } catch (error) {
-      logger.error(error)
+      logger.error(error);
     }
+    return { topic: topicTitle, lectures: topicLectures, error: error };
   }
 }
 

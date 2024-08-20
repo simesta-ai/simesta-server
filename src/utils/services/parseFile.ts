@@ -1,31 +1,37 @@
-import { ServerError, ValidateError } from "../handlers/error";
+import { CustomError, ServerError, ValidateError } from "../handlers/error";
 import path from "path";
 import pdf from "pdf-parse";
 import mammoth from "mammoth";
 import Tesseract from "tesseract.js";
+import logger from "../logger";
 
 export class FileService {
   async parseFile(filePath: any) {
+    let fileError: CustomError | null = null;
+    let data: string = "";
     try {
       const fileExtension = path.extname(filePath);
 
       if (fileExtension === ".pdf") {
-        const data = await pdf(filePath);
-        return data.text.toString();
-      }
-      if (fileExtension === ".docx") {
-        const data = await mammoth.extractRawText({ path: filePath });
-        return data.value.toString();
-      }
-      if ([".jpg", ".jpeg", ".png"].includes(fileExtension)) {
+        const result = await pdf(filePath);
+        data = result.text.toString();
+      } else if (fileExtension === ".docx") {
+        const result = await mammoth.extractRawText({ path: filePath });
+        data = result.value.toString();
+      } else if ([".jpg", ".jpeg", ".png"].includes(fileExtension)) {
         const {
           data: { text },
         } = await Tesseract.recognize(filePath, "eng");
-        return text.toString();
+        const pictureData = text.toString();
+        data = pictureData
+      } else {
+        fileError = new ValidateError("Invalid file format");
+        throw fileError
       }
-      throw new ValidateError("Invalid file format");
+      
     } catch (error) {
-      throw new ServerError("Unable to parse file");
+      logger.error("File error: ", error)
     }
+    return { data, fileError }
   }
 }

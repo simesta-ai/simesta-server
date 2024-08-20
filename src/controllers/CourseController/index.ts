@@ -23,14 +23,17 @@ class CourseController {
     const { userId } = req.params;
     const files = req.files;
     try {
-      let courseId;
-      courseId = await this.courseCreationService.createCourse(
+      const { courseId, error} = await this.courseCreationService.createCourse(
         userId,
         creationDetails.title,
         files,
         creationDetails.subtopics
       );
-      res.status(200).json({ courseId: courseId });
+      if(error){
+        throw error
+      } else {
+        res.status(200).json({ courseId: courseId });
+      }
     } catch (error) {
       next(error);
       
@@ -42,17 +45,25 @@ class CourseController {
   async getCourse(req: Request, res: Response, next: NextFunction) {
     try {
       const courseId = req.params.courseId;
-      const courseDetails = await this.getCourseService.getCourseFromStore(courseId);
-      return res.status(200).json(courseDetails);
+      const { course, topics, error } = await this.getCourseService.getCourseFromStore(courseId);
+      if(error){
+        throw error
+      } else {
+        return res.status(200).json({course: course, topics: topics});
+      }
     } catch (error) {
       next(error)
     }
   }
   async getAllCourses(req: Request, res: Response, next: NextFunction) {
     try {
-      const userId = req.params.id;
-      const allCourses = await this.getCourseService.getAllCourses(userId);
-      res.status(200).json({ courses: allCourses });
+      const userId = req.params.userId;
+      const { coursesList, error } = await this.getCourseService.getAllCourses(userId);
+      if(error){
+        throw error
+      } else {
+        res.status(200).json({ courses: coursesList });
+      }
     } catch (error) {
       next(error)
     }
@@ -61,8 +72,12 @@ class CourseController {
   async createTopic(req: Request, res: Response, next: NextFunction) {
     try {
       const topicId = req.params.topicId;
-      const topicLectures = await this.getTopicService.createNewTopic(topicId);
-      res.status(200).json(topicLectures);
+      const { topic, lectures, error } = await this.getTopicService.createNewTopic(topicId);
+      if(error){
+        throw error
+      }else {
+        res.status(200).json({ topic, lectures });
+      }
     } catch (error) {
       next(error)
     }
@@ -70,8 +85,12 @@ class CourseController {
   async createLecture(req: Request, res: Response, next: NextFunction){
     try {
       const { courseId, lectureId} = req.params;
-      const lectureContent = await this.getLectureService.createNewLecture(courseId, lectureId);
-      res.status(200).json(lectureContent);
+      const {lectureContent, error} = await this.getLectureService.createNewLecture(courseId, lectureId);
+      if(error){
+        throw error
+      } else {
+        res.status(200).json(lectureContent);
+      }
     } catch (error) {
       next(error);
     }
@@ -79,8 +98,12 @@ class CourseController {
   async getLecture(req: Request, res: Response, next: NextFunction) {
     try {
       const { lectureId } = req.params;
-      const lectureContent = await this.getLectureService.getLecture(lectureId);
-      res.status(200).json(lectureContent);
+      const {lectureContent, error} = await this.getLectureService.getLecture(lectureId);
+      if(error){
+        throw error
+      } else {
+        res.status(200).json(lectureContent);
+      }
     } catch (error) {
       next(error);
     }
@@ -88,8 +111,12 @@ class CourseController {
   async getTopic(req: Request, res: Response, next: NextFunction) {
     try {
       const topicId = req.params.topicId;
-      const topicLectures = await this.getTopicService.getTopic(topicId);
-      res.status(200).json(topicLectures);
+      const { topic, lectures, error } = await this.getTopicService.getTopic(topicId);
+      if(error){
+        throw error
+      }else {
+        res.status(200).json({ topic, lectures });
+      }
     } catch (error) {
       next(error)
     }

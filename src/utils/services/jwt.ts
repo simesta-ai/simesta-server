@@ -4,19 +4,16 @@ import { RequestWithUser } from "../../types"
 import { Request, Response, NextFunction } from "express"
 
 export interface IJwt {
-    grantToken(err: Error, req: RequestWithUser, res: Response, next: NextFunction): void
-    verifyToken(err: Error, req: RequestWithUser, res: Response, next: NextFunction): void
+    grantToken(req: RequestWithUser, res: Response, next: NextFunction): void
+    verifyToken(req: RequestWithUser, res: Response, next: NextFunction): void
 
 }
 
 class JwtService implements IJwt {
 
     // CREATE TOKEN
-    public grantToken(err: Error, req: RequestWithUser, res: Response, next: NextFunction){
+    public grantToken(req: RequestWithUser, res: Response, next: NextFunction){
         try {
-            if(err){
-                next(err)
-            }
             const user = req.user
             if(user){
                 const token = jwt.sign({ user: user }, 'secret', { expiresIn: '24h' });
@@ -31,13 +28,12 @@ class JwtService implements IJwt {
     }
 
     // VERIFY TOKEN
-    public verifyToken(err: Error, req: Request, res: Response, next: NextFunction){
+    public verifyToken(req: Request, res: Response, next: NextFunction){
         try {
-            if(err){
-                next(err)
-            }
             const token = req.cookies['Auth-token']
-            if(!token) throw new AuthError("Unable to authorize user: User not currently logged in.")
+            if(!token) {
+                throw new AuthError("Unable to authorize user: User not currently logged in.")
+            } 
             const verified = jwt.verify(token, 'secret')
             if(verified){
                 req.user = verified

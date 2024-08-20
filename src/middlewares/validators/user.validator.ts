@@ -1,12 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import Joi from "joi";
 import { ValidateError } from "../../utils/handlers/error";
+import logger from "../../utils/logger";
 
 class Uservalidator {
-  public async validate(err: Error, req: Request, res: Response, next: NextFunction) {
-    if(err){
-      next(err)
-    }
+  public async validate(req: Request, res: Response, next: NextFunction) {
+    
     const userpayload = req.body;
     try {
       const schema = Joi.object({

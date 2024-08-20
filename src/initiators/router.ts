@@ -16,15 +16,11 @@ class Router {
   }
 
   private isLoggedIn(
-    err: Error,
     req: RequestWithUser,
     res: Response,
     next: express.NextFunction
   ) {
     try {
-      if (err) {
-        next(err);
-      }
       if (req.user) {
         next();
       } else {
@@ -41,11 +37,8 @@ class Router {
       authRoutes,
       this.isLoggedIn,
       this.jwtService.grantToken,
-      (err: Error, req: RequestWithUser, res: Response, next: NextFunction) => {
+      (req: RequestWithUser, res: Response, next: NextFunction) => {
         try {
-          if (err) {
-            next(err);
-          }
           const user = req.user;
           if (!user) {
             throw new AuthError(
