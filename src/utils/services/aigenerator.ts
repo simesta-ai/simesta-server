@@ -1,12 +1,13 @@
-import { GoogleGenerativeAI, GenerativeModel } from "@google/generative-ai";
+import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai';
 
 // Check the clarifai-nodejs module and include these classes in the index.d.ts file
-import { ClarifaiStub, grpc } from "clarifai-nodejs-grpc";
-import CloudinaryService from "./cloudinary";
-import { ServerError } from "../handlers/error";
-import dotenv from "dotenv";
-import Converter from "../handlers/converter";
-import { resolve } from "path";
+const { ClarifaiStub, grpc } = require('clarifai-nodejs-grpc');
+
+import CloudinaryService from './cloudinary';
+import { ServerError } from '../handlers/error';
+import dotenv from 'dotenv';
+import Converter from '../handlers/converter';
+import { resolve } from 'path';
 
 // CONFIGURE ENVIRONMENT VARIABLES
 dotenv.config();
@@ -23,10 +24,10 @@ class AIGenerator {
     this.genAI = new GoogleGenerativeAI(
       process.env.GOOGLE_CLOUD_API_KEY as string
     );
-    this.textModel = this.genAI.getGenerativeModel({ model: "gemini-pro" });
+    this.textModel = this.genAI.getGenerativeModel({ model: 'gemini-pro' });
     this.clarifaiModel = ClarifaiStub.grpc();
     this.clarifaiMetadata = new grpc.Metadata();
-    this.clarifaiMetadata.set("authorization", "Key " + process.env.PAT);
+    this.clarifaiMetadata.set('authorization', 'Key ' + process.env.PAT);
     this.converter = new Converter();
     this.cloudinaryService = new CloudinaryService();
   }
@@ -48,7 +49,7 @@ class AIGenerator {
             if (response.status.code !== 10000) {
               reject(err);
             }
-            
+
             const output = response.outputs[0];
             const text = output.data.text.raw;
             resolve(text);
@@ -204,10 +205,10 @@ class AIGenerator {
           }
         );
       });
-      if (typeof imageResponse === "string") {
+      if (typeof imageResponse === 'string') {
         return imageResponse;
       }
-      return "";
+      return '';
     } catch (error: any) {
       const message = error.message;
       throw new ServerError(message);

@@ -1,6 +1,6 @@
-const createUser = {
+export const createUser = {
   tags: ['Auth'],
-  description: 'Create a new use in the system',
+  description: 'Create a new user in the system',
   operationId: 'createUser',
   security: [
     {
@@ -23,41 +23,7 @@ const createUser = {
       content: {
         'application/json': {
           schema: {
-            type: 'object',
-            properties: {
-              _id: {
-                type: 'string',
-                example: '60564fcb544047cdc3844818',
-              },
-              fullName: {
-                type: 'string',
-                example: 'John Snow',
-              },
-              email: {
-                type: 'string',
-                example: 'john.snow@email.com',
-              },
-              password: {
-                type: 'string',
-                example: '442893aba778ab321dc151d9b1ad98c64ed56c07f8cbaed',
-              },
-              enabled: {
-                type: 'boolean',
-                example: true,
-              },
-              role: {
-                type: 'string',
-                example: '605636683f6e29c81c8b2db0',
-              },
-              createdAt: {
-                type: 'string',
-                example: '2021-03-20T19:40:59.495Z',
-              },
-              updatedAt: {
-                type: 'string',
-                example: '2021-03-20T21:23:10.879Z',
-              },
-            },
+            $ref: '#/components/schemas/createUserResponse',
           },
         },
       },
@@ -80,31 +46,61 @@ const createUser = {
     },
   },
 };
-const createUserBody = {
-  type: 'object',
-  properties: {
-    fullName: {
-      type: 'string',
-      example: 'John Snow',
+
+export const loginUser = {
+  tags: ['Auth'],
+  description: 'Login a user in the system',
+  operationId: 'loginUser',
+  security: [
+    {
+      bearerAuth: [],
     },
-    email: {
-      type: 'string',
-      example: 'john.snow@email.com',
+  ],
+  requestBody: {
+    content: {
+      'application/json': {
+        schema: {
+          $ref: '#/components/schemas/loginUserBody',
+        },
+      },
     },
-    password: {
-      type: 'string',
-      description: "unencrypted user's password",
-      example: '!1234aWe1Ro3$#',
+    required: true,
+  },
+  responses: {
+    '200': {
+      description: 'User logged in successfully!',
+      headers: {
+        'Set-Cookie': {
+          schema: {
+            type: 'string',
+            example:
+              'Auth-token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY2YzViNzBiNjE5NWJjOGU5NDRjYWYwOSIsIm5hbWUiOiJLaW5nc2xleSBJaGVtZWxhbmR1IiwiZW1haWwiOiJraW5nQGdtYWlsLmNvbSIsInBhc3N3b3JkIjoiJDJiJDEwJFNPbkJxZzFoSnpGZmpqT0U3UE5VNk8uSGlpZzc2cDFDaTcwM25ScDZSVUQyay91NzVHbm91IiwicHJvZmlsZVBpY3R1cmUiOiIiLCJhcHByb3ByaWF0ZUxNZXRob2QiOiIiLCJvdGhlckxNZXRob2RzIjpbXSwiY3JlYXRlZEF0IjoiMjAyNC0wOC0yMVQwOTo0NDo0My4yMThaIiwidXBkYXRlZEF0IjoiMjAyNC0wOC0yMVQwOTo0NDo0My4yMThaIiwiX192IjowfSwiaWF0IjoxNzI0MjQxMDU2LCJleHAiOjE3MjQzMjc0NTZ9.exvIiKOBE-E5ikUCr9ixjrHu_W0EolZGTYDK8iHa9v8',
+          },
+        },
+      },
+      content: {
+        'application/json': {
+          schema: {
+            $ref: '#/components/schemas/createUserResponse',
+          },
+        },
+      },
     },
-    enabled: {
-      type: 'boolean',
-      example: true,
-    },
-    role: {
-      type: 'string',
-      example: '605636683f6e29c81c8b2db0',
+    '500': {
+      description: 'Internal Server Error',
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              message: {
+                type: 'string',
+                example: 'Internal Server Error',
+              },
+            },
+          },
+        },
+      },
     },
   },
 };
-
-export { createUser, createUserBody };
