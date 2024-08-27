@@ -81,7 +81,9 @@ class CourseCreationService {
   ) {
     let error: CustomError | null = null;
     let courseId: string = "";
-    if (title.length < 1) {
+
+    const isValidCourseTitle = await this.AIGenerator.confirmCourseTitle(title);
+    if (!isValidCourseTitle) {
       error =  new ClientError(
         "Invalid course title, please enter a valid title."
       );

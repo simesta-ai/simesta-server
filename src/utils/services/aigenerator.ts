@@ -102,6 +102,14 @@ class AIGenerator {
     };
   }
 
+  //Confirm if a course title is valid
+  async confirmCourseTitle(courseTitle: string): Promise<boolean> {
+    const prompt = `confirm if ${courseTitle} is a valid course title, if is return only yes, if not return only no. The course title can be anything as far as it has meaning`;
+    const response = await this.generateText(prompt);
+    return response.trim().toLowerCase() === "yes" ? true : false;
+  }
+
+
   // Generate Course Category
   async generateCoursecategory(courseTitle: string): Promise<string> {
     const prompt = `generate a 1 word category for a ${courseTitle} course`;
