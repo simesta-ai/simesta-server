@@ -1,22 +1,14 @@
-import { Request, Response, NextFunction} from "express";
-import passport from "passport";
-import { AuthError } from "../../../utils/handlers/error";
+import { Request, Response, NextFunction } from 'express';
+import passport from 'passport';
+import { AuthError } from '../../../utils/handlers/error';
 
 export interface IRegisterService {
-  registerUser(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): void;
+  registerUser(req: Request, res: Response, next: NextFunction): void;
 }
 
 class UserRegistrationService implements IRegisterService {
-  registerUser(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    passport.authenticate("signup", (err: any, user: any, info: any) => {
+  registerUser(req: Request, res: Response, next: NextFunction) {
+    passport.authenticate('signup', (err: any, user: any, info: any) => {
       try {
         if (err) {
           throw new AuthError(info.message);
@@ -26,7 +18,9 @@ class UserRegistrationService implements IRegisterService {
         } else {
           req.logIn(user, (err) => {
             if (err) {
-              throw new AuthError("Error logging in user to session after signup, please retry process");
+              throw new AuthError(
+                'Error logging in user to session after signup, please retry process'
+              );
             }
             next();
           });
