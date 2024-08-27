@@ -124,8 +124,12 @@ class AIGenerator {
   }
 
   //  Generate Course Topics
-  async generateTopics(courseTitle: string): Promise<Array<string>> {
-    const prompt = `generate a list of topics(not more than 15, in text only, numbered form without description or prelude or formatting and removing the subtopics) needed to completely learn ${courseTitle} course`;
+  async generateTopics(courseTitle: string, courseSubtopics?: string): Promise<Array<string>> {
+    let extraPrompt = ".";
+    if(courseSubtopics) {
+      extraPrompt = `, and include the following topics ${courseSubtopics}.`
+    }
+    const prompt = `generate a list of topics(not more than 15, in text only, numbered form without description or prelude or formatting and removing the subtopics) needed to completely learn ${courseTitle} course${extraPrompt}`;
     const topicsText = await this.generateText(prompt);
 
     // Convert text list to array of topics

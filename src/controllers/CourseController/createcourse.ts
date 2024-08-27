@@ -57,7 +57,19 @@ class CourseCreationService {
         }).save();
       }
     } else if (!files && subtopics){
-
+      const newTopics = await this.AIGenerator.generateTopics(
+        courseTitle,
+        subtopics
+      );
+      for (const topic of newTopics) {
+        const topicPosition = newTopics.indexOf(topic) + 1;
+        await new Topic({
+          title: topic,
+          position: topicPosition,
+          course: courseId,
+          inProgress: topicPosition === 1 ? true : false,
+        }).save();
+      }
     } else {
       const newTopics = await this.AIGenerator.generateTopics(
         courseTitle
@@ -122,6 +134,7 @@ class CourseCreationService {
           // Add files to course and include the subtpics in implementation
         } else if (!files && subtopics) {
           // Implement topics creation from just subtopics provided
+          await this.createTopics(newCourse._id, newCourse.title, undefined, subtopics)
         } else {
           // Auto-generate topics
           await this.createTopics(newCourse._id, newCourse.title)
