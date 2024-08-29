@@ -42,6 +42,7 @@ class AIGenerator {
         this.clarifaiModel.PostModelOutputs(
           this.clarifaiTextModelConfig(prompt),
           this.clarifaiMetadata,
+
           async (err: any, response: any) => {
             if (err) {
               reject(err);

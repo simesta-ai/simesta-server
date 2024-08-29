@@ -6,6 +6,7 @@ const router = express.Router()
 
 
 const userController = new UserController()
+
 router.route('').get(
     // Get all courses
 userController.getAllCourses

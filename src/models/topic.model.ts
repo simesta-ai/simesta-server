@@ -35,6 +35,15 @@ const TopicSchema = new Schema({
   },
 });
 
+TopicSchema.statics = {
+    async getTopicById(id: string) {
+        return this.findById(id).exec();
+    },
+    async getTopicByTitle(title: string) {
+        return this.findOne({ title: title }).exec();
+    }
+}
+
 type TopicType = ITopic;
 const TopicModel = model<TopicType>("Topic", TopicSchema);
 export default TopicModel;

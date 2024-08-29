@@ -57,6 +57,7 @@ class Router {
     this.app.use("/users", this.jwtService.verifyToken, userRoutes);
     this.app.use(errorHandler);
   }
+
   public configureCourseRoutes(){
     this.app.use('/courses')
   }
