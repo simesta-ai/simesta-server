@@ -41,9 +41,23 @@ class CourseCreationService {
   }
   private async createTopics(courseId: string, courseTitle: string, files?: any, subtopics?: string){
     if(files && subtopics){
+      const newTopics = await this.AIGenerator.generateTopics(
+        courseTitle,
+        files,
+        subtopics
+      );
+      for (const topic of newTopics) {
+        const topicPosition = newTopics.indexOf(topic) + 1;
+        await new Topic({
+          title: topic,
+          position: topicPosition,
+          course: courseId,
+          inProgress: topicPosition === 1 ? true : false,
+        }).save();
+      }
 
     } else if (files && !subtopics){
-      const newTopics = await this.AIGenerator.generateTopicsWithFile(
+      const newTopics = await this.AIGenerator.generateTopics(
         courseTitle,
         files
       );
@@ -59,6 +73,7 @@ class CourseCreationService {
     } else if (!files && subtopics){
       const newTopics = await this.AIGenerator.generateTopics(
         courseTitle,
+        undefined,
         subtopics
       );
       for (const topic of newTopics) {
@@ -105,33 +120,45 @@ class CourseCreationService {
         error = courseError
       } else if(newCourse) {
         courseId = newCourse._id
-        if (files && !subtopics) {
+        const parseFiles = async(files: any) => {
           // Add files to course and generate course topics
-          const filePaths = files.map((file: any) => file.path);
-          const fileData = await Promise.all(
-            filePaths.map(async (filePath: string) => {
-              const {data, fileError} = await this.FileService.parseFile(filePath);
-              if(fileError){
-                error = fileError
-              }
-              return data;
-            })
-          );
-  
-          filePaths.forEach((filePath: string) => {
-            fs.unlinkSync(filePath);
-          });
-  
+        const filePaths = files.map((file: any) => file.path);
+        const fileData = await Promise.all(
+          filePaths.map(async (filePath: string) => {
+            const {data, fileError} = await this.FileService.parseFile(filePath);
+            if(fileError){
+              error = fileError
+            }
+            return data;
+          })
+        );
+
+        filePaths.forEach((filePath: string) => {
+          fs.unlinkSync(filePath);
+        });
+        return fileData
+        }
+        if (files && !subtopics) {
+          
+          const processedFiles = await parseFiles(files)
           // Add files to course
           await Course.updateOne(
             { _id: newCourse._id },
-            { $set: { courseFiles: fileData } }
+            { $set: { courseFiles: processedFiles } }
           );
           await newCourse.save()
           await this.createTopics(newCourse._id, newCourse.title, newCourse.courseFiles.join(" "))
   
         } else if (files && subtopics) {
           // Add files to course and include the subtpics in implementation
+          const processedFiles = await parseFiles(files)
+          // Add files to course
+          await Course.updateOne(
+            { _id: newCourse._id },
+            { $set: { courseFiles: processedFiles } }
+          );
+          await newCourse.save()
+          await this.createTopics(newCourse._id, newCourse.title, newCourse.courseFiles.join(" "), subtopics)
         } else if (!files && subtopics) {
           // Implement topics creation from just subtopics provided
           await this.createTopics(newCourse._id, newCourse.title, undefined, subtopics)
