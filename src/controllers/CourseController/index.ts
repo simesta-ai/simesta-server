@@ -4,7 +4,9 @@ import { ServerError, ValidateError } from "../../utils/handlers/error";
 import GetCourseService from "./getcourse";
 import GetTopicService from "./gettopic";
 import GetLectureService from "./getlecture";
+import CourseService from '../../services/CourseService';
 
+const courseService = new CourseService()
 
 class CourseController {
   private courseCreationService: CourseCreationService;
@@ -22,6 +24,9 @@ class CourseController {
     const creationDetails = req.body;
     const { userId } = req.params;
     const files = req.files;
+
+    // courseService.createCourse(userId, creationDetails.title, files, creationDetails.subtopics)
+
     try {
       const { courseId, error} = await this.courseCreationService.createCourse(
         userId,
@@ -36,7 +41,7 @@ class CourseController {
       }
     } catch (error) {
       next(error);
-      
+
     }
   }
 
@@ -45,6 +50,9 @@ class CourseController {
   async getCourse(req: Request, res: Response, next: NextFunction) {
     try {
       const courseId = req.params.courseId;
+
+      //   courseService.getCourse(courseId)
+
       const { course, topics, error } = await this.getCourseService.getCourseFromStore(courseId);
       if(error){
         throw error

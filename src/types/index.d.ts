@@ -1,3 +1,4 @@
+export * from './courses';
 declare global {
   namespace NodeJs {
     interface ProcessEnv {

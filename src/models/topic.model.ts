@@ -10,7 +10,7 @@ const TopicSchema = new Schema({
     type: Number,
     required: true,
   },
-  
+
   course: {
     type: Schema.Types.ObjectId,
     ref: "Course",
