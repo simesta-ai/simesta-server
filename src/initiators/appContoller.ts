@@ -1,21 +1,22 @@
-import express from 'express';
-import mongoose from 'mongoose';
-import cors from 'cors';
-import { rateLimit } from 'express-rate-limit';
-import session from 'express-session';
-import cookiepParser from 'cookie-parser';
-import bodyParser from 'body-parser';
-import helmet from 'helmet';
-import passport from 'passport';
-import dotenv from 'dotenv';
-import Router from './router';
-import RedisService from '../utils/services/redis';
-import logger from '../utils/logger';
-require('../middlewares/authenticators/localauth');
-require('../middlewares/authenticators/oauth');
-import swaggerJSDoc from 'swagger-jsdoc';
-import swaggerUi from 'swagger-ui-express';
-import { documentationSetup } from '../docs/setup';
+import express from "express";
+import { sequelizeService } from "../database/sequelize";
+import cors from "cors";
+import { rateLimit } from "express-rate-limit";
+import session from "express-session";
+import cookiepParser from "cookie-parser";
+import bodyParser from "body-parser";
+import helmet from "helmet";
+import passport from "passport";
+import dotenv from "dotenv";
+import Router from "./router";
+import RedisService from "../utils/services/redis";
+import logger from "../utils/logger";
+require("../middlewares/authenticators/localauth");
+require("../middlewares/authenticators/oauth");
+import swaggerJSDoc from "swagger-jsdoc";
+import swaggerUi from "swagger-ui-express";
+import { documentationSetup } from "../docs/setup";
+import { ServerError } from "../utils/handlers/error";
 
 // CONFIGURE ENVIRONMENT VARIABLES
 dotenv.config();
@@ -36,13 +37,13 @@ class AppController {
     this.app = app;
     this.port = port;
     this.corsOptions = {
-      origin: '*',
+      origin: "*",
       credentials: true,
-      methods: ['GET', 'POST', 'PUT', 'DELETE'],
+      methods: ["GET", "POST", "PUT", "DELETE"],
       allowHeaders: [
-        'Content-Type',
-        'Authorization',
-        'Access-Control-Allow-Credentials',
+        "Content-Type",
+        "Authorization",
+        "Access-Control-Allow-Credentials",
       ],
     };
   }
@@ -59,7 +60,7 @@ class AppController {
   }
 
   private setupDocumentation() {
-    this.app.use('/docs', swaggerUi.serve, swaggerUi.setup(documentationSetup));
+    this.app.use("/docs", swaggerUi.serve, swaggerUi.setup(documentationSetup));
   }
 
   private sessionConfig() {
@@ -98,9 +99,18 @@ class AppController {
   }
 
   // Connect To Database
-  private async setupDatabase(): Promise<typeof mongoose> {
-    const db = await mongoose.connect(process.env.MONGODB_URL as string);
-    return db;
+  private async setupDatabase(): Promise<boolean> {
+    try {
+      await sequelizeService.sequelize.authenticate();
+      await sequelizeService.sequelize.sync();
+      logger.info(
+        "Connection to the database has been established successfully."
+      );
+      return true
+    } catch (error) {
+      logger.error("Unable to connect to the database:", error);
+      return false
+    }
   }
 
   // Connect to Redis data-store
@@ -120,13 +130,17 @@ class AppController {
     this.setupDocumentation();
     this.setupRedis();
     this.setupDatabase()
-      .then((db) => {
-        this.app.listen(this.port, () => {
-          logger.info(`Server listening on the port ${this.port}`);
-        });
+      .then((connected) => {
+        if(connected){
+          this.app.listen(this.port, () => {
+            logger.info(`Server listening on the port ${this.port}`);
+          });
+        } else {
+          throw new ServerError("Unable to connect to the database");
+        }
       })
       .catch((error) => {
-        logger.error('Error starting server: ', error);
+        logger.error("Error starting server: ", error);
       });
   }
 }
