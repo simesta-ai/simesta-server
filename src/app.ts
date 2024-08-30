@@ -1,10 +1,9 @@
-import express from "express"
-import dotenv from "dotenv"
-import AppController from "./initiators/appContoller"
+import express from 'express'
+import dotenv from 'dotenv'
+import AppController from './api/v1/initiators/appContoller'
 
 // CONFIGURE ENVIRONMENT VARIABLES
 dotenv.config()
-
 
 // Start Application Server
 export const app = express()
