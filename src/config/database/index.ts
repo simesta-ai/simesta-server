@@ -1,6 +1,8 @@
 import { Model, ModelStatic, Sequelize } from 'sequelize-typescript'
-import UserScheme from './models/user.model'
+import UserScheme from './models/User'
 import dotenv from 'dotenv'
+import User from './models/User'
+import Course from './models/Course'
 
 // CONFIGURE ENVIRONMENT VARIABLES
 dotenv.config()
@@ -16,7 +18,7 @@ const dbConnection = new Sequelize({
   },
   port: process.env.DB_PORT as unknown as number,
   logging: false,
-  models: [],
+  models: [User, Course],
 })
 
 export default dbConnection

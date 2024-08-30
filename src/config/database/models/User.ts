@@ -1,4 +1,3 @@
-import { DataTypes } from 'sequelize'
 import {
   Table,
   Column,
@@ -10,12 +9,20 @@ import {
   HasMany,
 } from 'sequelize-typescript'
 
+interface IUser {
+  id?: string
+  firstName: string
+  lastName?: string
+  email: string
+  password: string
+}
+
 @Table({
   timestamps: true,
   tableName: 'users',
-  modelName: 'Travel',
+  modelName: 'User',
 })
-export class User extends Model {
+class User extends Model<IUser> {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -26,13 +33,19 @@ export class User extends Model {
   @Column({
     type: DataType.STRING,
     allowNull: false,
-    unique: true,
+    unique: false,
   })
   declare firstName: string
+  /**
+   * This is the column for the first name
+   *
+   * @property lastName
+   */
   @Column({
     type: DataType.STRING,
-    allowNull: false,
-    unique: true,
+    allowNull: true,
+    unique: false,
+    defaultValue: '',
   })
   declare lastName: string
 
@@ -55,33 +68,6 @@ export class User extends Model {
   declare updatedAt?: Date
 }
 
-const UserScheme = {
-  id: {
-    type: DataTypes.UUID,
-    primaryKey: true,
-    defaultValue: DataTypes.UUIDV4,
-  },
-  email: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true,
-  },
-  password: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  firstName: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  lastName: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  role: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-}
+export default User
 
-export default UserScheme
+User.findOne({})
