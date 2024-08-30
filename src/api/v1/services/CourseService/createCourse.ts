@@ -9,17 +9,19 @@ import { FileService } from '../../../../libs/utils/services/parseFile'
 import fs from 'fs'
 import TopicService from '../TopicService'
 import UserModel from '../../../../config/database/schemas/user.model'
+import { ICreateCourse } from '../../../../types'
+import { Files } from 'openai/resources/files.mjs'
 
 const AIGen = new AIGenerator()
 const fileService = new FileService()
 const topicService = new TopicService()
 
-const createCourse = async (
-  userId: string,
-  title: string,
-  files: any,
-  subtopics: string[] | string
-): Promise<{ courseId: string | null; error: any }> => {
+const createCourse = async ({
+  userId,
+  title,
+  files,
+  subtopics,
+}: ICreateCourse): Promise<{ courseId: string | null; error: any }> => {
   let error: CustomError | null = null
   let courseId: string = ''
 

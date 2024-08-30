@@ -10,48 +10,14 @@ import {
   HasOne,
 } from 'sequelize-typescript'
 import User from './User'
-
-const CourseSchema = {
-  category: {
-    type: String,
-    default: '',
-  },
-  image: {
-    type: String,
-    default: '',
-  },
-  completed: {
-    type: Boolean,
-    default: false,
-  },
-  inProgress: {
-    type: Boolean,
-    default: false,
-  },
-  courseType: {
-    type: String,
-    default: '',
-  },
-  difficultyLevel: {
-    type: String,
-    default: '',
-  },
-  notes: {
-    type: String,
-    default: '',
-  },
-  courseFiles: {
-    type: [String],
-    default: [],
-  },
-}
+import { ICourse } from '../../../types'
 
 @Table({
   timestamps: true,
   tableName: 'courses',
   modelName: 'Course',
 })
-class Course extends Model {
+class Course extends Model<ICourse> {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -71,7 +37,61 @@ class Course extends Model {
     allowNull: true,
     defaultValue: '',
   })
-  declare descriiption: string
+  declare description: string
+
+  @Column({
+    type: DataType.BOOLEAN,
+    defaultValue: false,
+    allowNull: false,
+  })
+  declare completed: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+    defaultValue: false,
+  })
+  declare inProgress: boolean
+
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+    defaultValue: '',
+  })
+  declare courseType: string
+
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+    defaultValue: '',
+  })
+  declare difficultyLevel: string
+
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+    defaultValue: '',
+  })
+  declare notes: string
+
+  @Column({
+    type: DataType.ARRAY,
+    allowNull: true,
+    defaultValue: '',
+  })
+  declare courseFiles: string[]
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  declare img: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  declare category: string
 
   @HasOne(() => User)
   declare user: User

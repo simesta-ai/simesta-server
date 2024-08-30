@@ -31,6 +31,11 @@ class UserRepository {
     const foundUser = await this.model.findOne({ where: { email } })
     return foundUser
   }
+
+  findById = async (id: string) => {
+    const foundUser = await this.model.findByPk(id)
+    return foundUser
+  }
 }
 
 export default UserRepository

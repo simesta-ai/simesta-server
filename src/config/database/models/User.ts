@@ -6,6 +6,7 @@ import {
   CreatedAt,
   UpdatedAt,
 } from 'sequelize-typescript'
+import { IUser } from '../../../types'
 
 @Table({
   timestamps: true,
@@ -72,15 +73,3 @@ class User extends Model<IUser> {
 }
 
 export default User
-
-export interface IUser {
-  id?: string
-  name: string
-  email: string
-  password: string
-  profilePicture?: string
-  appropriateLMethod?: string
-  otherLMethods?: string[]
-  createdAt?: Date
-  updatedAt?: Date
-}
