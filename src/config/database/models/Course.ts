@@ -5,6 +5,7 @@ import {
   DataType,
   CreatedAt,
   UpdatedAt,
+  ForeignKey,
   BeforeCreate,
   HasMany,
   HasOne,
@@ -23,7 +24,7 @@ class Course extends Model<ICourse> {
     primaryKey: true,
     defaultValue: DataType.UUIDV4,
   })
-  declare id: string
+  declare _id: string
 
   @Column({
     type: DataType.STRING,
@@ -75,7 +76,7 @@ class Course extends Model<ICourse> {
   declare notes: string
 
   @Column({
-    type: DataType.ARRAY,
+    type: DataType.ARRAY(DataType.STRING),  
     allowNull: true,
     defaultValue: '',
   })
@@ -93,8 +94,12 @@ class Course extends Model<ICourse> {
   })
   declare category: string
 
-  @HasOne(() => User)
-  declare user: User
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: false,
+  })
+  declare userId: string
 
   @CreatedAt
   declare createdAt: Date
