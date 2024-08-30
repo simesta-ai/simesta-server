@@ -10,7 +10,7 @@ export interface ICourse {
   courseFiles?: string[]
   image?: string
   category: string
-  user: IUser
+  user: string | IUser
   createdAt?: Date
   updatedAt?: Date
 }

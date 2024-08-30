@@ -1,4 +1,4 @@
-import { ICreateCourse } from '../../../types'
+import { ICreateCourse, IUser } from '../../../types'
 import Course from '../models/Course'
 
 class CourseRepository {
@@ -9,13 +9,22 @@ class CourseRepository {
     category,
     image,
     user,
-  }: any): Promise<Course> => {
+    courseFiles,
+  }: {
+    title: string
+    description: string
+    category: string
+    image: string
+    user: string | IUser
+    courseFiles?: any
+  }): Promise<Course> => {
     const course = await this.model.create({
       title,
       description,
       category,
       image,
       user,
+      courseFiles: courseFiles ? courseFiles : undefined,
     })
     return course
   }
