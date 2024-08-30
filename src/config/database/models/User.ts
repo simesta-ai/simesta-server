@@ -19,6 +19,7 @@ class User extends Model<IUser> {
     defaultValue: DataType.UUIDV4,
   })
   declare id: string
+
   @Column({
     type: DataType.STRING,
     allowNull: false,
@@ -27,6 +28,7 @@ class User extends Model<IUser> {
     },
   })
   declare name: string
+
   @Column({
     type: DataType.STRING,
     allowNull: false,
@@ -36,6 +38,7 @@ class User extends Model<IUser> {
     },
   })
   declare email: string
+
   @Column({
     type: DataType.STRING,
     allowNull: false,
@@ -70,16 +73,14 @@ class User extends Model<IUser> {
 
 export default User
 
-interface IUser {
+export interface IUser {
   id?: string
   name: string
   email: string
   password: string
-  profilePicture: string
-  appropriateLMethod: string
-  otherLMethods: string[]
+  profilePicture?: string
+  appropriateLMethod?: string
+  otherLMethods?: string[]
   createdAt?: Date
   updatedAt?: Date
 }
-
-export { IUser }

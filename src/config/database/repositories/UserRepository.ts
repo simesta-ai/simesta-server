@@ -3,24 +3,34 @@ import User from '../models/User'
 class UserRepository {
   model = User
   async createUser({
-    firstName,
-    lastName,
+    name,
     email,
     password,
   }: {
-    firstName: string
-    lastName: string
+    name: string
     email: string
     password: string
-  }) {
+  }): Promise<User | null> {
     const foundUser = await this.model.findOne({ where: { email } })
     if (foundUser) return null
     const createdUser = await this.model.create({
-      firstName,
-      lastName,
+      name,
       email,
       password,
     })
     return createdUser
   }
+
+  loginUser = async ({
+    email,
+    password,
+  }: {
+    email: string
+    password: string
+  }): Promise<User | null> => {
+    const foundUser = await this.model.findOne({ where: { email } })
+    return foundUser
+  }
 }
+
+export default UserRepository
