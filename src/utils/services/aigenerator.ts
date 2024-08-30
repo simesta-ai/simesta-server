@@ -1,13 +1,13 @@
-import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai';
+import { GoogleGenerativeAI, GenerativeModel } from "@google/generative-ai";
 
 // Check the clarifai-nodejs module and include these classes in the index.d.ts file
-const { ClarifaiStub, grpc } = require('clarifai-nodejs-grpc');
+const { ClarifaiStub, grpc } = require("clarifai-nodejs-grpc");
 
-import CloudinaryService from './cloudinary';
-import { ServerError } from '../handlers/error';
-import dotenv from 'dotenv';
-import Converter from '../handlers/converter';
-import { resolve } from 'path';
+import CloudinaryService from "./cloudinary";
+import { ServerError } from "../handlers/error";
+import dotenv from "dotenv";
+import Converter from "../handlers/converter";
+import { resolve } from "path";
 
 // CONFIGURE ENVIRONMENT VARIABLES
 dotenv.config();
@@ -24,10 +24,10 @@ class AIGenerator {
     this.genAI = new GoogleGenerativeAI(
       process.env.GOOGLE_CLOUD_API_KEY as string
     );
-    this.textModel = this.genAI.getGenerativeModel({ model: 'gemini-pro' });
+    this.textModel = this.genAI.getGenerativeModel({ model: "gemini-pro" });
     this.clarifaiModel = ClarifaiStub.grpc();
     this.clarifaiMetadata = new grpc.Metadata();
-    this.clarifaiMetadata.set('authorization', 'Key ' + process.env.PAT);
+    this.clarifaiMetadata.set("authorization", "Key " + process.env.PAT);
     this.converter = new Converter();
     this.cloudinaryService = new CloudinaryService();
   }
@@ -110,7 +110,6 @@ class AIGenerator {
     return response.trim().toLowerCase() === "yes" ? true : false;
   }
 
-
   // Generate Course Category
   async generateCoursecategory(courseTitle: string): Promise<string> {
     const prompt = `generate a 1 word category for a ${courseTitle} course`;
@@ -126,27 +125,24 @@ class AIGenerator {
   }
 
   //  Generate Course Topics
-  async generateTopics(courseTitle: string): Promise<Array<string>> {
-    const prompt = `generate a list of topics(not more than 15, in text only, numbered form without description or prelude or formatting and removing the subtopics) needed to completely learn ${courseTitle} course`;
-    const topicsText = await this.generateText(prompt);
-
-    // Convert text list to array of topics
-    const topicList = this.converter.textToArray(topicsText);
-    return topicList;
-  }
-
-  //Generate Topics With File
-  async generateTopicsWithFile(
+  async generateTopics(
     courseTitle: string,
-    courseFiles: string[]
+    courseFiles?: string,
+    subtopics?: string
   ): Promise<Array<string>> {
-    const prompt = `generate a list of topics(not more than 15, in text only, numbered form without description or prelude or formatting and removing the subtopics) needed to completely learn ${courseTitle} you can go through this array of ${courseFiles} and generate topics as needed`;
+    let subtopicPrompt = ".";
+    if (subtopics) {
+      subtopicPrompt = `, and include the following topics ${subtopics}.`;
+    }
+    const prompt = `generate a list of topics(not more than 15, in text only, numbered form without description or prelude or formatting and removing the subtopics) needed to completely learn ${courseTitle}, you can go through this array of ${courseFiles} and generate topics as needed ${subtopicPrompt}`;
     const topicsText = await this.generateText(prompt);
 
     // Convert text list to array of topics
     const topicList = this.converter.textToArray(topicsText);
     return topicList;
   }
+
+
 
   // Generate Topic Lectures
   async generateLectures(
@@ -214,10 +210,10 @@ class AIGenerator {
           }
         );
       });
-      if (typeof imageResponse === 'string') {
+      if (typeof imageResponse === "string") {
         return imageResponse;
       }
-      return '';
+      return "";
     } catch (error: any) {
       const message = error.message;
       throw new ServerError(message);
