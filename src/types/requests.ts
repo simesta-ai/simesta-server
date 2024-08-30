@@ -14,5 +14,6 @@ export interface ICreateCourse {
     | { [fieldname: string]: File[] }
     | undefined
     | Express.Multer.File[]
+    | any
   subtopics: string | string[]
 }
