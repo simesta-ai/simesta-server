@@ -11,7 +11,7 @@ const createTopics = async (
 ) => {
   if (files && subtopics) {
   } else if (files && !subtopics) {
-    const newTopics = await aigenerator.generateTopicsWithFile(
+    const newTopics = await aigenerator.generateTopics(
       courseTitle,
       files
     )

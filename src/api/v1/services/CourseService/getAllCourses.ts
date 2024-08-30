@@ -2,7 +2,7 @@ import CourseModel from '../../../../config/database/schemas/course.model'
 import TopicModel from '../../../../config/database/schemas/topic.model'
 import UserModel from '../../../../config/database/schemas/user.model'
 import logger from '../../../../libs/utils/logger'
-import { ICourse } from '../../../../types'
+import { ICourseList } from '../../../../types'
 import {
   AuthError,
   CustomError,
@@ -11,9 +11,9 @@ import {
 
 const getAllCourses = async (
   userId: string
-): Promise<{ coursesList: Array<ICourse>; error: CustomError | null }> => {
+): Promise<{ coursesList: Array<ICourseList>; error: CustomError | null }> => {
   let error: CustomError | null = null
-  const coursesList: Array<ICourse> = []
+  const coursesList: Array<ICourseList> = []
   try {
     const user = await UserModel.findById(userId)
     if (user) {

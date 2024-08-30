@@ -11,8 +11,8 @@ import dotenv from 'dotenv'
 import Router from './router'
 import RedisService from '../../../libs/utils/services/redis'
 import logger from '../../../libs/utils/logger'
-require('../middlewares/authenticators/localauth')
-require('../middlewares/authenticators/oauth')
+require('../../../libs/middlewares/authenticators/localauth')
+require('../../../libs/middlewares/authenticators/oauth')
 import swaggerJSDoc from 'swagger-jsdoc'
 import swaggerUi from 'swagger-ui-express'
 import { documentationSetup } from '../docs/setup'

@@ -7,6 +7,7 @@ interface Lecture extends Document{
     lectureText: string;
     position: number;
     completed: boolean;
+    topic: string;
 
    
 }

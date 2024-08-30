@@ -28,17 +28,20 @@ class CourseController {
     const { userId } = req.params
     const files = req.files
 
+    // courseService.createCourse(userId, creationDetails.title, files, creationDetails.subtopics)
+
     try {
-      const { courseId, error } = await courseService.createCourse({
+      const { courseId, error } = await this.courseCreationService.createCourse(
         userId,
-        title: creationDetails.title,
+        creationDetails.title,
         files,
-        subtopics: creationDetails.subtopics,
-      })
+        creationDetails.subtopics
+      )
       if (error) {
         throw error
+      } else {
+        res.status(200).json({ courseId: courseId })
       }
-      res.status(200).json({ courseId: courseId })
     } catch (error) {
       next(error)
     }
