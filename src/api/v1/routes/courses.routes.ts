@@ -7,27 +7,16 @@ const router = express.Router()
 
 const userController = new UserController()
 const courseController = new CourseController()
-router
-  .route('')
-  .get(
-    // Get all courses
-    userController.getAllCourses
-  )
-  .post(
-    // Create new course
-    upload.array('files', 25),
-    checkTotalFileSize,
-    userController.createCourse
-  )
 
-router
-  .route('/:courseId')
-  .get(userController.getCourse)
-  .put
-  // Update course by ID
-  ()
-  .delete
-  // Delete course by ID
-  ()
+router.route('').get(courseController.getAllCourses).post(
+  // Create new course
+  upload.array('files', 25),
+  checkTotalFileSize,
+  courseController.createCourse
+)
+
+router.get('/users/:userId', courseController.getUserCourses)
+
+router.route('/:courseId').get(userController.getCourse).put().delete()
 
 export default router

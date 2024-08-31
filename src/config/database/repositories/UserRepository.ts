@@ -32,7 +32,7 @@ class UserRepository {
     return foundUser
   }
 
-  findById = async (id: string) => {
+  findById = async (id: string): Promise<User | null> => {
     const foundUser = await this.model.findByPk(id)
     return foundUser
   }

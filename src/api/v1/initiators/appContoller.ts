@@ -17,6 +17,7 @@ import swaggerJSDoc from 'swagger-jsdoc'
 import swaggerUi from 'swagger-ui-express'
 import { documentationSetup } from '../docs/setup'
 import { ServerError } from '../../../libs/utils/handlers/error'
+import { addTopicContraints } from '../../../config/database/queries/topics'
 
 // CONFIGURE ENVIRONMENT VARIABLES
 dotenv.config()
@@ -78,6 +79,7 @@ class AppController {
     const appRouter = new Router(this.app)
     appRouter.configAuthRoutes()
     appRouter.configUserRoutes()
+    appRouter.configureCourseRoutes()
   }
 
   // Setup Express Middlewares
@@ -103,6 +105,7 @@ class AppController {
     try {
       await dbConnection.authenticate()
       await dbConnection.sync()
+      //   addTopicContraints(dbConnection)
       logger.info(
         'Connection to the database has been established successfully.'
       )

@@ -16,7 +16,6 @@ interface Course extends Document{
     courseType: string;
     difficultyLevel: string;
     courseFiles: string[];
-    user: string;
 }
 
 

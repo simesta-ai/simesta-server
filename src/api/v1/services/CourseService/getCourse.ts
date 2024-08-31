@@ -2,19 +2,23 @@ import CourseModel from '../../../../config/database/schemas/course.model'
 import TopicModel from '../../../../config/database/schemas/topic.model'
 import logger from '../../../../libs/utils/logger'
 import { CustomError, ServerError } from '../../../../libs/utils/handlers/error'
+import CourseRepository from '../../../../config/database/repositories/CourseRepository'
+
+const courseRepository = new CourseRepository()
 
 const getCourse = async (courseId: string) => {
   let error: CustomError | null = null
   let courseInfo
   const topicsInfo = []
+
   try {
-    const course = await CourseModel.findById(courseId)
+    const course = await courseRepository.findById(courseId)
     if (course) {
       courseInfo = {
-        id: course._id,
+        id: course.id,
         title: course.title,
         description: course.description,
-        image: course.image,
+        image: course.img,
       }
       const topics: any = await TopicModel.find({ course: courseId })
 

@@ -1,4 +1,3 @@
-import CourseModel from '../../../../config/database/schemas/course.model'
 import {
   AuthError,
   ClientError,
@@ -8,38 +7,47 @@ import AIGenerator from '../../../../libs/utils/services/aigenerator'
 import { FileService } from '../../../../libs/utils/services/parseFile'
 import fs from 'fs'
 import TopicService from '../TopicService'
-import UserModel from '../../../../config/database/schemas/user.model'
+
 import { ICreateCourse } from '../../../../types'
-import { Files } from 'openai/resources/files.mjs'
+
+import CourseRepository from '../../../../config/database/repositories/CourseRepository'
+import UserRepository from '../../../../config/database/repositories/UserRepository'
 
 const AIGen = new AIGenerator()
 const fileService = new FileService()
 const topicService = new TopicService()
+
+const userRepository = new UserRepository()
+const courseRepository = new CourseRepository()
 
 const createCourse = async ({
   userId,
   title,
   files,
   subtopics,
-}: ICreateCourse): Promise<{ courseId: string | null; error: any }> => {
+}: ICreateCourse): Promise<{
+  courseId: string | null
+  error: CustomError | null
+}> => {
   let error: CustomError | null = null
-  let courseId: string = ''
-
-  try {
-  } catch (error) {}
-
-  const isValidCourseTitle = await AIGen.confirmCourseTitle(title)
-  if (!isValidCourseTitle)
+  let newCourse = null
+  const user = await userRepository.findById(userId)
+  if (!user) {
     return {
-      courseId: null,
-      error: new ClientError(
-        'Invalid course title, please enter a valid title.'
-      ),
+      courseId: newCourse,
+      error: new AuthError('User does not exist, cannot create course'),
     }
+  }
+  const validCourseTitle = await AIGen.confirmCourseTitle(title)
+  if (!validCourseTitle)
+    return {
+      courseId: newCourse,
+      error: new AuthError('User does not exist, cannot create course'),
+    }
+  const description = await AIGen.generateCourseDescription(title)
+  const courseCategory = await AIGen.generateCoursecategory(title)
+  const courseImage = await AIGen.generateCourseImage(title)
 
-  const { newCourse, courseError } = await createCourseStructure(title, userId)
-  if (courseError) return { courseId: null, error: courseError }
-  courseId = newCourse!._id
   if (files && !subtopics) {
     // Add files to course and generate course topics
     const filePaths = files.map((file: any) => file.path)
@@ -58,48 +66,39 @@ const createCourse = async ({
     })
 
     // Add files to course
-    await CourseModel.updateOne(
-      { _id: newCourse!._id },
-      { $set: { courseFiles: fileData } }
-    )
-    await newCourse!.save()
+    newCourse = await courseRepository.createCourse({
+      title,
+      description: description as string,
+      category: courseCategory,
+      image: courseImage,
+      user: userId,
+      courseFiles: fileData,
+    })
+
     await topicService.createTopics(
-      newCourse!._id,
+      newCourse!.id,
       newCourse!.title,
       newCourse!.courseFiles.join(' ')
     )
+    return { courseId: newCourse?.id, error }
   } else if (files && subtopics) {
     // Add files to course and include the subtpics in implementation
   } else if (!files && subtopics) {
     // Implement topics creation from just subtopics provided
-  } else {
-    // Auto-generate topics
-    await topicService.createTopics(newCourse!._id, newCourse!.title)
   }
+  newCourse = await courseRepository.createCourse({
+    title,
+    description: description,
+    category: courseCategory,
+    image: courseImage,
+    user: userId,
+  })
 
-  return { courseId, error }
-}
+  await topicService.createTopics(newCourse!.id, newCourse!.title)
 
-const createCourseStructure = async (courseTitle: string, userId: string) => {
-  let courseError: CustomError | null = null
-  let newCourse = null
-  const user = await UserModel.findById(userId)
-  if (!user) {
-    courseError = new AuthError('User does not exist, cannot create course')
-  } else {
-    const courseDescription = await AIGen.generateCourseDescription(courseTitle)
-    const courseCategory = await AIGen.generateCoursecategory(courseTitle)
-    const courseImage = await AIGen.generateCourseImage(courseTitle)
-    newCourse = new CourseModel({
-      title: courseTitle,
-      description: courseDescription,
-      category: courseCategory,
-      image: courseImage,
-      user: user!._id,
-    })
-    await newCourse.save()
-  }
-  return { newCourse, courseError }
+  if (!newCourse) return { courseId: null, error }
+
+  return { courseId: newCourse?.id, error }
 }
 
 export default createCourse

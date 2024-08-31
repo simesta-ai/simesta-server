@@ -1,9 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import CourseCreationService from './createcourse'
-import {
-  ServerError,
-  ValidateError,
-} from '../../../../libs/utils/handlers/error'
+
 import GetCourseService from './getcourse'
 import GetTopicService from './gettopic'
 import GetLectureService from './getlecture'
@@ -28,20 +25,17 @@ class CourseController {
     const { userId } = req.params
     const files = req.files
 
-    // courseService.createCourse(userId, creationDetails.title, files, creationDetails.subtopics)
-
     try {
-      const { courseId, error } = await this.courseCreationService.createCourse(
+      const { courseId, error } = await courseService.createCourse({
         userId,
-        creationDetails.title,
+        title: creationDetails.title,
         files,
-        creationDetails.subtopics
-      )
+        subtopics: creationDetails.subtopics,
+      })
       if (error) {
         throw error
-      } else {
-        res.status(200).json({ courseId: courseId })
       }
+      res.status(200).json({ courseId: courseId })
     } catch (error) {
       next(error)
     }
@@ -66,12 +60,19 @@ class CourseController {
       next(error)
     }
   }
+
   async getAllCourses(req: Request, res: Response, next: NextFunction) {
     try {
+      const courses = await courseService.getAllCourses()
+      return res.status(200).json({ courses })
+    } catch (err) {
+      return next(err)
+    }
+  }
+  async getUserCourses(req: Request, res: Response, next: NextFunction) {
+    try {
       const userId = req.params.userId
-      const { coursesList, error } = await this.getCourseService.getAllCourses(
-        userId
-      )
+      const { coursesList, error } = await courseService.getUserCourses(userId)
       if (error) {
         throw error
       } else {

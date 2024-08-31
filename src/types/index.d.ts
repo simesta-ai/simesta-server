@@ -1,5 +1,6 @@
 export * from './models'
 export * from './requests'
+export * from './generics'
 declare global {
   namespace NodeJs {
     interface ProcessEnv {
