@@ -1,53 +1,8 @@
-import CourseModel from '../../../../config/database/schemas/course.model'
-import TopicModel from '../../../../config/database/schemas/topic.model'
-import UserModel from '../../../../config/database/schemas/user.model'
-import logger from '../../../../libs/utils/logger'
-import { ICourseList } from '../../../../types'
-import {
-  AuthError,
-  CustomError,
-  ServerError,
-} from '../../../../libs/utils/handlers/error'
+import CourseRepository from '../../../../config/database/repositories/CourseRepository'
 
-const getAllCourses = async (
-  userId: string
-): Promise<{ coursesList: Array<ICourseList>; error: CustomError | null }> => {
-  let error: CustomError | null = null
-  const coursesList: Array<ICourseList> = []
-  try {
-    const user = await UserModel.findById(userId)
-    if (user) {
-      const courses = await CourseModel.find({ user: userId })
-      if (courses.length < 1) {
-        error = new ServerError('User does not have any course created yet')
-      }
-      for (const course of courses) {
-        const topics: any = await TopicModel.find({ course: course._id })
-        const numberOfTopics = topics.length
-        let i = 0
-        for (const topic of topics) {
-          if (topic.completed) {
-            i++
-          }
-        }
-        coursesList.push({
-          id: course._id,
-          title: course.title,
-          image: course.image,
-          progress: (i / numberOfTopics) * 100,
-          topicsCompleted: `${i} / ${numberOfTopics}`,
-        })
-      }
-      if (coursesList.length < 1 && courses.length > 0) {
-        error = new ServerError('Error retrieving courses, please retry')
-      }
-    } else {
-      error = new AuthError("Couldn't fetch courses, user is invalid")
-    }
-  } catch (error) {
-    logger.error(error)
-  }
-  return { coursesList, error }
+const getAllCourses = async () => {
+  const courseRepository = new CourseRepository()
+  return await courseRepository.find()
 }
 
 export default getAllCourses

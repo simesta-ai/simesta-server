@@ -1,3 +1,5 @@
+import { Express } from 'express'
+
 export interface ICreateUserArg {
   name: string
   email: string
@@ -7,15 +9,11 @@ export interface ICreateUserArg {
 export interface ICreateCourse {
   userId: string
   title: string
-  files: any[]
+  files:
+    | File[]
+    | { [fieldname: string]: File[] }
+    | undefined
+    | Express.Multer.File[]
+    | any
   subtopics: string | string[]
-}
-
-
-export interface ICourseList {
-  id: string
-  title: string
-  image: string
-  progress: number
-  topicsCompleted: string
 }

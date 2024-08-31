@@ -5,13 +5,35 @@ import {
   DataType,
   CreatedAt,
   UpdatedAt,
-  ForeignKey,
   BeforeCreate,
   HasMany,
   HasOne,
+  ForeignKey,
 } from 'sequelize-typescript'
 import User from './User'
 import { ICourse } from '../../../types'
+
+@Table({
+  timestamps: true,
+  tableName: 'course_files',
+  modelName: 'CourseFile',
+})
+export class CourseFile extends Model {
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  declare url: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  declare fileUrl: string
+
+  @ForeignKey(() => Course)
+  declare courseId: number
+}
 
 @Table({
   timestamps: true,
@@ -19,12 +41,18 @@ import { ICourse } from '../../../types'
   modelName: 'Course',
 })
 class Course extends Model<ICourse> {
+  /**
+   * Unique identifier for the course.
+   *
+   * @type {string}
+   * @example '123e4567-e89b-12d3-a456-426655440000'
+   */
   @Column({
     type: DataType.UUID,
     primaryKey: true,
     defaultValue: DataType.UUIDV4,
   })
-  declare _id: string
+  declare id: string
 
   @Column({
     type: DataType.STRING,
@@ -75,12 +103,8 @@ class Course extends Model<ICourse> {
   })
   declare notes: string
 
-  @Column({
-    type: DataType.ARRAY(DataType.STRING),  
-    allowNull: true,
-    defaultValue: '',
-  })
-  declare courseFiles: string[]
+  @HasMany(() => CourseFile)
+  declare courseFiles: CourseFile[]
 
   @Column({
     type: DataType.STRING,
@@ -95,11 +119,9 @@ class Course extends Model<ICourse> {
   declare category: string
 
   @ForeignKey(() => User)
-  @Column({
-    type: DataType.UUID,
-    allowNull: false,
-  })
-  declare userId: string
+  declare user: string
+  //   @HasOne(() => User)
+  //   declare user: User
 
   @CreatedAt
   declare createdAt: Date
@@ -109,5 +131,3 @@ class Course extends Model<ICourse> {
 }
 
 export default Course
-
-// Compare this snippet from src/config/database/models/User.ts:

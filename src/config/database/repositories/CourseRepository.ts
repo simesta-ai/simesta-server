@@ -29,6 +29,18 @@ class CourseRepository {
     return course
   }
 
+  findById = async (id: string) => {
+    const course = await this.model.findByPk(id)
+    return course
+  }
+  find = async (query?: Record<string, any>) => {
+    if (!query) {
+      return await this.model.findAll()
+    }
+    const courses = await this.model.findAll({ where: query })
+    return courses
+  }
+
   updateOne = async ({
     id,
   }: {

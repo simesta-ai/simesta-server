@@ -1,6 +1,7 @@
 import express, { ErrorRequestHandler, NextFunction, Response } from 'express'
 import authRoutes from '../routes/auth.routes'
 import userRoutes from '../routes/user.routes'
+import courseRoutes from '../routes/courses.routes'
 import JwtService, { IJwt } from '../../../libs/utils/services/jwt'
 import { AuthError } from '../../../libs/utils/handlers/error'
 import { errorHandler } from '../../../libs/utils/handlers/error'
@@ -59,7 +60,7 @@ class Router {
   }
 
   public configureCourseRoutes() {
-    this.app.use('/courses')
+    this.app.use('/courses', courseRoutes)
   }
 }
 

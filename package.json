@@ -50,6 +50,7 @@
     "passport-local": "^1.0.0",
     "pdf-parse": "^1.1.1",
     "redis": "^4.6.14",
+    "reflect-metadata": "^0.2.2",
     "sequelize": "^6.37.3",
     "sequelize-typescript": "^2.1.6",
     "streamifier": "^0.1.1",

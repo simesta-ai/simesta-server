@@ -2,7 +2,9 @@ import { Model, ModelStatic, Sequelize } from 'sequelize-typescript'
 import UserScheme from './models/User'
 import dotenv from 'dotenv'
 import User from './models/User'
-import Course from './models/Course'
+import Course, { CourseFile } from './models/Course'
+import Topic from './models/Topic'
+import { addTopicContraints } from './queries/topics'
 
 // CONFIGURE ENVIRONMENT VARIABLES
 dotenv.config()
@@ -18,7 +20,7 @@ const dbConnection = new Sequelize({
   },
   port: process.env.DB_PORT as unknown as number,
   logging: false,
-  models: [User, Course],
+  models: [User, Course, Topic, CourseFile],
 })
 
 export default dbConnection
