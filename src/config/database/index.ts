@@ -5,6 +5,7 @@ import User from './models/User'
 import Course, { CourseFile } from './models/Course'
 import Topic from './models/Topic'
 import { addTopicContraints } from './queries/topics'
+import LearningMethod from './models/LearningMethod'
 
 // CONFIGURE ENVIRONMENT VARIABLES
 dotenv.config()
@@ -17,10 +18,12 @@ const dbConnection = new Sequelize({
   dialect: 'mssql',
   dialectOptions: {
     encrypt: true,
+    timeout: 60000,
   },
+
   port: process.env.DB_PORT as unknown as number,
-  logging: false,
-  models: [User, Course, Topic, CourseFile],
+  logging: process.env.NODE_ENV == 'development' ? true : false,
+  models: [User, Course, Topic, CourseFile, LearningMethod],
 })
 
 export default dbConnection

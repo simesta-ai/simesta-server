@@ -3,12 +3,14 @@ import UserLoginService from './localauth/login'
 import UserRegistrationService from './localauth/register'
 import GoogleOAuthService from './oauth/googleOAuth'
 import UserService from '../../services/UserService'
+import AuthService from '../../services/AuthService'
 
 const loginService = new UserLoginService()
 const registrationService = new UserRegistrationService()
 const googleAuthenticator = new GoogleOAuthService()
 
 const userService = new UserService()
+const authService = new AuthService()
 
 class AuthController {
   // REGISTER USER
@@ -18,7 +20,7 @@ class AuthController {
 
   async register2(req: Request, res: Response, next: NextFunction) {
     const { name, email, password } = req.body
-    const user = userService.createUser({ name, email, password })
+    const user = authService.createUser({ name, email, password })
     if (!user) return res.status(400).json({ message: 'User already exists' })
     return res.status(201).json({ message: 'User created successfully' })
   }

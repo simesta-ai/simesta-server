@@ -5,8 +5,11 @@ import {
   DataType,
   CreatedAt,
   UpdatedAt,
+  HasMany,
+  ForeignKey,
 } from 'sequelize-typescript'
 import { IUser } from '../../../types'
+import LearningMethod from './LearningMethod'
 
 @Table({
   timestamps: true,
@@ -48,22 +51,19 @@ class User extends Model<IUser> {
     },
   })
   declare password: string
+
   @Column({
     type: DataType.STRING,
-    allowNull: false,
-    defaultValue: '',
+    allowNull: true,
+    // defaultValue: '',
   })
   declare profilePicture: string
-  @Column({
-    type: DataType.STRING,
-    defaultValue: '',
-  })
-  declare appropriateLMethod: string
-  @Column({
-    type: DataType.STRING,
-    defaultValue: [],
-  })
-  declare otherLMethods: string[]
+
+  @ForeignKey(() => LearningMethod)
+  declare appropriateLearningMethod: string
+
+  @HasMany(() => LearningMethod)
+  declare otherLearningMethods: LearningMethod[]
 
   @CreatedAt
   declare createdAt: Date

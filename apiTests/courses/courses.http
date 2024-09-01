@@ -3,5 +3,7 @@
 # @name getAllCourses
 GET  http://localhost:3000/courses HTTP/1.1
 
+
+###
 # @name createCourse
 POST http://localhost:3000/courses HTTP/1.1

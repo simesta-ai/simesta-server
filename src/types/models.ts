@@ -1,3 +1,5 @@
+import LearningMethod from '../config/database/models/LearningMethod'
+
 export interface ICourse {
   id?: string
   title: string
@@ -21,8 +23,8 @@ export interface IUser {
   email: string
   password: string
   profilePicture?: string
-  appropriateLMethod?: string
-  otherLMethods?: string[]
+  appropriateLearningMethod?: string
+  otherLearningMethods?: LearningMethod[]
   createdAt?: Date
   updatedAt?: Date
 }

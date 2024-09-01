@@ -11,13 +11,17 @@ class UserRepository {
     email: string
     password: string
   }): Promise<User | null> {
-    const foundUser = await this.model.findOne({ where: { email } })
+    const foundUser = await this.model.findOne({
+      where: { email },
+      attributes: ['id'],
+    })
     if (foundUser) return null
     const createdUser = await this.model.create({
       name,
       email,
       password,
     })
+    console.log('Created User', createdUser)
     return createdUser
   }
 

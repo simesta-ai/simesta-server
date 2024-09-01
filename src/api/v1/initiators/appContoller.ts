@@ -1,4 +1,4 @@
-import express from 'express'
+import express, { NextFunction, Request, Response } from 'express'
 import dbConnection from '../../../config/database'
 import cors from 'cors'
 import { rateLimit } from 'express-rate-limit'
@@ -27,6 +27,23 @@ interface IcorsOptions {
   credentials: boolean
   methods: string[]
   allowHeaders: string[]
+}
+
+export const errorHandler = (
+  error: Error,
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const statusCode = res.statusCode !== 200 ? res.statusCode : 500
+  res.status(statusCode)
+
+  const responseBody = {
+    message: error.message,
+    stack: process.env.NODE_ENV === 'production' ? '' : error.stack,
+  }
+  logger.error('Error', responseBody)
+  res.json(responseBody)
 }
 
 class AppController {
@@ -93,6 +110,7 @@ class AppController {
     this.sessionConfig()
     this.configureLimiter()
     this.app.use(cookiepParser())
+
     this.app.use(passport.initialize())
     this.app.use(passport.session())
     this.app.use(bodyParser.json())
@@ -145,6 +163,7 @@ class AppController {
       .catch((error) => {
         logger.error('Error starting server: ', error)
       })
+    this.app.use(errorHandler)
   }
 }
 
