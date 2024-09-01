@@ -8,7 +8,7 @@ const router = express.Router()
 const userController = new UserController()
 const courseController = new CourseController()
 
-router.route('').get(courseController.getAllCourses).post(
+router.route('/:userId/course').get(courseController.getAllCourses).post(
   // Create new course
   upload.array('files', 25),
   checkTotalFileSize,

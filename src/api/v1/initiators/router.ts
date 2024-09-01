@@ -61,6 +61,7 @@ class Router {
 
   public configureCourseRoutes() {
     this.app.use('/courses', courseRoutes)
+    this.app.use(errorHandler)
   }
 }
 
