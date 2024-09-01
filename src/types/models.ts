@@ -1,4 +1,5 @@
 import LearningMethod from '../config/database/models/LearningMethod'
+import IdeaContent from '../config/database/models/IdeaContent'
 
 export interface ICourse {
   id?: string
@@ -28,3 +29,20 @@ export interface IUser {
   createdAt?: Date
   updatedAt?: Date
 }
+
+
+export interface ILecture {
+    id: string;
+    title: string;
+    videos: string[];
+    ideas: IdeaContent[];
+  }
+
+ export interface IQuiz {
+    id: string;
+    question: string;
+    options: string[];
+    answer: string[];
+    explanation: string;
+  }
+  

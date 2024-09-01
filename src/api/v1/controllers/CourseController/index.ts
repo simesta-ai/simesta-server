@@ -33,6 +33,7 @@ class CourseController {
         subtopics: creationDetails.subtopics,
       })
       if (error) {
+        console.log('error', error)
         throw error
       }
       res.status(200).json({ courseId: courseId })

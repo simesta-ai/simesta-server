@@ -8,6 +8,7 @@ interface Topic extends Document{
     image: string;
     completed: boolean;
     inProgress: boolean;
+    course: string
 }
 
 export default Topic
