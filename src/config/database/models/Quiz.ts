@@ -5,9 +5,12 @@ import {
   DataType,
   ForeignKey,
   BelongsTo,
+  HasMany,
 } from 'sequelize-typescript'
 import IdeaContent from './IdeaContent'
 import { IQuiz } from '../../../types'
+
+
 
 @Table({
   timestamps: false,
@@ -28,17 +31,12 @@ class Quiz extends Model<IQuiz> {
   })
   declare question: string
 
-  @Column({
-    type: DataType.ARRAY(DataType.STRING),
-    defaultValue: [],
-  })
-  declare options: string[]
+  @HasMany(() => Option)
+  declare options: Option[];
 
-  @Column({
-    type: DataType.ARRAY(DataType.STRING),
-    defaultValue: [],
-  })
-  declare answer: string[]
+  @HasMany(() => Answer)
+  declare answers: Answer[];
+
 
   @Column({
     type: DataType.STRING,
@@ -54,6 +52,68 @@ class Quiz extends Model<IQuiz> {
 
   @BelongsTo(() => IdeaContent)
   declare ideaContent: IdeaContent
+}
+
+@Table({
+  timestamps: true,
+  tableName: 'options',
+  modelName: 'Option',
+})
+export class Option extends Model {
+  @Column({
+    type: DataType.UUID,
+    primaryKey: true,
+    defaultValue: DataType.UUIDV4,
+  })
+  declare id: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  declare text: string;
+
+  @ForeignKey(() => Quiz)
+  @Column({
+    type: DataType.UUID,
+    allowNull: false,
+  })
+  declare quizId: string;
+
+  @BelongsTo(() => Quiz)
+  declare quiz: Quiz;
+
+}
+
+@Table({
+  timestamps: true,
+  tableName: 'answers',
+  modelName: 'Answer',
+})
+export class Answer extends Model {
+  @Column({
+    type: DataType.UUID,
+    primaryKey: true,
+    defaultValue: DataType.UUIDV4,
+  })
+  declare id: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  declare text: string;
+
+  @ForeignKey(() => Quiz)
+  @Column({
+    type: DataType.UUID,
+    allowNull: false,
+  })
+  declare quizId: string;
+
+  @BelongsTo(() => Quiz)
+  declare quiz: Quiz;
+
 }
 
 export default Quiz

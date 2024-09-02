@@ -6,6 +6,9 @@ import Course, { CourseFile } from './models/Course'
 import Topic from './models/Topic'
 import { addTopicContraints } from './queries/topics'
 import LearningMethod from './models/LearningMethod'
+import Lecture, {Video} from './models/Lecture'
+import IdeaContent from './models/IdeaContent'
+import Quiz, {Option, Answer}from './models/Quiz'
 
 // CONFIGURE ENVIRONMENT VARIABLES
 dotenv.config()
@@ -23,7 +26,7 @@ const dbConnection = new Sequelize({
 
   port: process.env.DB_PORT as unknown as number,
   logging: process.env.NODE_ENV == 'development' ? true : false,
-  models: [User, Course, Topic, CourseFile, LearningMethod],
+  models: [User, Course, Topic, CourseFile, LearningMethod, Lecture, IdeaContent, Quiz, Answer, Option,  Video],
 })
 
 export default dbConnection
