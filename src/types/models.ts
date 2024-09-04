@@ -1,6 +1,3 @@
-import LearningMethod from '../config/database/models/LearningMethod'
-import IdeaContent from '../config/database/models/IdeaContent'
-
 export interface ICourse {
   id?: string
   title: string
@@ -24,25 +21,24 @@ export interface IUser {
   email: string
   password: string
   profilePicture?: string
-  appropriateLearningMethod?: string
-  otherLearningMethods?: LearningMethod[]
+  //   appropriateLearningMethod?: string
+  //   otherLearningMethods?: LearningMethod[]
+  primaryLearningMethodId: string
   createdAt?: Date
   updatedAt?: Date
 }
 
-
 export interface ILecture {
-    id: string;
-    title: string;
-    videos: string[];
-    ideas: IdeaContent[];
-  }
+  id: string
+  title: string
+  videos: string[]
+  ideas: any[] //IdeaContent[]
+}
 
- export interface IQuiz {
-    id: string;
-    question: string;
-    options: string[];
-    answer: string[];
-    explanation: string;
-  }
-  
+export interface IQuiz {
+  id: string
+  question: string
+  options: string[]
+  answer: string[]
+  explanation: string
+}
