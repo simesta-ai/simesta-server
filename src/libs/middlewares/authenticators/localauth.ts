@@ -1,7 +1,7 @@
 import passport from 'passport'
 import LocalStrategy from 'passport-local'
 import bcrypt from 'bcrypt'
-import User from '../../../config/database/schemas/user.model'
+// import User from '../../../config/database/schemas/user.model'
 
 const saltRounds = 10
 const localStrategy = LocalStrategy.Strategy
@@ -23,7 +23,8 @@ passport.use(
         }
 
         // Find the user by email
-        const user = await User.findOne({ email })
+        // const user = await User.findOne({ email })
+        const user = { name: 'Kingsley' }
 
         if (user) {
           return done(null, false, {
@@ -35,12 +36,16 @@ passport.use(
           if (err) {
             done(err)
           } else {
-            const newUser = new User({
-              name,
-              email,
-              password: hash,
-            })
-
+            // const newUser = new User({
+            //   name,
+            //   email,
+            //   password: hash,
+            // })
+            const newUser = {
+              async save() {
+                return {}
+              },
+            }
             // Save the user to the database
             const savedUser = await newUser.save()
             done(null, savedUser)
@@ -65,8 +70,8 @@ passport.use(
     async (req, email, password, done) => {
       try {
         // Find the user by email
-        const user = await User.findOne({ email })
-
+        // const user = await User.findOne({ email })
+        const user = { password: '' }
         // check if the email and password are provided be done with an error message
         if (!email || !password) {
           return done(null, false, {

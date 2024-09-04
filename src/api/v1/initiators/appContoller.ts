@@ -1,5 +1,4 @@
 import express, { NextFunction, Request, Response } from 'express'
-import dbConnection from '../../../config/database'
 import cors from 'cors'
 import { rateLimit } from 'express-rate-limit'
 import session from 'express-session'
@@ -13,11 +12,8 @@ import RedisService from '../../../libs/utils/services/redis'
 import logger from '../../../libs/utils/logger'
 require('../../../libs/middlewares/authenticators/localauth')
 require('../../../libs/middlewares/authenticators/oauth')
-import swaggerJSDoc from 'swagger-jsdoc'
 import swaggerUi from 'swagger-ui-express'
 import { documentationSetup } from '../docs/setup'
-import { ServerError } from '../../../libs/utils/handlers/error'
-import { addTopicContraints } from '../../../config/database/queries/topics'
 
 // CONFIGURE ENVIRONMENT VARIABLES
 dotenv.config()
@@ -119,20 +115,31 @@ class AppController {
   }
 
   // Connect To Database
-  private async setupDatabase(): Promise<boolean> {
-    try {
-      await dbConnection.authenticate()
-      await dbConnection.sync()
-      //   addTopicContraints(dbConnection)
-      logger.info(
-        'Connection to the database has been established successfully.'
-      )
-      return true
-    } catch (error) {
-      logger.error('Unable to connect to the database:', error)
-      return false
-    }
-  }
+  //   private async setupDatabase(): Promise<boolean> {
+  //     try {
+  //       await AppDataSource.initialize()
+  //       const createUser = async () => {
+  //         const user = new User()
+  //         user.name = 'Kingsley'
+  //         user.email = 'king@email.com'
+  //         user.password = '12345678'
+  //         await AppDataSource.manager.save(user)
+  //       }
+
+  //       createUser()
+  //       console.log(AppDataSource)
+  //       //   await dbConnection.authenticate()
+  //       //   await dbConnection.sync()
+  //       //   addTopicContraints(dbConnection)
+  //       logger.info(
+  //         'Connection to the database has been established successfully.'
+  //       )
+  //       return true
+  //     } catch (error) {
+  //       logger.error('Unable to connect to the database:', error)
+  //       return false
+  //     }
+  //   }
 
   // Connect to Redis data-store
   private setupRedis() {
@@ -150,19 +157,20 @@ class AppController {
     this.configureRouting()
     this.setupDocumentation()
     this.setupRedis()
-    this.setupDatabase()
-      .then((connected) => {
-        if (connected) {
-          this.app.listen(this.port, () => {
-            logger.info(`Server listening on the port ${this.port}`)
-          })
-        } else {
-          throw new ServerError('Unable to connect to the database')
-        }
-      })
-      .catch((error) => {
-        logger.error('Error starting server: ', error)
-      })
+    this.app.listen(this.port, () => {
+      logger.info(`Server listening on the port ${this.port}`)
+    })
+    // this.setupDatabase()
+    //   .then((connected) => {
+    //     if (connected) {
+
+    //     } else {
+    //       throw new ServerError('Unable to connect to the database')
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     logger.error('Error starting server: ', error)
+    //   })
     this.app.use(errorHandler)
   }
 }

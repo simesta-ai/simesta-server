@@ -1,6 +1,7 @@
 import express from 'express'
 import dotenv from 'dotenv'
 import AppController from './api/v1/initiators/appContoller'
+import 'reflect-metadata'
 
 // CONFIGURE ENVIRONMENT VARIABLES
 dotenv.config()

@@ -1,0 +1,15 @@
+model Topic {
+  id          String      @id() @default(uuid())
+  title       String
+  position    Int
+  completed   Boolean? @default(false)
+  inProgress  Boolean? @default(false)
+//   nextTopicId Int
+//   nextTopic   Topic @relation("NextTopics",fields: [nextTopicId], references: [id])
+//   prevTopicId Int
+//   prevTopic   Topic @relation("PreviousTopics",fields: [prevTopicId], references: [id])
+  courseId    String
+  course      Course @relation(fields: [courseId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+}
