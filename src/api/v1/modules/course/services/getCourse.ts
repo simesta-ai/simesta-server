@@ -4,8 +4,10 @@ import {
   ServerError,
 } from '../../../../../libs/utils/handlers/error'
 import CourseRepository from '../repository'
+import TopicRepository from '../../topic/repository'
 
 const courseRepository = new CourseRepository()
+const topicRepository = new TopicRepository()
 
 const getCourse = async (courseId: string) => {
   let error: CustomError | null = null
@@ -21,7 +23,7 @@ const getCourse = async (courseId: string) => {
         description: course.description,
         image: course.img,
       }
-      const topics: any = await TopicModel.find({ course: courseId })
+      const topics: any = await top.find({ course: courseId })
 
       // Return Topics
       if (topics.length > 0) {

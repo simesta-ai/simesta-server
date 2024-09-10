@@ -36,7 +36,9 @@ class Router {
     this.app.use(
       '/auth',
       authRoutes,
+      // this ensures that the there is a user before proceeding
       this.isLoggedIn,
+
       this.jwtService.grantToken,
       (req: RequestWithUser, res: Response, next: NextFunction) => {
         try {
@@ -46,7 +48,12 @@ class Router {
               "Unable to login user because user doesn't exist"
             )
           }
-          res.status(200).json({ id: user._id, name: user.name })
+          res
+            .status(200)
+            .json({
+              data: { id: user._id, name: user.name },
+              messsage: 'User created',
+            })
         } catch (error) {
           next(error)
         }
@@ -56,7 +63,7 @@ class Router {
 
   public configUserRoutes() {
     this.app.use('/users', this.jwtService.verifyToken, userRoutes)
-    this.app.use(errorHandler)
+    // this.app.use(errorHandler)
   }
 
   public configureCourseRoutes() {
