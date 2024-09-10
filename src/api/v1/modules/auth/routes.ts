@@ -6,8 +6,8 @@ const router = express.Router()
 const authController = new AuthController()
 const userValidator = new Uservalidator()
 
-router.post('/register', authController.register)
-router.post('/login', authController.login)
+router.post('/register', userValidator.validate, authController.register)
+router.post('/login', userValidator.validate, authController.login)
 
 // router.post('/signup', userValidator.validate, authController.register)
 // router.get('/login', userValidator.validate, authController.login)

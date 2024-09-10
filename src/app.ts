@@ -1,8 +1,10 @@
 import express from 'express'
 import dotenv from 'dotenv'
 import AppController from './api/v1/initiators/appContoller'
+import http from 'http'
 import 'reflect-metadata'
 
+// const server = http.Server()
 // CONFIGURE ENVIRONMENT VARIABLES
 dotenv.config()
 

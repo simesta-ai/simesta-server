@@ -15,7 +15,6 @@ Here's what each prefix typically means:
 - ci: Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs).
 - chore: Other changes that don't modify src or test files. This could be updating build tasks, package manager configs, etc.
 
-
 ### Note taking
 
 - git commit messages

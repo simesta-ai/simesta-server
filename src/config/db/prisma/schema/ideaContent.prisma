@@ -1,7 +1,7 @@
 model IdeaContent {
-  id        String    @id() @default(uuid())
+  id        String   @id() @default(uuid())
   text      String
-  image     String?   @default("")
+  image     String?  @default("")
   lectureId String?
   lecture   Lecture? @relation(fields: [lectureId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   quizzes   Quiz[]

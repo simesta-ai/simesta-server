@@ -1,4 +1,4 @@
-import express, { NextFunction, Request, Response } from 'express'
+import express from 'express'
 import cors from 'cors'
 import { rateLimit } from 'express-rate-limit'
 import session from 'express-session'
@@ -23,23 +23,6 @@ interface IcorsOptions {
   credentials: boolean
   methods: string[]
   allowHeaders: string[]
-}
-
-export const errorHandler = (
-  error: Error,
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const statusCode = res.statusCode !== 200 ? res.statusCode : 500
-  res.status(statusCode)
-
-  const responseBody = {
-    message: error.message,
-    stack: process.env.NODE_ENV === 'production' ? '' : error.stack,
-  }
-  logger.error('Error', responseBody)
-  res.json(responseBody)
 }
 
 class AppController {
@@ -114,33 +97,6 @@ class AppController {
     this.app.use(cors(this.corsOptions))
   }
 
-  // Connect To Database
-  //   private async setupDatabase(): Promise<boolean> {
-  //     try {
-  //       await AppDataSource.initialize()
-  //       const createUser = async () => {
-  //         const user = new User()
-  //         user.name = 'Kingsley'
-  //         user.email = 'king@email.com'
-  //         user.password = '12345678'
-  //         await AppDataSource.manager.save(user)
-  //       }
-
-  //       createUser()
-  //       console.log(AppDataSource)
-  //       //   await dbConnection.authenticate()
-  //       //   await dbConnection.sync()
-  //       //   addTopicContraints(dbConnection)
-  //       logger.info(
-  //         'Connection to the database has been established successfully.'
-  //       )
-  //       return true
-  //     } catch (error) {
-  //       logger.error('Unable to connect to the database:', error)
-  //       return false
-  //     }
-  //   }
-
   // Connect to Redis data-store
   private setupRedis() {
     const redisService = new RedisService(
@@ -160,18 +116,6 @@ class AppController {
     this.app.listen(this.port, () => {
       logger.info(`Server listening on the port ${this.port}`)
     })
-    // this.setupDatabase()
-    //   .then((connected) => {
-    //     if (connected) {
-
-    //     } else {
-    //       throw new ServerError('Unable to connect to the database')
-    //     }
-    //   })
-    //   .catch((error) => {
-    //     logger.error('Error starting server: ', error)
-    //   })
-    this.app.use(errorHandler)
   }
 }
 

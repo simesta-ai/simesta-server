@@ -1,8 +1,8 @@
 model CourseFile {
-    id        String   @id() @default(uuid())
-    url       String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @default(now()) @updatedAt
-    courseId  String
-    course    Course   @relation(fields: [courseId], references: [id], onUpdate: NoAction)
+  id        String   @id() @default(uuid())
+  url       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id], onUpdate: NoAction)
 }

@@ -1,5 +1,3 @@
-import { Express } from 'express'
-
 export interface ICreateUserArg {
   name: string
   email: string
