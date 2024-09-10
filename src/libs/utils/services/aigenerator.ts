@@ -130,11 +130,13 @@ class AIGenerator {
     courseFiles?: string,
     subtopics?: string
   ): Promise<Array<string>> {
-    let subtopicPrompt = ".";
-    if (subtopics) {
-      subtopicPrompt = `, and include the following topics ${subtopics}.`;
+    let prompt = `generate a list of topics(not more than 15, in text only, numbered form without description or prelude or formatting and removing the subtopics) needed to completely learn ${courseTitle}`;
+    if(courseFiles) {
+      prompt += `. Go through these files to know what topics should be included ${courseFiles}` 
     }
-    const prompt = `generate a list of topics(not more than 15, in text only, numbered form without description or prelude or formatting and removing the subtopics) needed to completely learn ${courseTitle}, you can go through this array of ${courseFiles} and generate topics as needed ${subtopicPrompt}`;
+    if(subtopics) {
+      prompt += `, and make sure to include these subtopics if they are relevant to the course ${subtopics}`
+    }
     const topicsText = await this.generateText(prompt);
 
     // Convert text list to array of topics

@@ -4,6 +4,7 @@ import pdf from "pdf-parse";
 import mammoth from "mammoth";
 import Tesseract from "tesseract.js";
 import logger from "../logger";
+import { error } from "console";
 
 export class FileService {
   async parseFile(filePath: any) {
