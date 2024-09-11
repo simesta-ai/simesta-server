@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client'
+
 import prisma from '../../../../../config/db/prisma'
 import RoleRepository from '../../role/repository'
 
@@ -29,13 +30,13 @@ class UserRepository {
     password: string
   }): Promise<IUser | null> => {
     try {
-      const newUser = await prisma.$transaction(async (prisma: PrismaClient) => {
+      const newUser = await prisma.$transaction(async (prisma) => {
         const foundUser = await prisma.user.findUnique({ where: { email } })
         if (foundUser)
           throw new Error(`User with email ${email} already exists`)
         const baseRole = await roleRepository.findOne({ name: 'user' })
 
-        return await prisma.user.create({
+        return prisma.user.create({
           data: {
             email,
             name,
