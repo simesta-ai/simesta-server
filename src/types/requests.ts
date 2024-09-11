@@ -15,3 +15,13 @@ export interface ICreateCourse {
     | any
   subtopics: string
 }
+
+export interface ICreateLecture {
+  courseId: string
+  lectureId: string
+}
+
+export interface ILectureContent {
+  ideaContent: string[]
+  videos: string[]
+}

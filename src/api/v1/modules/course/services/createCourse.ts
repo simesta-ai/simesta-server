@@ -7,22 +7,21 @@ import {
 import AIGenerator from '../../../../../libs/utils/services/aigenerator'
 import { FileService } from '../../../../../libs/utils/services/parseFile'
 import { ICreateCourse } from '../../../../../types'
+import TopicService from '../../topic/services'
+import UploadFilesToBucket from '../../../../../libs/utils/services/uploadFIlesToBucket'
+import { redisService } from '../../../../../libs/utils/services/redis'
 
 // Repositories
 import CourseRepository from '../repository'
 import UserRepository from '../../user/repository'
-import TopicRepository from '../../topic/repository'
 
-class TopicService {
-  createTopics(data1: any, data2: any, data3?: any) {}
-}
 const AIGen = new AIGenerator()
 const fileService = new FileService()
 const topicService = new TopicService()
 
 const userRepository = new UserRepository()
 const courseRepository = new CourseRepository()
-const topicRepository = new TopicRepository()
+const uploadFilesToBucket = new UploadFilesToBucket()
 
 const createCourse = async ({
   userId,
@@ -48,20 +47,37 @@ const createCourse = async ({
       courseId: newCourse,
       error: new AuthError('User does not exist, cannot create course'),
     }
-  const description = await AIGen.generateCourseDescription(title)
+  const courseDescription = await AIGen.generateCourseDescription(title)
   const courseCategory = await AIGen.generateCoursecategory(title)
   const courseImage = await AIGen.generateCourseImage(title)
 
-  if (files && !subtopics) {
+  console.log('Done with the course resource generation')
+
+  let fileUrls: string[] = []
+  let fileContent: string[] = []
+
+  if (files) {
+    console.log('Starting work on files')
     // Add files to course and generate course topics
     const filePaths = files.map((file: any) => file.path)
     const fileData = await Promise.all(
       filePaths.map(async (filePath: string) => {
+        const { fileUrl, UploadError } = await uploadFilesToBucket.uploadFiles(
+          filePath
+        )
+        if (UploadError) {
+          error = UploadError
+        }
         const { data, fileError } = await fileService.parseFile(filePath)
         if (fileError) {
           error = fileError
         }
-        return data
+        if (fileUrl && data) {
+          await redisService.client.set(fileUrl, JSON.stringify(data))
+
+        }
+
+        return { data, fileUrl }
       })
     )
 
@@ -69,38 +85,27 @@ const createCourse = async ({
       fs.unlinkSync(filePath)
     })
 
-    // Add files to course
-    newCourse = await courseRepository.createOne({
-      title,
-      description: description as string,
-      category: courseCategory,
-      image: courseImage,
-      userId,
-      courseFiles: fileData,
-    })
-
-    await topicService.createTopics(
-      newCourse!.id,
-      newCourse!.title,
-      newCourse!.courseFiles.join(' ')
-    )
-    return { courseId: newCourse?.id, error }
-  } else if (files && subtopics) {
-    // Add files to course and include the subtpics in implementation
-  } else if (!files && subtopics) {
-    // Implement topics creation from just subtopics provided
+    fileUrls = fileData.map((file: any) => file.fileUrl)
+    fileContent = fileData.map((file: any) => file.data)
   }
+
+  // Add files to course
   newCourse = await courseRepository.createOne({
     title,
-    description: description,
+    description: courseDescription as string,
     category: courseCategory,
     image: courseImage,
     userId,
+    courseFiles: fileUrls,
   })
 
-  await topicService.createTopics(newCourse!.id, newCourse!.title)
-
-  if (!newCourse) return { courseId: null, error }
+  const createdTopics = await topicService.createTopics(
+    newCourse!.id,
+    newCourse!.title,
+    fileContent.join(' '),
+    subtopics
+  )
+  console.log(createdTopics)
 
   return { courseId: newCourse?.id, error }
 }
