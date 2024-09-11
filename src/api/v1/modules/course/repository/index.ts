@@ -25,7 +25,13 @@ class CourseRepository {
         category,
         img: image,
         userId,
-        courseFiles: courseFiles ? courseFiles : undefined,
+        courseFiles: courseFiles
+        ? {
+            create: courseFiles.map((file: string) => ({
+              url: file,
+            })),
+          }
+        : undefined,
       },
     })
     return course

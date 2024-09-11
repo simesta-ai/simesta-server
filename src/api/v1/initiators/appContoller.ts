@@ -8,7 +8,7 @@ import helmet from 'helmet'
 import passport from 'passport'
 import dotenv from 'dotenv'
 import Router from './router'
-import RedisService from '../../../libs/utils/services/redis'
+import { initializeRedis } from '../../../libs/utils/services/redis'
 import logger from '../../../libs/utils/logger'
 require('../../../libs/middlewares/authenticators/localauth')
 require('../../../libs/middlewares/authenticators/oauth')
@@ -99,12 +99,7 @@ class AppController {
 
   // Connect to Redis data-store
   private setupRedis() {
-    const redisService = new RedisService(
-      process.env.REDIS_SECRET,
-      process.env.REDIS_HOST,
-      Number(process.env.REDIS_PORT)
-    )
-    redisService.createConnection()
+    initializeRedis()
   }
 
   // Initialize Application
