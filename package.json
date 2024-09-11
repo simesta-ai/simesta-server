@@ -7,12 +7,17 @@
         "start": "npx prisma generate && node dist/app.js",
         "test": "mocha --exit",
         "build": "tsc",
+<<<<<<< HEAD
         "start:dev": "npx prisma generate && nodemon ./src/app.ts"
+=======
+        "start:dev": "nodemon ./src/app.ts"
+>>>>>>> 9facfd8256bedf59b7c9e1a4d090e41a186b173b
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "dependencies": {
+        "@azure/storage-blob": "^12.24.0",
         "@google-cloud/vertexai": "^1.0.0",
         "@google/generative-ai": "^0.7.1",
         "@prisma/client": "5.19.1",

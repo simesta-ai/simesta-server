@@ -1,35 +1,35 @@
-import { GoogleGenerativeAI, GenerativeModel } from "@google/generative-ai";
+import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai'
 
 // Check the clarifai-nodejs module and include these classes in the index.d.ts file
-const { ClarifaiStub, grpc } = require("clarifai-nodejs-grpc");
+const { ClarifaiStub, grpc } = require('clarifai-nodejs-grpc')
 
-import CloudinaryService from "./cloudinary";
-import { ServerError } from "../handlers/error";
-import dotenv from "dotenv";
-import Converter from "../handlers/converter";
-import { resolve } from "path";
+import CloudinaryService from './cloudinary'
+import { ServerError } from '../handlers/error'
+import dotenv from 'dotenv'
+import Converter from '../handlers/converter'
+import { resolve } from 'path'
 
 // CONFIGURE ENVIRONMENT VARIABLES
-dotenv.config();
+dotenv.config()
 
 class AIGenerator {
-  private readonly genAI: GoogleGenerativeAI;
-  private readonly textModel: GenerativeModel;
-  private readonly clarifaiModel: typeof ClarifaiStub;
-  private readonly clarifaiMetadata;
-  private converter: Converter;
-  private cloudinaryService: CloudinaryService;
+  private readonly genAI: GoogleGenerativeAI
+  private readonly textModel: GenerativeModel
+  private readonly clarifaiModel: typeof ClarifaiStub
+  private readonly clarifaiMetadata
+  private converter: Converter
+  private cloudinaryService: CloudinaryService
 
   constructor() {
     this.genAI = new GoogleGenerativeAI(
       process.env.GOOGLE_CLOUD_API_KEY as string
-    );
-    this.textModel = this.genAI.getGenerativeModel({ model: "gemini-pro" });
-    this.clarifaiModel = ClarifaiStub.grpc();
-    this.clarifaiMetadata = new grpc.Metadata();
-    this.clarifaiMetadata.set("authorization", "Key " + process.env.PAT);
-    this.converter = new Converter();
-    this.cloudinaryService = new CloudinaryService();
+    )
+    this.textModel = this.genAI.getGenerativeModel({ model: 'gemini-pro' })
+    this.clarifaiModel = ClarifaiStub.grpc()
+    this.clarifaiMetadata = new grpc.Metadata()
+    this.clarifaiMetadata.set('authorization', 'Key ' + process.env.PAT)
+    this.converter = new Converter()
+    this.cloudinaryService = new CloudinaryService()
   }
 
   private async generateText(prompt: string): Promise<string> {
@@ -45,22 +45,22 @@ class AIGenerator {
 
           async (err: any, response: any) => {
             if (err) {
-              reject(err);
+              reject(err)
             }
             if (response.status.code !== 10000) {
-              reject(err);
+              reject(err)
             }
 
-            const output = response.outputs[0];
-            const text = output.data.text.raw;
-            resolve(text);
+            const output = response.outputs[0]
+            const text = output.data.text.raw
+            resolve(text)
           }
-        );
-      });
-      return textResponse;
+        )
+      })
+      return textResponse
     } catch (error: any) {
-      const message = error.message;
-      throw new ServerError(message);
+      const message = error.message
+      throw new ServerError(message)
     }
   }
 
@@ -81,7 +81,7 @@ class AIGenerator {
           },
         },
       ],
-    };
+    }
   }
   private clarifaiTextModelConfig(prompt: string) {
     return {
@@ -100,28 +100,28 @@ class AIGenerator {
           },
         },
       ],
-    };
+    }
   }
 
   //Confirm if a course title is valid
   async confirmCourseTitle(courseTitle: string): Promise<boolean> {
-    const prompt = `confirm if ${courseTitle} is a valid course title, if is return only yes, if not return only no. The course title can be anything as far as it has meaning`;
-    const response = await this.generateText(prompt);
-    return response.trim().toLowerCase() === "yes" ? true : false;
+    const prompt = `confirm if ${courseTitle} is a valid course title, if is return only yes, if not return only no. The course title can be anything as far as it has meaning`
+    const response = await this.generateText(prompt)
+    return response.trim().toLowerCase() === 'yes' ? true : false
   }
 
   // Generate Course Category
   async generateCoursecategory(courseTitle: string): Promise<string> {
-    const prompt = `generate a 1 word category for a ${courseTitle} course`;
-    const categoryText = await this.generateText(prompt);
-    return categoryText;
+    const prompt = `generate a 1 word category for a ${courseTitle} course`
+    const categoryText = await this.generateText(prompt)
+    return categoryText
   }
 
   //  Generate Course Description
   async generateCourseDescription(courseTitle: string): Promise<string> {
-    const prompt = `generate a 50 word description for a ${courseTitle} course that describes what would be learnt and areas that would be covered`;
-    const courseDescription = await this.generateText(prompt);
-    return courseDescription;
+    const prompt = `generate a 50 word description for a ${courseTitle} course that describes what would be learnt and areas that would be covered`
+    const courseDescription = await this.generateText(prompt)
+    return courseDescription
   }
 
   //  Generate Course Topics
@@ -130,31 +130,43 @@ class AIGenerator {
     courseFiles?: string,
     subtopics?: string
   ): Promise<Array<string>> {
-    let subtopicPrompt = ".";
-    if (subtopics) {
-      subtopicPrompt = `, and include the following topics ${subtopics}.`;
+    let prompt = `generate a list of topics(not more than 15, in text only, numbered form without description or prelude or formatting and removing the subtopics) needed to completely learn ${courseTitle}`
+    if (courseFiles) {
+      prompt += `. Go through these files to know what topics should be included ${courseFiles}`
     }
-    const prompt = `generate a list of topics(not more than 15, in text only, numbered form without description or prelude or formatting and removing the subtopics) needed to completely learn ${courseTitle}, you can go through this array of ${courseFiles} and generate topics as needed ${subtopicPrompt}`;
-    const topicsText = await this.generateText(prompt);
+    if (subtopics) {
+      prompt += `, and make sure to include these subtopics if they are relevant to the course ${subtopics}`
+    }
+    const topicsText = await this.generateText(prompt)
 
     // Convert text list to array of topics
-    const topicList = this.converter.textToArray(topicsText);
-    return topicList;
+    const topicList = this.converter.textToArray(topicsText)
+    return topicList
   }
 
-
+  async generateIdeaContent(
+    lectureTitle: string,
+    courseFiles?: string[]
+  ): Promise<string> {
+    let prompt = `Generate a comprehensive and well explained set of ideas to give a complete understanding of ${lectureTitle}, separated with '###' each idea should have three sections separated by '##', namely the text explaining the idea itself, an image description that tries to make the idea clearer but this is optional and an optional quiz section that tests the understanding of the idea. So Each idea should be in this format: Idea text ## Image description ## Quiz section. and then it is possible that an idea doesn't have an image or quiz section, in that case, just leave the section empty. the Quiz section should be separated by '#' with consisting of sections question, options, explanation and correct answer.`
+    if (courseFiles) {
+      prompt += `reference these provided files as well when generating the lecture ideas  ${courseFiles}`
+    }
+    const ideaContent = await this.generateText(prompt)
+    return ideaContent
+  }
 
   // Generate Topic Lectures
   async generateLectures(
     courseTitle: string,
     topicTitle: string
   ): Promise<string[]> {
-    const prompt = `generate a list of lectures only(not more than 15, in text only, numbered form without description or prelude or formatting and removing the sub lectures) needed to completely learn ${topicTitle} topic in ${courseTitle} course`;
-    const lecturesText = await this.generateText(prompt);
+    const prompt = `generate a list of lectures only(not more than 15, in text only, numbered form without description or prelude or formatting and removing the sub lectures) needed to completely learn ${topicTitle} topic in ${courseTitle} course`
+    const lecturesText = await this.generateText(prompt)
 
     // Convert text list to array of lectures
-    const lectureList = this.converter.textToArray(lecturesText);
-    return lectureList;
+    const lectureList = this.converter.textToArray(lecturesText)
+    return lectureList
   }
   // Generate Topic Lectures with course files
   async generateLecturesWithFiles(
@@ -162,63 +174,61 @@ class AIGenerator {
     topicTitle: string,
     courseFiles: string
   ): Promise<string[]> {
-    const prompt = `generate a list of lectures only(not more than 15, in text only, numbered form without description or prelude or formatting and removing the sub lectures) needed to completely learn ${topicTitle} topic in ${courseTitle} course, using these learning materials provided: ${courseFiles}`;
-    const lecturesText = await this.generateText(prompt);
+    const prompt = `generate a list of lectures only(not more than 15, in text only, numbered form without description or prelude or formatting and removing the sub lectures) needed to completely learn ${topicTitle} topic in ${courseTitle} course, using these learning materials provided: ${courseFiles}`
+    const lecturesText = await this.generateText(prompt)
 
     // Convert text list to array of lectures
-    const lectureList = this.converter.textToArray(lecturesText);
-    return lectureList;
+    const lectureList = this.converter.textToArray(lecturesText)
+    return lectureList
   }
 
   //   Generate Lecture text
   async generateLectureText(lectureTitle: string): Promise<string> {
-    const prompt = `generate a comprehensive but well explanatory lecture in form of paragraphed texts with necessary bullet points and formatted texts teaching ${lectureTitle}`;
-    const lectureText = await this.generateText(prompt);
-    return lectureText;
+    const prompt = `generate a comprehensive but well explanatory lecture in form of paragraphed texts with necessary bullet points and formatted texts teaching ${lectureTitle}`
+    const lectureText = await this.generateText(prompt)
+    return lectureText
   }
   //   Generate Lecture text
   async generateLectureTextWithFiles(
     lectureTitle: string,
     courseFiles: string
   ): Promise<string> {
-    const prompt = `generate a comprehensive but well explanatory lecture in form of sectioned texts that each teach a main idea with necessary bullet points and formatted texts teaching ${lectureTitle}. Read the course material provided here and extract the content related to this lecture and use it to teach the lecture. Material: ${courseFiles}`;
-    const lectureText = await this.generateText(prompt);
-    return lectureText;
+    const prompt = `generate a comprehensive but well explanatory lecture in form of sectioned texts that each teach a main idea with necessary bullet points and formatted texts teaching ${lectureTitle}. Read the course material provided here and extract the content related to this lecture and use it to teach the lecture. Material: ${courseFiles}`
+    const lectureText = await this.generateText(prompt)
+    return lectureText
   }
 
   //  Generate course Image
   async generateCourseImage(courseTitle: string): Promise<string> {
     try {
-      const prompt = `generate an graphical illustration that represents the concept of ${courseTitle}`;
+      const prompt = `generate an graphical illustration that represents the concept of ${courseTitle}`
       const imageResponse = await new Promise((resolve, reject) => {
         this.clarifaiModel.PostModelOutputs(
           this.clarifaiImageModelConfig(prompt),
           this.clarifaiMetadata,
           async (err: any, response: any) => {
             if (err) {
-              reject(err);
+              reject(err)
             }
             if (response.status.code !== 10000) {
-              reject(err);
+              reject(err)
             }
-            const imageBuffer = response.outputs[0].data.image.base64;
+            const imageBuffer = response.outputs[0].data.image.base64
             const secureImageUrl =
-              await this.cloudinaryService.uploadImageBufferToCloud(
-                imageBuffer
-              );
-            resolve(secureImageUrl);
+              await this.cloudinaryService.uploadImageBufferToCloud(imageBuffer)
+            resolve(secureImageUrl)
           }
-        );
-      });
-      if (typeof imageResponse === "string") {
-        return imageResponse;
+        )
+      })
+      if (typeof imageResponse === 'string') {
+        return imageResponse
       }
-      return "";
+      return ''
     } catch (error: any) {
-      const message = error.message;
-      throw new ServerError(message);
+      const message = error.message
+      throw new ServerError(message)
     }
   }
 }
 
-export default AIGenerator;
+export default AIGenerator
