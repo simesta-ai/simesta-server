@@ -2,6 +2,7 @@ import express, { ErrorRequestHandler, NextFunction, Response } from 'express'
 import authRoutes from '../modules/auth/routes'
 import userRoutes from '../modules/user/routes'
 import courseRoutes from '../modules/course/routes'
+import chatRoutes from '../modules/chat/routes'
 import JwtService, { IJwt } from '../../../libs/utils/services/jwt'
 import { AuthError } from '../../../libs/utils/handlers/error'
 import { errorHandler } from '../../../libs/utils/handlers/error'
@@ -68,6 +69,9 @@ class Router {
 
   public configureCourseRoutes() {
     this.app.use('/courses', courseRoutes)
+  }
+  public configureChatRoutes() {
+    this.app.use('/chat', chatRoutes)
     this.app.use(errorHandler)
   }
 }

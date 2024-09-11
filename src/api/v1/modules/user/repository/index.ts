@@ -43,7 +43,7 @@ class UserRepository {
             // other user fields...
           },
         })
-      })
+      }, { timeout: 30000 })
       return newUser
     } catch (error: any) {
       if (error.code === 'P2002') {

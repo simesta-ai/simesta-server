@@ -32,6 +32,27 @@ const fileFilter = (req: any, file: Express.Multer.File, cb: multer.FileFilterCa
   cb(null, true);
 };
 
+const audioFileFilter = (req: any, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+  const allowedMimeTypes = [
+    "audio/mpeg", // mp3
+    "audio/wav", // wav
+    "audio/mp4", // mp4
+  ];
+
+  if (file.size > 20 * 1024 * 1024) { 
+    req.fileValidationError = 'File too large. Maximum size allowed is 20 MB.';
+    return cb(null, false);
+  }
+
+  if (!allowedMimeTypes.includes(file.mimetype)) {
+    req.fileValidationError = 'Invalid file type. Only MP3, WAV, and MP4 files are allowed.';
+    return cb(null, false);
+  }
+
+  cb(null, true);
+}
+
 const upload = multer({ storage: storage , limits: { fileSize:  20 * 1024 * 1024}, fileFilter: fileFilter });
+export const uploadAudio = multer({ storage: storage , limits: { fileSize:  20 * 1024 * 1024}, fileFilter: audioFileFilter });
 
 export default upload;

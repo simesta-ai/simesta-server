@@ -76,6 +76,7 @@ class AppController {
     appRouter.configAuthRoutes()
     appRouter.configUserRoutes()
     appRouter.configureCourseRoutes()
+    appRouter.configureChatRoutes()
   }
 
   // Setup Express Middlewares
