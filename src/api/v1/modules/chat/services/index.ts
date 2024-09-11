@@ -1,14 +1,13 @@
 import fs from 'fs'
-// import sdk from 'microsoft-cognitiveservices-speech-sdk'
 const sdk = require('microsoft-cognitiveservices-speech-sdk')
 import convertFileFormat from '../../../../../libs/utils/services/audioconverter'
-// import dotenv from 'dotenv'
+import dotenv from 'dotenv'
 
-// dotenv.config()
+dotenv.config()
 
 const speechConfig = sdk.SpeechConfig.fromSubscription(
-  '3d6819944bdf47c7a3ef0dfd4945f947',
-  'eastus'
+  process.env.SPEECH_KEY,
+  process.env.SPEECH_REGION
 )
 speechConfig.speechRecognitionLanguage = 'en-US'
 
@@ -49,7 +48,7 @@ async function fromFile(path: string) {
           }
         })
       }
-    }, 1000)
+    }, 3000)
   })
   return text
   
