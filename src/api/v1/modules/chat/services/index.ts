@@ -71,6 +71,9 @@ class ChatService {
       throw error
     }
   }
+  async sendMessage(message: string) {
+    
+  }
 }
 
 export default ChatService
