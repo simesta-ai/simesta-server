@@ -4,7 +4,9 @@ import ChatService from '../services'
 
 const chatService = new ChatService()
 class ChatController {
-  constructor() { }
+
+  constructor() {
+  }
   async speechToText(req: Request, res: Response, next: NextFunction) {
     try {
       if (req.file) {
@@ -26,6 +28,7 @@ class ChatController {
       next(error)
     }
   }
+
 }
 
 export default ChatController
