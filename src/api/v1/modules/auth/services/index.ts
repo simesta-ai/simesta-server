@@ -10,8 +10,6 @@ import bcrypt from 'bcryptjs'
 
 const userRepository = new UserRepository()
 
-const hash = () => {}
-
 class AuthService {
   register = async ({
     name,
@@ -39,9 +37,9 @@ class AuthService {
   login = async ({ email, password }: { email: string; password: string }) => {
     try {
       const user = await userRepository.findOne({ email })
-      if (!user) return
+      if (!user) return null
       const isCorrect = await bcrypt.compare(password, user.password)
-      if (!isCorrect) return
+      if (!isCorrect) return null
       return user
     } catch (error) {
       return null

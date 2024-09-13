@@ -13,7 +13,6 @@ const accountName = process.env.AZURE_ACCOUNT_NAME
 const accountKey = process.env.AZURE_ACCOUNT_KEY
 const containerName = process.env.AZURE_CONTAINER_NAME
 
-
 class UploadFilesToBucket {
   private sharedKeyCredential: StorageSharedKeyCredential
   private blobServiceClient: BlobServiceClient
@@ -27,33 +26,37 @@ class UploadFilesToBucket {
       this.sharedKeyCredential
     )
   }
-  async uploadFiles(filePath: string): Promise<{ fileUrl: string | null; UploadError: CustomError | null }> {
-    let UploadError: CustomError | null = null;
-    let fileUrl: string | null = null;
+  async uploadFiles(
+    filePath: string
+  ): Promise<{ fileUrl: string | null; UploadError: CustomError | null }> {
+    let UploadError: CustomError | null = null
+    let fileUrl: string | null = null
 
     try {
-      const containerClient = this.blobServiceClient.getContainerClient(containerName!);
-      await containerClient.createIfNotExists();
+      const containerClient = this.blobServiceClient.getContainerClient(
+        containerName!
+      )
+      await containerClient.createIfNotExists()
 
-      const blobName = `${Date.now()}-${path.basename(filePath)}`;
-      const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+      const blobName = `${Date.now()}-${path.basename(filePath)}`
+      const blockBlobClient = containerClient.getBlockBlobClient(blobName)
 
-      const fileStream = fs.createReadStream(filePath);
-      const uploadResponse = await blockBlobClient.uploadStream(fileStream);
+      const fileStream = fs.createReadStream(filePath)
+      const uploadResponse = await blockBlobClient.uploadStream(fileStream)
 
       if (uploadResponse._response.status !== 201) {
-        UploadError = new ServerError('Error uploading file');
-        throw UploadError;
+        UploadError = new ServerError('Error uploading file')
+        throw UploadError
       }
 
-      console.log(`Upload completed: ${uploadResponse.requestId}`);
-      fileUrl = blockBlobClient.url;
+      console.log(`Upload completed: ${uploadResponse.requestId}`)
+      fileUrl = blockBlobClient.url
     } catch (error) {
-      console.error('Error uploading file: ', error);
-      UploadError = UploadError || new ServerError('Unknown error occurred');
+      console.error('Error uploading file: ', error)
+      UploadError = UploadError || new ServerError('Unknown error occurred')
     }
 
-    return { fileUrl, UploadError };
+    return { fileUrl, UploadError }
   }
 }
 
