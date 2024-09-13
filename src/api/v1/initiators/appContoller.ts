@@ -14,6 +14,8 @@ require('../../../libs/middlewares/authenticators/localauth')
 require('../../../libs/middlewares/authenticators/oauth')
 import swaggerUi from 'swagger-ui-express'
 import { documentationSetup } from '../docs/setup'
+import { Http2SecureServer } from 'http2'
+import { Server } from 'http'
 
 // CONFIGURE ENVIRONMENT VARIABLES
 dotenv.config()
@@ -109,7 +111,7 @@ class AppController {
     this.configureRouting()
     this.setupDocumentation()
     this.setupRedis()
-    this.app.listen(this.port, () => {
+    return this.app.listen(this.port, () => {
       logger.info(`Server listening on the port ${this.port}`)
     })
   }

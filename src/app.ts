@@ -13,8 +13,12 @@ dotenv.config()
 
 // Start Application Servers
 export const app = express()
-const socketServer = createServer()
-export const io = new Server(socketServer)
+
+
+const PORT = process.env.PORT as string
+const appController = new AppController(app, PORT)
+const httpServer = appController.startApp()
+export const io = new Server(httpServer)
 io.on('connection', async (socket) => {
   logger.info(`user with id: ${socket.id} connected`)
   socket.on('disconnect', () => {
@@ -25,9 +29,3 @@ io.on('connection', async (socket) => {
   
 })
 
-const PORT = process.env.PORT as string
-const appController = new AppController(app, PORT)
-appController.startApp()
-socketServer.listen(4000, () => {
-  logger.info('Socket listening on port 4000')
-})
