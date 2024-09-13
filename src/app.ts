@@ -15,13 +15,13 @@ dotenv.config()
 export const app = express()
 const socketServer = createServer()
 export const io = new Server(socketServer)
-io.on('connection', (socket) => {
+io.on('connection', async (socket) => {
   logger.info(`user with id: ${socket.id} connected`)
   socket.on('disconnect', () => {
     logger.info(`user with id: ${socket.id} disconnected`)
   })
     const socketController = new SocketController(socket)
-    socketController.initializeMessaging()
+    await socketController.initializeMessaging()
   
 })
 

@@ -1,17 +1,24 @@
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import dotenv from 'dotenv'
+import { startPrompt } from './prompts'
 
 dotenv.config()
 
-const startPrompt = ""
+
 
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_CLOUD_API_KEY as string)
-const model = genAI.getGenerativeModel({ model: 'gemini-pro' })
+const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
 const chat = model.startChat({ history: [] })
 
 class AIMessenger {
-  public startLearningStylePrediction() {
-
+  public async startLearningStylePrediction() {
+    try {
+        const result = await chat.sendMessage(startPrompt)
+        const text = result.response.text()
+        return text
+      } catch (error) {
+        return ''
+      }
   }
   public async chat(message: string) {
     try {
