@@ -7,7 +7,7 @@ import CloudinaryService from './cloudinary'
 import { ServerError } from '../handlers/error'
 import dotenv from 'dotenv'
 import Converter from '../handlers/converter'
-import { resolve } from 'path'
+import { IIdeaContent } from '../../../types'
 
 // CONFIGURE ENVIRONMENT VARIABLES
 dotenv.config()
@@ -147,34 +147,81 @@ class AIGenerator {
   async generateIdeaContent(
     lectureTitle: string,
     courseFiles?: string[]
-  ): Promise<string> {
-    let prompt = `Generate a comprehensive and well explained set of ideas to give a complete understanding of ${lectureTitle}, separated with '###' each idea should have three sections separated by '##', namely the text explaining the idea itself, an image description that tries to make the idea clearer but this is optional and an optional quiz section that tests the understanding of the idea. So Each idea should be in this format: Idea text ## Image description ## Quiz section. and then it is possible that an idea doesn't have an image or quiz section, in that case, just leave the section empty. the Quiz section should be separated by '#' with consisting of sections question, options, explanation and correct answer.`
+  ): Promise<IIdeaContent[]> {
+    let prompt = `Generate a comprehensive and well-explained set of ideas to give a complete understanding of ${lectureTitle}, namely the text explaining the idea itself, (the text is the main explainer of the idea it was actually teaches a user) a short image description that tries to make the idea clearer (optional), do note that the image generated would be for an image model so it doesn't have to be so long, and an optional quiz section that tests the understanding of the idea. If an idea doesn't have an image or quiz section, just leave the section empty. The Quiz section should consisit of sections: question, options, explanation, and correct answer aslo ensure for every questions there is a minimum of 4 options, if you don't have sufficient you can as well leave the Quiz section blank. Ensure that every time every Idea is generated every content section(meaning that an Idea should look like this =  
+    ###Idea 
+    ##Idea Text : An explanation of the idea (that is mandatory)
+    ##Image Description : A description of the image that explains the idea that is optional(if you don't deem it necessary you can leave it blank) but ensure the section is present
+    ##Quiz Section : A section that tests the understanding of the idea that is optional(if you don't deem it necessary you can leave it blank,on an occasion where it is blank, it should be left as ##Quiz Section without any content but if it is present, 
+    the Quiz Section must look like this
+    #Question : The question that is being asked
+    #Options : The options for the question separated by a semicolon(;) minimum of 4 options
+    #Explanation : The explanation for the question
+    #Correct Answer : The correct answer for the question
+    ) but ensure the section is present
+
+    ) must be present whether they have content or not that is the sections separated by the '##' .
+
+    Make the output of your response be in JSON format.
+    that is the output should be in this format
+    follow this format strictly and do not deviate from it or add irrelevant information to it.
+    therei no need to add json or any character to the response, just the JSON object
+
+    Generate as much ideas as possible for the lecture ${lectureTitle} to give a comprehensive understanding of the topic.
+
+ starting here-> {
+    "ideaContent": [
+        {
+            "text": "Operators are special symbols that perform specific operations on values.",
+            "imageDescription": "A diagram showing different types of operators with their symbols and descriptions.",
+            "quiz": {
+                "question": "Which of the following is NOT a valid arithmetic operator?",
+                "options": ["+", "-", "*", "/", "%", "^"],
+                "explanation": "The caret symbol (^) is used for bitwise XOR.",
+                "correct_answer": "^"
+            }
+        }
+        {
+            "text": "Operators are special symbols that perform specific operations on values.",
+            "imageDescription": "A diagram showing different types of operators with their symbols and descriptions.",
+            "quiz": {
+                "question": "Which of the following is NOT a valid arithmetic operator?",
+                "options": ["+", "-", "*", "/", "%", "^"],
+                "explanation": "The caret symbol (^) is used for bitwise XOR.",
+                "correct_answer": "^"
+            }
+        }
+    ]
+}<-ending here`
+
     if (courseFiles) {
-      prompt += `reference these provided files as well when generating the lecture ideas  ${courseFiles}`
+      prompt += ` Reference these provided files as well when generating the lecture ideas: ${courseFiles.join(
+        ', '
+      )}`
     }
-    const ideaContent = await this.generateText(prompt)
+    const rawIdeaContent = await this.generateText(prompt)
+    if(!rawIdeaContent) {
+      return []
+    }
+    const cleanedContent = rawIdeaContent
+      .replace(/```json\s*|\s*```/g, '')
+      .trim()
+    const { ideaContent } = JSON.parse(cleanedContent)
+
     return ideaContent
   }
 
   // Generate Topic Lectures
   async generateLectures(
     courseTitle: string,
-    topicTitle: string
-  ): Promise<string[]> {
-    const prompt = `generate a list of lectures only(not more than 15, in text only, numbered form without description or prelude or formatting and removing the sub lectures) needed to completely learn ${topicTitle} topic in ${courseTitle} course`
-    const lecturesText = await this.generateText(prompt)
-
-    // Convert text list to array of lectures
-    const lectureList = this.converter.textToArray(lecturesText)
-    return lectureList
-  }
-  // Generate Topic Lectures with course files
-  async generateLecturesWithFiles(
-    courseTitle: string,
     topicTitle: string,
-    courseFiles: string
+    courseFiles?: string
   ): Promise<string[]> {
-    const prompt = `generate a list of lectures only(not more than 15, in text only, numbered form without description or prelude or formatting and removing the sub lectures) needed to completely learn ${topicTitle} topic in ${courseTitle} course, using these learning materials provided: ${courseFiles}`
+    let prompt = `generate a list of lectures only(not more than 15, in text only, numbered form without description or prelude or formatting and removing the sub lectures) needed to completely learn ${topicTitle} topic in ${courseTitle} course`
+
+    if (courseFiles) {
+      prompt += `. Go through these files to know what lectures should be included ${courseFiles}`
+    }
     const lecturesText = await this.generateText(prompt)
 
     // Convert text list to array of lectures

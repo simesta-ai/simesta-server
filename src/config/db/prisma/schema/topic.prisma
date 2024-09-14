@@ -10,6 +10,8 @@ model Topic {
   //   prevTopic   Topic @relation("PreviousTopics",fields: [prevTopicId], references: [id])
   courseId   String
   course     Course   @relation(fields: [courseId], references: [id])
+  lectureId  String?
+  lecture    Lecture[]
   createdAt  DateTime @default(now())
   updatedAt  DateTime @default(now()) @updatedAt
 }

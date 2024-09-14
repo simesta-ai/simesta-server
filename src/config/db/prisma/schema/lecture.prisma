@@ -4,7 +4,8 @@ model Lecture {
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @default(now()) @updatedAt
   ideaContents IdeaContent[]
+  position     Int
   videos       Video[]
-  courseId     String
-  course       Course        @relation(fields: [courseId], references: [id])
+  topicId     String
+  topic       Topic       @relation(fields: [topicId], references: [id])
 }

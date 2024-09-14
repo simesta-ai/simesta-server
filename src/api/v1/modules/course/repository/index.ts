@@ -41,6 +41,13 @@ class CourseRepository {
     const course = await this.model.findUnique({ where: { id } })
     return course
   }
+  findWithFiles = async (id: string) => {
+    const course = await this.model.findUnique({
+      where: { id },
+      include: { courseFiles: true },
+    })
+    return course
+  }
   find = async (query?: Record<string, any>) => {
     let courses
     if (!query) {

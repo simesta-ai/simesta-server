@@ -13,7 +13,6 @@ model Course {
   updatedAt       DateTime     @default(now()) @updatedAt
   courseFiles     CourseFile[]
   topics          Topic[]
-  lectures        Lecture[]
   userId          String
   user            User         @relation(fields: [userId], references: [id])
 }

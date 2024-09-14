@@ -22,6 +22,25 @@ export interface ICreateLecture {
 }
 
 export interface ILectureContent {
-  ideaContent: string[]
+  ideaContent: IIdeaContent[]
   videos: string[]
+}
+
+interface QuizSection {
+  question?: string;
+  options?: string[];
+  explanation?: string;
+  correct_answer?: string;
+}
+
+export interface IIdeaContent {
+  text: string;
+  imageDescription?: string;
+  quiz?: QuizSection;
+}
+
+export interface ITopicLecture {
+  id: string
+  title: string
+  position: number
 }
