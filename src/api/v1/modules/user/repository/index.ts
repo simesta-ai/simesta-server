@@ -30,7 +30,7 @@ class UserRepository {
     password: string
   }): Promise<IUser | null> => {
     try {
-      const newUser = await prisma.$transaction(async (prisma) => {
+      const newUser = await prisma.$transaction(async (prisma: any) => {
         const foundUser = await prisma.user.findUnique({ where: { email } })
         if (foundUser)
           throw new Error(`User with email ${email} already exists`)

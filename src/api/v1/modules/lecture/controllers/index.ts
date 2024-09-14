@@ -5,11 +5,11 @@ const lectureService = new LectureService()
 
 class LectureController {
 
-  async createLecture(req: Request, res: Response, next: NextFunction) {
+  async createLectureContent(req: Request, res: Response, next: NextFunction) {
     try {
       const { courseId, lectureId } = req.params
       const { lectureContent, error } =
-        await this.getLectureService.createNewLecture(courseId, lectureId)
+        await lectureService.create({courseId, lectureId})
       if (error) {
         throw error
       } else {
@@ -19,10 +19,10 @@ class LectureController {
       next(error)
     }
   }
-  async getLecture(req: Request, res: Response, next: NextFunction) {
+  async getLectureContent(req: Request, res: Response, next: NextFunction) {
     try {
       const { lectureId } = req.params
-      const { lectureContent, error } = await this.getLectureService.getLecture(
+      const { lectureContent, error } = await lectureService.get(
         lectureId
       )
       if (error) {
@@ -35,3 +35,5 @@ class LectureController {
     }
   }
 }
+
+export default LectureController
