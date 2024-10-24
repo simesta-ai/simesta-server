@@ -11,9 +11,9 @@ const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
 const chat = model.startChat({ history: [] })
 
 class AIMessenger {
-  public async startLearningStylePrediction() {
+  public async startLearningStylePrediction(name: string) {
     try {
-        const result = await chat.sendMessage(startPrompt)
+        const result = await chat.sendMessage(startPrompt(name))
         const text = result.response.text()
         return text
       } catch (error) {

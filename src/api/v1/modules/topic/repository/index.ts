@@ -8,6 +8,11 @@ class TopicRepository {
     return topic
   }
 
+  async find(query: any) {
+    const topic = await this.model.findMany({ where: query })
+    return topic
+  }
+
   async findAll() {
     const topics = await this.model.findMany()
     return topics
@@ -23,11 +28,11 @@ class TopicRepository {
     return topic
   }
 
-  async update() {}
+  async update() { }
 
-  async updateOne() {}
+  async updateOne() { }
 
-  async updateAll() {}
+  async updateAll() { }
 
   async deleteOne(id: string) {
     const affectedCount = await this.model.delete({ where: { id } })

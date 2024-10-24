@@ -26,12 +26,12 @@ class CourseRepository {
         img: image,
         userId,
         courseFiles: courseFiles
-        ? {
-            create: courseFiles.map((file: string) => ({
-              url: file,
-            })),
-          }
-        : undefined,
+          ? {
+              create: courseFiles.map((file: string) => ({
+                url: file,
+              })),
+            }
+          : undefined,
       },
     })
     return course
@@ -41,10 +41,13 @@ class CourseRepository {
     const course = await this.model.findUnique({ where: { id } })
     return course
   }
-  findWithFiles = async (id: string) => {
+  findWithFilesAndLearningMethod = async (id: string) => {
     const course = await this.model.findUnique({
       where: { id },
-      include: { courseFiles: true },
+      include: {
+        courseFiles: true,
+        user: { include: { primaryLearningMethod: true } },
+      },
     })
     return course
   }
@@ -53,8 +56,15 @@ class CourseRepository {
     if (!query) {
       courses = await this.model.findMany()
     }
-    courses = await this.model.findMany({ where: query })
+    courses = await this.model.findMany({ where: query, include: { topics: true } })
     return courses
+  }
+  findCourseWithTopics = async (id: string) => {
+    const course = await this.model.findUnique({
+      where: { id },
+      include: { topics: true },
+    })
+    return course
   }
 
   //   updateOne = async ({

@@ -5,7 +5,7 @@
  * @file /src/api/v1/modules/course/controllers
  */
 
-import { NextFunction, Request, Response } from 'express'
+import { NextFunction, Request, RequestHandler, Response } from 'express'
 import CourseService from '../services'
 
 const courseService = new CourseService()
@@ -53,6 +53,20 @@ class CourseController {
       } else {
         res.status(200).json({ courses: coursesList })
       }
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  getCourseById:RequestHandler = async (req, res, next) =>{
+    try {
+      const courseId = req.params.courseId
+      const course = await courseService.getCourseById(courseId)
+      res.status(200).json({
+          message: 'Successfully Gotten a Course',
+          success: true,
+          data: course,
+        })
     } catch (error) {
       next(error)
     }

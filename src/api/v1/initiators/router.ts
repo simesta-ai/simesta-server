@@ -2,8 +2,8 @@ import express from 'express'
 import authRoutes from '../modules/auth/routes'
 import userRoutes from '../modules/user/routes'
 import courseRoutes from '../modules/course/routes'
-import lectureRoutes from '../modules/lecture/routes'
 import topicRoutes from '../modules/topic/routes'
+import lectureRoutes from '../modules/lecture/routes'
 import chatRoutes from '../modules/chat/routes'
 import JwtService, { IJwt } from '../../../libs/utils/services/jwt'
 import { errorHandler } from '../../../libs/utils/handlers/error'
@@ -17,11 +17,14 @@ class Router {
     this.jwtService = new JwtService()
   }
 
+  public configRootRoutes() {
+    this.app.get('/', (req: express.Request, res: express.Response) => {
+      res.send('TrueLearn API - Visit https://github.com/simesta-ai/truelearn for usage.')
+    })
+  }
+
   public configAuthRoutes() {
-    this.app.use(
-      '/auth',
-      authRoutes,
-    )
+    this.app.use('/auth', authRoutes)
   }
 
   public configUserRoutes() {
@@ -30,10 +33,10 @@ class Router {
   }
 
   public configureCourseRoutes() {
-    this.app.use('/courses', courseRoutes)
-    this.app.use('/courses', topicRoutes)
-    this.app.use('/courses', lectureRoutes 
-    )
+    this.app.use('/courses', this.jwtService.verifyToken, courseRoutes)
+    this.app.use('/courses',this.jwtService.verifyToken, topicRoutes)
+    this.app.use('/courses',this.jwtService.verifyToken, lectureRoutes)
+
   }
   public configureChatRoutes() {
     this.app.use('/chat', chatRoutes)

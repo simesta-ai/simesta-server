@@ -29,7 +29,7 @@ const createTopicLectures = async (topicId: string) => {
     const originalTopic: any = await topicRepository.findById(topicId)
     if (originalTopic) {
       topicTitle = originalTopic.title
-      const originalCourse: any = await courseRepository.findWithFiles(
+      const originalCourse: any = await courseRepository.findWithFilesAndLearningMethod(
         originalTopic.courseId
       )
 

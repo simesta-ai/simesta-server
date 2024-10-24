@@ -1,3 +1,17 @@
+/**
+ * @file auth/controllers/index.ts
+ * @author [Kingsley Ihemelandu]
+ * @github [https://github.com/kijuchihe]
+ * @description Defines the authentication controllers for the application.
+ * @created [2024-07-20]
+ * @lastModified [2024-07-20]
+ * @module api/v1/modules/auth
+ *
+ * //@typedef {import('express').Request} Request
+ * //@typedef {import('express').Response} Response
+ * //@typedef {import('express').NextFunction} NextFunction
+ * //@typedef {import('../services').default} AuthService
+ */
 import { Request, Response, NextFunction } from 'express'
 import AuthService from '../services'
 import jwt from 'jsonwebtoken'
