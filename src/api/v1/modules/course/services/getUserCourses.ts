@@ -35,7 +35,8 @@ const getUserCourses = async (
   try {
     const user = await userRepository.findById(userId)
     if (user) {
-      const courses = await courseRepository.find({ user: userId })
+      const courses = await courseRepository.find({ userId: userId })
+      console.log('courses', courses)
       if (courses.length < 1)
         return {
           coursesList,
@@ -43,7 +44,8 @@ const getUserCourses = async (
         }
       for (const course of courses) {
         // const topics: any = await TopicModel.find({ course: course.id })
-        const topics: any[] = []
+        const topics: any[] = course.topics
+        console.log('topics', topics)
         const numberOfTopics = topics.length
         let i = 0
         for (const topic of topics) {

@@ -23,7 +23,7 @@ const getCourse = async (courseId: string) => {
         description: course.description,
         image: course.img,
       }
-      const topics: any = await top.find({ course: courseId })
+      const topics: any = await topicRepository.find({ course: courseId })
 
       // Return Topics
       if (topics.length > 0) {

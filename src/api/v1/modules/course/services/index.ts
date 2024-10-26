@@ -1,7 +1,16 @@
+/**
+ * @file: course/index.ts
+ * @author: Taiwo Joseph<emperortj128@gmail.com>
+ * @date: 07/09/24
+ * @purpose: Manages the functions for generating and retrieving courses
+ */
+
+import { Course } from '@prisma/client'
 import { CustomError } from '../../../../../libs/utils/handlers/error'
 import { ICreateCourse } from '../../../../../types'
 import createCourse from './createCourse'
 import getAllCourses from './getAllCourses'
+import getCourseById from './getCourseById'
 import getUserCourses, { ICourseResponse } from './getUserCourses'
 
 class CourseService {
@@ -16,6 +25,8 @@ class CourseService {
   }> = getUserCourses
 
   getAllCourses: () => Promise<any> = getAllCourses
+
+  getCourseById: (id: string) => Promise<Course>  = getCourseById
 }
 
 export default CourseService

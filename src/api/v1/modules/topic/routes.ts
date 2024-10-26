@@ -8,9 +8,4 @@ router
   .post(topicController.createTopicLectures)
   .get(topicController.getTopicLectures)
 
-  // router
-//   .route('/course/topic/:topicId')
-//   .get(userController.getTopic) => get topicLectures
-//   .post(userController.createTopic) => create topicLectures
-
 export default router

@@ -7,7 +7,7 @@ import bodyParser from 'body-parser'
 import helmet from 'helmet'
 import passport from 'passport'
 import dotenv from 'dotenv'
-import Router from './router'
+import ApiRouter from '../initiators/router'
 import { initializeRedis } from '../../../libs/utils/services/redis'
 import logger from '../../../libs/utils/logger'
 require('../../../libs/middlewares/authenticators/localauth')
@@ -29,10 +29,10 @@ interface IcorsOptions {
 
 class AppController {
   private app: express.Application
-  private port: string
+  private port: string|number
   private readonly corsOptions: IcorsOptions
 
-  constructor(app: express.Application, port: string) {
+  constructor(app: express.Application, port: string|number) {
     this.app = app
     this.port = port
     this.corsOptions = {
@@ -74,7 +74,8 @@ class AppController {
   }
 
   private configureRouting() {
-    const appRouter = new Router(this.app)
+    const appRouter = new ApiRouter(this.app)
+    appRouter.configRootRoutes()
     appRouter.configAuthRoutes()
     appRouter.configUserRoutes()
     appRouter.configureCourseRoutes()
@@ -110,7 +111,7 @@ class AppController {
     this.enableMiddlewares()
     this.configureRouting()
     this.setupDocumentation()
-    this.setupRedis()
+    // this.setupRedis()
     return this.app.listen(this.port, () => {
       logger.info(`Server listening on the port ${this.port}`)
     })

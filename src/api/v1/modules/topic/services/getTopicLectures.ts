@@ -24,7 +24,7 @@ const getTopicWithLectures = async (topicId: string) => {
       if (existingLectures.length > 0) {
         for (const lecture of existingLectures) {
           topicLectures.push({
-            id: lecture._id,
+            id: lecture.id,
             title: lecture.title,
             position: lecture.position,
           })

@@ -6,6 +6,6 @@ model Lecture {
   ideaContents IdeaContent[]
   position     Int
   videos       Video[]
-  topicId     String
-  topic       Topic       @relation(fields: [topicId], references: [id])
+  topicId      String
+  topic        Topic         @relation(fields: [topicId], references: [id])
 }

@@ -1,3 +1,17 @@
+/**
+ * @file auth/routes.ts
+ * @author [Kingsley Ihemelandu]
+ * @github [https://github.com/kijuchihe]
+ * @description Defines the authentication routes for the application.
+ * @created [2024-07-20]
+ * @lastModified [2024-07-20]
+ * @module api/v1/modules/auth
+ *
+ * //@typedef {import('express').Router} Router
+ * //@typedef {import('./controllers').default} AuthController
+ * //@typedef {import('../../../../libs/middlewares/validators/user.validator').default} UserValidator
+ */
+
 import express from 'express'
 import AuthController from './controllers'
 import Uservalidator from '../../../../libs/middlewares/validators/user.validator'

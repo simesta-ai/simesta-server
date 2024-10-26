@@ -10,9 +10,12 @@ const lectureRepository = new LectureRepository()
 
 const getLecture = async (lectureId: string) => {
   let error: CustomError | null = null
-  const lectureContent = {
-    videos: [''],
+  const lectureContent: {
+    videos: string[]
+    ideaContent: { text: string }[]
+  } = {
     ideaContent: [],
+    videos: [''],
   }
   try {
     const lecture = await lectureRepository.getIdeaContents(lectureId)
@@ -25,9 +28,16 @@ const getLecture = async (lectureId: string) => {
       }
 
       if (lecture.videos && lecture.videos.length > 0) {
-        lectureContent.videos = lecture.videos
+        lectureContent.videos = lecture.videos.map(
+          (video: {
+            id: string
+            lectureId: string
+            createdAt: Date
+            updatedAt: Date
+          }) => video.id
+        )
       } else {
-        error = new ServerError('Lecture videos do no exist')
+        error = new ServerError('Lecture videos do not exist')
       }
     } else {
       error = new ServerError('Lecture not found')

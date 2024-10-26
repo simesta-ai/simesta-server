@@ -1,27 +1,21 @@
+/**
+ * @file user/routes.ts
+ * @author [Kingsley Ihemelandu]
+ * @github [https://github.com/kijuchihe]
+ * @description Defines the user routes for the application.
+ * @created [2024-07-20]
+ * @lastModified [2024-07-20]
+ * @module api/v1/modules/user
+ *
+ * //@typedef {import('express').Router} Router
+ */
 import express from 'express'
 import UserController from './controllers'
-import upload from '../../../../libs/utils/services/multer'
-import checkTotalFileSize from '../../../../libs/middlewares/validators/file.validator'
 
 const router = express.Router()
 const userController = new UserController()
 
-// Create new course
-// router.post(
-//   '/:userId/create-course',
-//   upload.array('files', 25),
-//   checkTotalFileSize,
-//   userController.createCourse
-// )
-// router.get('/course/:courseId', userController.getCourse)
-// router.get('/:userId/courses', userController.getAllCourses)
-// router
-//   .route('/course/topic/:topicId')
-//   .get(userController.getTopic)
-//   .post(userController.createTopic)
-// router
-//   .route('/course/:courseId/topic/lecture/:lectureId')
-//   .get(userController.getLecture)
-//   .post(userController.createLecture)
+router.get('/:userId', userController.getUser)
+
 
 export default router

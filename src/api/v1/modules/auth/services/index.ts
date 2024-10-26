@@ -1,8 +1,14 @@
 /**
- * file: auth/service.ts
- * author: Kingsley Ihemelandu X<@kijuchihe>
- * Date: 04/09/24
- * purpose:
+ * @file auth/services/index.ts
+ * @author [Kingsley Ihemelandu]
+ * @github [https://github.com/kijuchihe]
+ * @description Defines the authentication services for the application.
+ * @created [2024-07-20]
+ * @lastModified [2024-07-20]
+ * @module api/v1/modules/auth
+ *
+ * //@typedef {import('../../user/repository').IUser} IUser
+ * //@typedef {import('../../user/repository').default} UserRepository
  */
 
 import UserRepository, { IUser } from '../../user/repository'
