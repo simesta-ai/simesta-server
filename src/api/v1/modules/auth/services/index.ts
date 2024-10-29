@@ -102,6 +102,12 @@ class AuthService {
       const isEmailValid = await validate({ email, validateRegex: true });
       if (!isEmailValid) {
         error = new ClientError("Invalid email address");
+        return { error, data: null };
+      }
+      const existingUser = await userRepository.findOne({ email });
+      if (!existingUser) {
+        error = new ClientError("User does not exist");
+        return { error, data: null };
       }
       const otp = Math.floor(1000 + Math.random() * 9000);
       const hashedOtp = await bcrypt.hash(otp.toString(), 10);

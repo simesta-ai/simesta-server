@@ -18,10 +18,7 @@ class RedisService implements IRedisService {
   ) {
     this.client = createClient({
       password: password,
-      socket: {
-        host: host,
-        port: port,
-      },
+      url: `redis://${host}:6379`
     })
   }
 
@@ -29,7 +26,6 @@ class RedisService implements IRedisService {
     this.client.on('ready', () => {
       logger.info('Redis store connected')
     })
-
     this.client.on('error', (err) => {
       logger.error('Redis is disconnected: ', err)
     })

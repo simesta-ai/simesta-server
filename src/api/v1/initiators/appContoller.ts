@@ -10,8 +10,6 @@ import dotenv from 'dotenv'
 import ApiRouter from '../initiators/router'
 import { initializeRedis } from '../../../libs/utils/services/redis'
 import logger from '../../../libs/utils/logger'
-require('../../../libs/middlewares/authenticators/localauth')
-require('../../../libs/middlewares/authenticators/oauth')
 import swaggerUi from 'swagger-ui-express'
 import { documentationSetup } from '../docs/setup'
 
@@ -92,9 +90,6 @@ class AppController {
     this.sessionConfig()
     this.configureLimiter()
     this.app.use(cookiepParser())
-
-    this.app.use(passport.initialize())
-    this.app.use(passport.session())
     this.app.use(bodyParser.json())
     this.app.use(bodyParser.urlencoded({ extended: true }))
     this.app.use(cors(this.corsOptions))

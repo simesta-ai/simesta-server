@@ -84,9 +84,14 @@ router.get(
 // VERIFICATION ROUTES
 router.get(
   '/verify/email/:email',
-  jwtService.verifyToken,
   authController.verifyEmail
 )
-router.post('/verify/otp', jwtService.verifyToken, authController.verifyOtp)
+router.post('/verify/otp', authController.verifyOtp, jwtService.grantToken, (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'User verified successfully',
+    data: req.user
+  })
+})
 
 export default router

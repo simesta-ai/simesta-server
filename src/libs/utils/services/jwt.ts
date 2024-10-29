@@ -11,8 +11,9 @@ export interface IJwt {
 
 class JwtService implements IJwt {
   // CHECK TOKEN BLACKLIST
-  private checkBlacklist = async (token: string) => {
-    const result = await redisService.get(token)
+  public checkBlacklist(token: string){
+    console.log(token)
+    const result = redisService.get(token)
     return result
   }
 
@@ -43,8 +44,8 @@ class JwtService implements IJwt {
           'Unable to authorize user: User not currently logged in.'
         )
       }
-      const isBlacklisted = await this.checkBlacklist(token)
-      if (isBlacklisted) {
+      const isBlacklisted = redisService.get(token)
+      if (await isBlacklisted) {
         throw new AuthError('Invalid token: User logged out')
       }
       const verified = jwt.verify(token, 'secret')

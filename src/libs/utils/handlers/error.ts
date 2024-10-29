@@ -18,6 +18,16 @@ export class ServerError extends CustomError {
     }
 }
 
+export class RedirectError extends CustomError {
+    statusCode: number;
+    constructor(message: string) {
+        super(message)
+        this.name = "RedirectError"
+        this.message = message
+        this.statusCode = 303
+    }
+}
+
 export class AuthError extends CustomError {
     statusCode: number;
     constructor(message: string) {

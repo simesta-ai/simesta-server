@@ -24,41 +24,41 @@ class AIGenerator {
     this.genAI = new GoogleGenerativeAI(
       process.env.GOOGLE_CLOUD_API_KEY as string
     )
-    this.textModel = this.genAI.getGenerativeModel({ model: 'gemini-pro' })
+    this.textModel = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
     this.clarifaiModel = ClarifaiStub.grpc()
     this.clarifaiMetadata = new grpc.Metadata()
     this.clarifaiMetadata.set('authorization', 'Key ' + process.env.PAT)
     this.converter = new Converter()
     this.cloudinaryService = new CloudinaryService()
+
   }
 
   private async generateText(prompt: string): Promise<string> {
     try {
-      // const result = await this.textModel.generateContent(prompt);
-      // const response = result.response;
-      // const text = response.text();
+      const result = await this.textModel.generateContent(prompt);
+      const response = result.response;
+      const text = response.text();
+      return text
 
-      const textResponse: string = await new Promise((resolve, reject) => {
-        this.clarifaiModel.PostModelOutputs(
-          this.clarifaiTextModelConfig(prompt),
-          this.clarifaiMetadata,
+      // const textResponse: string = await new Promise((resolve, reject) => {
+      //   this.clarifaiModel.PostModelOutputs(
+      //     this.clarifaiTextModelConfig(prompt),
+      //     this.clarifaiMetadata,
+      //     async (err: any, response: any) => {
+      //       if (err) {
+      //         reject(err)
+      //       }
+      //       if (response.status.code !== 10000) {
+      //         reject(err)
+      //       }
 
-          async (err: any, response: any) => {
-            if (err) {
-              reject(err)
-            }
-            if (response.status.code !== 10000) {
-              reject(err)
-            }
-
-            const output = response.outputs[0]
-            console.log(output)
-            const text = output.data.text.raw
-            resolve(text)
-          }
-        )
-      })
-      return textResponse
+      //       const output = response.outputs[0]
+      //       const text = output.data.text.raw
+      //       resolve(text)
+      //     }
+      //   )
+      // })
+      // return textResponse
     } catch (error: any) {
       const message = error.message
       throw new ServerError(message)
