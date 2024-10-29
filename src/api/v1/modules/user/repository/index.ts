@@ -10,19 +10,7 @@
 
 import prisma from '../../../../../config/db/prisma'
 import RoleRepository from '../../role/repository'
-
-export interface IUser {
-  id: string
-  email: string
-  password: string
-  name: string
-  roleId: string | null
-  createdAt: Date
-  updatedAt: Date
-  age: number | null
-  avatar: string
-  primaryLearningMethodId: string | null
-}
+import { IUser } from '../../../../../types'
 
 const roleRepository = new RoleRepository()
 class UserRepository {
@@ -74,6 +62,18 @@ class UserRepository {
   findById = async (id: string) => {
     const foundUser = await this.model.findUnique({ where: { id } })
     return foundUser
+  }
+
+  updateEmailVerified = async(email: string) => {
+    try {
+      const updatedUser = await this.model.update({
+        where: { email },
+        data: { emailVerified: true },
+      });
+      return updatedUser;
+    } catch (error) {
+      return null;
+    }
   }
 }
 

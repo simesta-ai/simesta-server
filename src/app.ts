@@ -1,13 +1,12 @@
 import express from 'express'
 import dotenv from 'dotenv'
 import AppController from './api/v1/initiators/appContoller'
-import { createServer } from 'http'
 import { Server } from 'socket.io'
 import SocketController from './api/v1/modules/chat/socket'
 import 'reflect-metadata'
-import logger from './libs/utils/logger/logger'
+import logger from './libs/utils/logger'
 
-// const server = http.Server()
+
 // CONFIGURE ENVIRONMENT VARIABLES
 dotenv.config()
 

@@ -49,8 +49,8 @@ export class ValidateError extends CustomError {
 
 export const errorHandler = (err: CustomError, req: Request, res: Response, next: NextFunction) => {
     if(err){
-        return res.status(err.statusCode || 500).json({ message: err.message })
+        return res.status(err.statusCode || 500).json({ success: false, message: err.message })
     } else {
-        return res.status(500).json({ message: "An unexpected error occured, please retry the process. There's nothing wrong."})
+        return res.status(500).json({ success: false, message: "An unexpected error occured, please retry the process. There's nothing wrong."})
     }
 }

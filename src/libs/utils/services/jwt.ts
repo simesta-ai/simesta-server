@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken'
 import { AuthError } from '../handlers/error'
 import { RequestWithUser } from '../../../types'
 import { Request, Response, NextFunction } from 'express'
+import { redisService } from '../services/redis'
 
 export interface IJwt {
   grantToken(req: RequestWithUser, res: Response, next: NextFunction): void
@@ -9,13 +10,19 @@ export interface IJwt {
 }
 
 class JwtService implements IJwt {
+  // CHECK TOKEN BLACKLIST
+  private checkBlacklist = async (token: string) => {
+    const result = await redisService.get(token)
+    return result
+  }
+
   // CREATE TOKEN
   public grantToken(req: RequestWithUser, res: Response, next: NextFunction) {
     try {
       const user = req.user
       if (user) {
         const token = jwt.sign({ user: user }, 'secret', { expiresIn: '24h' })
-        res.cookie('Auth-token', token, { httpOnly: true, maxAge: 3600000 })
+        res.header('Authorization', `Bearer ${token}`)
         next()
       } else {
         throw new AuthError(
@@ -28,13 +35,17 @@ class JwtService implements IJwt {
   }
 
   // VERIFY TOKEN
-  public verifyToken(req: Request, res: Response, next: NextFunction) {
+  public async verifyToken(req: Request, res: Response, next: NextFunction) {
     try {
-      const token = req.cookies['Auth-token']
+      const token = req.headers.authorization?.split(' ')[1]
       if (!token) {
         throw new AuthError(
           'Unable to authorize user: User not currently logged in.'
         )
+      }
+      const isBlacklisted = await this.checkBlacklist(token)
+      if (isBlacklisted) {
+        throw new AuthError('Invalid token: User logged out')
       }
       const verified = jwt.verify(token, 'secret')
       if (verified) {
@@ -42,6 +53,46 @@ class JwtService implements IJwt {
         next()
       } else {
         throw new AuthError('Invalid token: Attempt to login afresh')
+      }
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  //  INVALIDATE TOKEN
+  public async invalidateToken(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const token = req.headers.authorization?.split(' ')[1]
+      if (!token) {
+        throw new AuthError(
+          'Unable to authorize user: User not currently logged in.'
+        )
+      }
+      const result = await redisService.set(token, 'blacklisted')
+      if (result) {
+        req.user = ''
+        next()
+      } else {
+        throw new AuthError(
+          'Could not log user out: Unable to invalidate token'
+        )
+      }
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  // CHECK USER OBJECT IN REQUEST
+  public isLoggedIn = (req: Request, res: Response, next: NextFunction) => {
+    try {
+      if (req.user) {
+        next()
+      } else {
+        throw new AuthError('User is not logged in')
       }
     } catch (error) {
       next(error)

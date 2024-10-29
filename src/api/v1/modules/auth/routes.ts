@@ -12,20 +12,81 @@
  * //@typedef {import('../../../../libs/middlewares/validators/user.validator').default} UserValidator
  */
 
-import express from 'express'
+import express, { NextFunction, Response } from 'express'
 import AuthController from './controllers'
 import Uservalidator from '../../../../libs/middlewares/validators/user.validator'
+import JwtService, { IJwt } from '../../../../libs/utils/services/jwt'
+import { AuthError } from '../../../../libs/utils/handlers/error'
+import { RequestWithUser } from '../../../../types'
 
 const router = express.Router()
 const authController = new AuthController()
 const userValidator = new Uservalidator()
+const jwtService = new JwtService()
 
-router.post('/register', userValidator.validate, authController.register)
-router.post('/login', userValidator.validate, authController.login)
+const authResponse = (
+  req: RequestWithUser,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = req.user
+    if (!user) {
+      throw new AuthError("Unable to login user because user doesn't exist")
+    }
+    if (user.message == 'Please verify email address to continue') {
+      res.status(200).json({
+        status: 'success',
+        email: user.email,
+        message: user.message,
+      })
+    } else {
+      res.status(200).json({
+        status: 'success',
+        data: user,
+        messsage: 'User authentication successful',
+      })
+    }
+  } catch (error) {
+    next(error)
+  }
+}
 
-// router.post('/signup', userValidator.validate, authController.register)
-// router.get('/login', userValidator.validate, authController.login)
-// router.get('/google', authController.googleSignIn)
-// router.get('/google/callback', authController.googleCallback)
+// LOCAL AUTH ROUTES
+router.post(
+  '/register',
+  userValidator.validate,
+  authController.register,
+  jwtService.grantToken,
+  jwtService.isLoggedIn,
+  authResponse
+)
+router.post(
+  '/login',
+  userValidator.validate,
+  authController.login,
+  jwtService.grantToken,
+  jwtService.isLoggedIn,
+  authResponse
+)
+router.get(
+  '/logout',
+  authController.logout,
+  jwtService.invalidateToken,
+  (req, res) => {
+    res.status(200).json({
+      status: 'success',
+      message: 'User logged out successfully',
+    })
+  }
+)
+
+// VERIFICATION ROUTES
+router.get(
+  '/verify/email/:email',
+  jwtService.verifyToken,
+  authController.verifyEmail
+)
+router.post('/verify/otp', jwtService.verifyToken, authController.verifyOtp)
 
 export default router

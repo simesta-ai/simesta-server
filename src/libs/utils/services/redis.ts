@@ -39,6 +39,14 @@ class RedisService implements IRedisService {
       logger.error('Error while connecting to redis store: ', err)
     }
   }
+
+  async get(key: string) {
+    return this.client.get(key)
+  }
+
+  async set(key: string, value: string) {
+    return this.client.set(key, value)
+  }
 }
 const redisService = new RedisService(
   process.env.REDIS_SECRET,

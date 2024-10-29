@@ -13,103 +13,114 @@
  * //@typedef {import('../services').default} AuthService
  */
 import { Request, Response, NextFunction } from 'express'
+import { IResponseBody } from '../../../../../types'
 import AuthService from '../services'
 import jwt from 'jsonwebtoken'
+import { ClientError } from '../../../../../libs/utils/handlers/error'
 
 const authService = new AuthService()
 
-interface IResponseBody {
-  message: string
-  success: boolean
-  data?: any
-}
+
+
 
 class AuthController {
   async register(req: Request, res: Response, next: NextFunction) {
-    let responseBody: IResponseBody = {
-      message: '',
-      success: false,
-      data: null,
-    }
-
     try {
-      console.log('Request made')
       const { name, email, password } = req.body
-      const user = await authService.register({ name, email, password })
-      if (!user || user === null) {
-        responseBody = {
-          ...responseBody,
-          message: 'User already exists',
-        }
-        return res.status(400).json(responseBody)
+      const { data, error } = await authService.register({ name, email, password })
+      if (!data && !error) {
+        throw new ClientError('Unable to create new user')
       }
-      const { password: unusedPassword, ...userWithoutPassword } = user
-
-      const token = jwt.sign(
-        { id: user.id, email: user.email, name: user.name },
-        'secret',
-        { expiresIn: '24h' }
-      )
-      res.cookie('Auth-token', token, { httpOnly: true, maxAge: 3600000 })
-      responseBody = {
-        data: userWithoutPassword,
-        success: true,
-        message: 'Successfully created user',
+      if(error) {
+        next(error)
       }
-
-      return res.status(201).json(responseBody)
+      let userData = null;
+      if (!data.emailVerified) {
+        userData = {
+          message: "Please verify email address to continue",
+          email: data.email,
+        };
+        req["user"] = userData;
+      } else {
+        req["user"] = data;
+      }
+      next()
     } catch (error) {
       next(error)
     }
   }
 
   async login(req: Request, res: Response, next: NextFunction) {
-    let responseBody: IResponseBody = {
-      message: '',
-      success: false,
-      data: null,
-    }
     try {
       const { email, password } = req.body
-      const user = await authService.login({ email, password })
-      if (!user) {
-        responseBody = { ...responseBody, message: 'Invalid Credentials ' }
-        return res
-          .status(401)
-          .json({ message: 'Invalid credentials', success: false })
+      const { data, error } = await authService.login({ email, password })
+      if (!data && !error) {
+        throw new ClientError('Unable to fetch user')
       }
-      const { password: unusedPassword, ...userWithoutPassword } = user
-
-      const token = jwt.sign(
-        { id: user.id, email: user.email, name: user.name },
-        'secret',
-        { expiresIn: '24h' }
-      )
-      res.cookie('Auth-token', token, { httpOnly: true, maxAge: 3600000 })
-      responseBody = {
-        data: userWithoutPassword,
-        success: true,
-        message: 'Successfully logged in',
+      if(error) {
+        next(error)
       }
-
-      return res.status(200).json(responseBody)
+      let userData = null;
+      if (!data.emailVerified) {
+        userData = {
+          message: "Please verify email address to continue",
+          email: data.email,
+        };
+        req["user"] = userData;
+      } else {
+        req["user"] = data;
+      }
+      next();
     } catch (error) {
       next(error)
     }
   }
 
-  // LOGIN USER
-  //   public async login(req: Request, res: Response, next: NextFunction) {
-  //     loginService.loginUser(req, res, next)
-  //   }
+  async logout(req: Request, res: Response, next: NextFunction) {
+    try {
+      req.session.destroy((err) => {
+        if (err) {
+          throw new ClientError('Unable to logout user: Session destruction error')
+        }
+      })
+      next()
+    } catch (error) {
+      next(error)
+    }
+  }
 
-  //   // GOOGLE OAUTH
-  //   public async googleSignIn(req: Request, res: Response, next: NextFunction) {
-  //     googleAuthenticator.authenticateUser(req, res, next)
-  //   }
-  //   public async googleCallback(req: Request, res: Response, next: NextFunction) {
-  //     googleAuthenticator.authenticationCallback(req, res, next)
-  //   }
+  async verifyEmail(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { email } = req.params;
+      if (!email) {
+          throw new Error("Email address is required");
+      }
+      const { error, data } = await authService.sendVerificationEmail(email)
+      if (error) {
+          throw error;
+      }
+      res.status(200).json(data);
+      } catch (error) {
+      next(error);
+      }
+  }
+
+  async verifyOtp(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { otp, email } = req.body;
+      if (!otp || !email) {
+          throw new Error("Email address and OTP are required");
+      }
+      const { error, data } = await authService.verifyOtp(email, otp)
+      if (error) {
+          throw error;
+      }
+      res.status(200).json(data);
+      } catch (error) {
+      next(error);
+      }
+  }
+
 }
 
 export default AuthController

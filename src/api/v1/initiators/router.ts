@@ -19,27 +19,26 @@ class Router {
 
   public configRootRoutes() {
     this.app.get('/', (req: express.Request, res: express.Response) => {
-      res.send('TrueLearn API - Visit https://github.com/simesta-ai/truelearn for usage.')
+      res.send('Simesta API - Visit https://github.com/simesta-ai/simesta-server for usage.')
     })
   }
 
   public configAuthRoutes() {
-    this.app.use('/auth', authRoutes)
+    this.app.use('/api/auth', authRoutes)
   }
 
   public configUserRoutes() {
-    this.app.use('/users', this.jwtService.verifyToken, userRoutes)
-    // this.app.use(errorHandler)
+    this.app.use('/api/users', this.jwtService.verifyToken, userRoutes)
   }
 
   public configureCourseRoutes() {
-    this.app.use('/courses', this.jwtService.verifyToken, courseRoutes)
-    this.app.use('/courses',this.jwtService.verifyToken, topicRoutes)
-    this.app.use('/courses',this.jwtService.verifyToken, lectureRoutes)
+    this.app.use('/api/courses', this.jwtService.verifyToken, courseRoutes)
+    this.app.use('/api/courses',this.jwtService.verifyToken, topicRoutes)
+    this.app.use('/api/courses',this.jwtService.verifyToken, lectureRoutes)
 
   }
   public configureChatRoutes() {
-    this.app.use('/chat', chatRoutes)
+    this.app.use('/api/chat', chatRoutes)
     this.app.use(errorHandler)
   }
 }

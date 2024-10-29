@@ -21,8 +21,9 @@ export interface IUser {
   email: string
   password: string
   profilePicture?: string
-  //   appropriateLearningMethod?: string
-  //   otherLearningMethods?: LearningMethod[]
+  appropriateLearningMethod?: string
+  otherLearningMethods?: string[]
+  emailVerified?: boolean
   primaryLearningMethodId: string
   createdAt?: Date
   updatedAt?: Date

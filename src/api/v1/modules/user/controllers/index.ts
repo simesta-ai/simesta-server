@@ -17,12 +17,6 @@ const user = new UserService()
 
 
 class UserController {
-  async createCourse(req: Request, res: Response, next: NextFunction) {
-    await courseService.createCourse(req, res, next)
-  }
-  async getAllCourses(req: Request, res: Response, next: NextFunction) {
-    await courseService.getAllCourses(req, res, next)
-  }
   async getUser(req: Request, res: Response, next: NextFunction) {
     const { userId } = req.params
     try {

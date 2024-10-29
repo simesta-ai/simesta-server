@@ -4,6 +4,7 @@ model User {
   password                String
   name                    String
   roleId                  String?
+  emailVerified Boolean  @default(false)
   role                    Role?           @relation(fields: [roleId], references: [id])
   createdAt               DateTime        @default(now())
   updatedAt               DateTime        @default(now()) @updatedAt

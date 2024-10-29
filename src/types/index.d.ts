@@ -22,3 +22,14 @@ export type ControllerFunction = (
   res: Response,
   next?: NextFunction
 ) => Promise<void> | void
+
+export interface IResponseBody {
+  message: string
+  success: boolean
+  data?: any
+}
+
+export interface ProviderResponse {
+  error: Error | null
+  data: any
+}
