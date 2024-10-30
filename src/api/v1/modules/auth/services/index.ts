@@ -13,16 +13,19 @@
 
 import UserRepository from '../../user/repository'
 import bcrypt from 'bcryptjs'
-import { ClientError, ServerError } from '../../../../../libs/utils/handlers/error'
+import {
+  ClientError,
+  ServerError,
+} from '../../../../../libs/utils/handlers/error'
 import { ProviderResponse } from '../../../../../types'
 import EmailService from '../../email/services'
 import EmailRepository from '../../email/repository'
 import validate from 'deep-email-validator'
+import otpMail from './otpMail'
 
 const userRepository = new UserRepository()
 const emailService = new EmailService()
 const verificationRepository = new EmailRepository()
-
 
 class AuthService {
   register = async ({
@@ -37,7 +40,7 @@ class AuthService {
     try {
       let error = null
       let data = null
-      const existingUser = await userRepository.findOne({ email })
+      const existingUser = await userRepository.findByEmail(email)
       if (existingUser) {
         error = new ClientError('User already exists')
       } else {
@@ -56,6 +59,7 @@ class AuthService {
             email: createdUser.email,
             emailVerified: createdUser.emailVerified,
           }
+          await this.sendVerificationEmail(createdUser.email)
         }
       }
       return { data, error }
@@ -74,7 +78,7 @@ class AuthService {
     try {
       let error = null
       let data = null
-      const user = await userRepository.findOne({ email })
+      const user = await userRepository.findByEmail(email)
       if (!user) {
         error = new ClientError('User does not exist')
         return { error, data }
@@ -96,81 +100,86 @@ class AuthService {
   }
 
   async sendVerificationEmail(email: string) {
-    let error = null;
-    let data = null;
+    let error = null
+    let data = null
     try {
-      const isEmailValid = await validate({ email, validateRegex: true });
+      const isEmailValid = await validate({ email, validateRegex: true })
       if (!isEmailValid) {
-        error = new ClientError("Invalid email address");
-        return { error, data: null };
+        error = new ClientError('Invalid email address')
+        return { error, data: null }
       }
-      const existingUser = await userRepository.findOne({ email });
+      const existingUser = await userRepository.findByEmail(email)
       if (!existingUser) {
-        error = new ClientError("User does not exist");
-        return { error, data: null };
+        error = new ClientError('User does not exist')
+        return { error, data: null }
       }
-      const otp = Math.floor(1000 + Math.random() * 9000);
-      const hashedOtp = await bcrypt.hash(otp.toString(), 10);
-      const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
-      console.log(new Date(Date.now()), expiresAt);
+      const otp = Math.floor(1000 + Math.random() * 9000)
+      const hashedOtp = await bcrypt.hash(otp.toString(), 10)
+      const expiresAt = new Date(Date.now() + 10 * 60 * 1000)
+      console.log(new Date(Date.now()), expiresAt)
       const newOtp = await verificationRepository.createVerificationCode(
         hashedOtp,
         email,
         expiresAt
-      );
+      )
       if (!newOtp) {
-        error = new ClientError("Verification code could not be created");
-        return { error, data: null };
+        error = new ClientError('Verification code could not be created')
+        return { error, data: null }
       }
-      const html = `<p>Your otp is ${otp}</p>`
-      const sentResult = await emailService.sendMail(email, "Confirm your Simesta Email", undefined, html)
+      const html = otpMail(existingUser.name, otp)
+      const sentResult = await emailService.sendMail(
+        email,
+        'Confirm your Simesta Email',
+        undefined,
+        html
+      )
       if (!sentResult) {
-        error = new ClientError("Could not send verification email");
-        return { error, data: null };
+        error = new ClientError('Could not send verification email')
+        return { error, data: null }
       }
       data = sentResult
-      return { error, data };
+      return { error, data }
     } catch (error: any) {
-      return { error, data: null };
+      return { error, data: null }
     }
   }
   async verifyOtp(email: string, otp: string) {
-    let error = null;
-    let data = null;
+    let error = null
+    let data = null
     try {
-      const foundOtp = await verificationRepository.getVerificationCode(email);
+      const foundOtp = await verificationRepository.getVerificationCode(email)
       if (!foundOtp) {
-        error = new ClientError("Invalid verification code");
+        error = new ClientError('Invalid verification code')
       } else {
-        const otpIsCorrect = bcrypt.compare(otp.toString(), foundOtp.otp);
+        const otpIsCorrect = bcrypt.compare(otp.toString(), foundOtp.otp)
         if (!otpIsCorrect) {
-          error = new ClientError("Invalid verification code");
+          error = new ClientError('Invalid verification code')
         } else {
-          const currentTime = new Date();
+          const currentTime = new Date()
           if (currentTime > foundOtp.expiresAt) {
-            error = new ClientError("Verification code has expired");
+            error = new ClientError('Verification code has expired')
           } else {
-            const updatedUser = await userRepository.updateEmailVerified(email);
+            const updatedUser = await userRepository.updateEmailVerified(email)
             if (!updatedUser) {
-              error = new ServerError("User could not be updated");
+              error = new ServerError('User could not be updated')
             } else {
               data = {
-                message: "Email verified successfully",
+                message: 'Email verified successfully',
                 user: {
                   id: updatedUser.id,
                   name: updatedUser.name,
                   email: updatedUser.email,
                   emailVerified: updatedUser.emailVerified,
                 },
-              };
-              await verificationRepository.deleteVerificationCode(foundOtp.id);
+              }
+              await verificationRepository.deleteVerificationCode(foundOtp.id)
             }
           }
         }
       }
-      return { error, data };
+      return { error, data }
     } catch (error: any) {
-      return { error, data: null };
+      return { error, data: null }
     }
   }
 }

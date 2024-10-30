@@ -15,7 +15,7 @@ class EmailService {
       },
     })
     const mailOptions = {
-      from: process.env.HOST_EMAIL_ADDRESS,
+      from: `Simesta AI <${process.env.HOST_EMAIL_ADDRESS}>`,
       to,
       subject,
       text: text ? text : '',

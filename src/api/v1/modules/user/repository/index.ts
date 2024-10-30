@@ -64,6 +64,11 @@ class UserRepository {
     return foundUser
   }
 
+  findByEmail = async(email: string) => {
+    const foundUser = await this.model.findUnique({ where: { email } })
+    return foundUser
+  }
+
   updateEmailVerified = async(email: string) => {
     try {
       const updatedUser = await this.model.update({

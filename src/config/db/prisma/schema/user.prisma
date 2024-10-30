@@ -13,4 +13,8 @@ model User {
   primaryLearningMethodId String?
   primaryLearningMethod   LearningMethod? @relation("UserLearningMethod")
   courses                 Course[]
+
+  @@index([email]) 
 }
+
+

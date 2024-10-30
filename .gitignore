@@ -3,7 +3,9 @@
 node_modules/
 build/
 tmp/
+public/
 temp/
+migrations/
 logs/
 # Logs
 logs
