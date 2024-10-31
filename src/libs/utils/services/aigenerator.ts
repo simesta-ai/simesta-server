@@ -257,6 +257,7 @@ class AIGenerator {
       prompt += `. Go through these files to know what lectures should be included ${courseFiles}`
     }
     const lecturesText = await this.generateText(prompt)
+    console.log(lecturesText)
 
     // Convert text list to array of lectures
     const lectureList = this.converter.textToArray(lecturesText)

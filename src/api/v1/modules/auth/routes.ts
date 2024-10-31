@@ -35,7 +35,7 @@ const authResponse = (
       throw new AuthError("Unable to login user because user doesn't exist")
     }
     if (user.message == 'Please verify email address to continue') {
-      res.status(200).json({
+      res.status(201).json({
         status: 'success',
         email: user.email,
         message: user.message,

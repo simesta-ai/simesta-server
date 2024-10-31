@@ -59,7 +59,13 @@ class AuthService {
             email: createdUser.email,
             emailVerified: createdUser.emailVerified,
           }
-          await this.sendVerificationEmail(createdUser.email)
+          setImmediate(async () => {
+            try {
+              await this.sendVerificationEmail(createdUser.email);
+            } catch (emailError) {
+              console.error('Failed to send verification email:', emailError);
+            }
+          });
         }
       }
       return { data, error }

@@ -16,8 +16,6 @@ export const populateTopicLecture = async(
     const topicLectures: Array<ITopicLecture> = []
     let newLectures: string[] = []
 
-    console.log("I am populating topic lectures")
-
     newLectures = await aIGenerator.generateLectures(
       courseTitle,
       topicTitle,
