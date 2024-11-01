@@ -42,7 +42,7 @@ const createTopicLectures = async (topicId: string) => {
       if (fileUrls.length > 0) {
         courseFileContent = await Promise.all(
           fileUrls.map(async (url: string) => {
-            const IsCached = await redisService.client.get(url)
+            const IsCached = await redisService.get(url)
             if (IsCached) {
               return IsCached
             }
@@ -59,7 +59,7 @@ const createTopicLectures = async (topicId: string) => {
               error = fileError
             }
             if (data) {
-              await redisService.client.set(url, JSON.stringify(data))
+              await redisService.set(url, JSON.stringify(data))
               return data
             }
           })
@@ -86,7 +86,7 @@ const createTopicLectures = async (topicId: string) => {
   } catch (error) {
     logger.error(error)
   }
-  return { topic: topicTitle, lectures: topicLectures, error: error }
+  return { topic: {id: topicId, title: topicTitle}, lectures: topicLectures, error: error }
 }
 
 export default createTopicLectures

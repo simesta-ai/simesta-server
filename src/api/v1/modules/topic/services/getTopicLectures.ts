@@ -42,7 +42,11 @@ const getTopicWithLectures = async (topicId: string) => {
   } catch (error) {
     logger.error(error)
   }
-  return { topic: topicTitle, lectures: topicLectures, error: error }
+  return {
+    topic: { id: topicId, title: topicTitle },
+    lectures: topicLectures,
+    error: error,
+  }
 }
 
 export default getTopicWithLectures

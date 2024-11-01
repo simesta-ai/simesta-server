@@ -9,7 +9,6 @@ class TopicController {
   async createTopicLectures(req: Request, res: Response, next: NextFunction) {
     try {
       const { topicId } = req.params
-      console.log('topicId', topicId)
       const { topic, lectures, error } = await topicService.createTopicLectures(topicId)
       if (error) {
         throw error

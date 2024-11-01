@@ -12,6 +12,7 @@
  */
 
 import UserRepository from '../../user/repository'
+import { redisService } from '../../../../../libs/utils/services/redis'
 import bcrypt from 'bcryptjs'
 import {
   ClientError,
@@ -22,6 +23,7 @@ import EmailService from '../../email/services'
 import EmailRepository from '../../email/repository'
 import validate from 'deep-email-validator'
 import otpMail from './otpMail'
+import logger from '../../../../../libs/utils/logger'
 
 const userRepository = new UserRepository()
 const emailService = new EmailService()
@@ -40,6 +42,14 @@ class AuthService {
     try {
       let error = null
       let data = null
+
+      const cachedUser = await redisService.hgetall(`user:${email}`)
+
+      if (cachedUser && Object.keys(cachedUser).length > 0) {
+        error = new ClientError('User already exists')
+        return { error, data: null }
+      }
+
       const existingUser = await userRepository.findByEmail(email)
       if (existingUser) {
         error = new ClientError('User already exists')
@@ -53,6 +63,14 @@ class AuthService {
         if (!createdUser) {
           error = new ClientError('User could not be created')
         } else {
+          setImmediate(async () => {
+            try {
+              await redisService.hset(`user:${email}`, createdUser)
+              logger.info(`User with email: ${email} cached successfully`)
+            } catch (error) {
+              logger.error('Failed to cache user:', error)
+            }
+          })
           data = {
             id: createdUser.id,
             name: createdUser.name,
@@ -61,11 +79,11 @@ class AuthService {
           }
           setImmediate(async () => {
             try {
-              await this.sendVerificationEmail(createdUser.email);
+              await this.sendVerificationEmail(createdUser.email)
             } catch (emailError) {
-              console.error('Failed to send verification email:', emailError);
+              logger.error('Failed to send verification email:', emailError)
             }
-          });
+          })
         }
       }
       return { data, error }
@@ -84,19 +102,47 @@ class AuthService {
     try {
       let error = null
       let data = null
-      const user = await userRepository.findByEmail(email)
-      if (!user) {
-        error = new ClientError('User does not exist')
-        return { error, data }
-      }
-      const isCorrect = await bcrypt.compare(password, user.password)
-      if (!isCorrect) error = new ClientError('Incorrect credentials')
-      else {
-        data = {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          emailVerified: user.emailVerified,
+
+      const cachedUser = await redisService.hgetall(`user:${email}`)
+      if (cachedUser && Object.keys(cachedUser).length > 0) {
+        const isCorrect = await bcrypt.compare(password, cachedUser.password)
+        if (!isCorrect) {
+          error = new ClientError('Incorrect credentials')
+        } else {
+          data = {
+            id: cachedUser.id,
+            name: cachedUser.name,
+            email: cachedUser.email,
+            emailVerified: cachedUser.emailVerified,
+          }
+        }
+      } else {
+        const existingUser = await userRepository.findByEmail(email)
+        if (!existingUser) {
+          error = new ClientError('User does not exist')
+        } else {
+          const isCorrect = await bcrypt.compare(
+            password,
+            existingUser.password
+          )
+          if (!isCorrect) {
+            error = new ClientError('Incorrect credentials')
+          } else {
+            setImmediate(async () => {
+              try {
+                await redisService.hset(`user:${email}`, existingUser)
+                logger.info(`User with email: ${email} cached successfully`)
+              } catch (error) {
+                logger.error('Failed to cache user:', error)
+              }
+            })
+            data = {
+              id: existingUser.id,
+              name: existingUser.name,
+              email: existingUser.email,
+              emailVerified: existingUser.emailVerified,
+            }
+          }
         }
       }
       return { error, data }

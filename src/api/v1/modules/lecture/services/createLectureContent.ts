@@ -46,7 +46,7 @@ const createLectureContent = async ({
       if (fileUrls.length > 0) {
         courseFileContent = await Promise.all(
           fileUrls.map(async (url: string) => {
-            const IsCached = await redisService.client.get(url)
+            const IsCached = await redisService.get(url)
             if (IsCached) {
               return IsCached
             }
@@ -63,12 +63,13 @@ const createLectureContent = async ({
               error = fileError
             }
             if (data) {
-              await redisService.client.set(url, JSON.stringify(data))
+              await redisService.set(url, JSON.stringify(data))
               return data
             }
           })
         )
       }
+
 
       // Generate lecture Idea content
       const generatedIdeaContent = await aiGenerator.generateIdeaContent(
@@ -76,6 +77,7 @@ const createLectureContent = async ({
         courseFileContent.filter((content) => content !== undefined),
         learningMethod || undefined
       )
+      console.log(generatedIdeaContent)
 
       if (!generatedIdeaContent || generatedIdeaContent.length === 0) {
         error = new ServerError('Error generating lecture content')

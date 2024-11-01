@@ -1,16 +1,12 @@
-import { RedisClientType, createClient } from 'redis'
+import { createClient, RedisClientType } from '@redis/client'
 import logger from '../logger'
 import dotenv from 'dotenv'
 
 dotenv.config()
 
-interface IRedisService {
-  client: RedisClientType
-  createConnection(): void
-}
 
-class RedisService implements IRedisService {
-  client: RedisClientType
+class RedisService {
+  private client: RedisClientType
   constructor(
     password: string | undefined,
     host: string | undefined,
@@ -43,6 +39,20 @@ class RedisService implements IRedisService {
   async set(key: string, value: string) {
     return this.client.set(key, value)
   }
+  async delete(key: string) {
+    return this.client.del(key)
+  }
+  async hset(key: string, object: Object) {
+    const entry = Object.entries(object).flat()
+    return this.client.hSet(key, entry)
+  }
+  async hget(key: string, field: string) {
+    return this.client.hGet(key, field)
+  }
+  async hgetall(key: string) {
+    return this.client.hGetAll(key)
+  }
+
 }
 const redisService = new RedisService(
   process.env.REDIS_SECRET,

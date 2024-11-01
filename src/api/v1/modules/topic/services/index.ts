@@ -5,12 +5,10 @@ import { ITopicLecture } from '../../../../../types'
 import getTopicWithLectures from './getTopicLectures'
 
 class TopicService {
-
   constructor() {
-    this.createTopicLectures = this.createTopicLectures.bind(this);
-    this.getTopicWithLectures = this.getTopicWithLectures.bind(this);
+    this.createTopicLectures = this.createTopicLectures.bind(this)
+    this.getTopicWithLectures = this.getTopicWithLectures.bind(this)
   }
-
 
   createTopics: (
     courseId: string,
@@ -19,20 +17,18 @@ class TopicService {
     subtopics?: string
   ) => Promise<void> = createTopics
 
-
   //New methods
   createTopicLectures: (topicId: string) => Promise<{
-    topic: string
+    topic: { id: string; title: string }
     lectures: ITopicLecture[]
     error: CustomError | null
   }> = createTopicLectures
 
   getTopicWithLectures: (topicId: string) => Promise<{
-    topic: string
+    topic: { id: string; title: string }
     lectures: ITopicLecture[]
     error: CustomError | null
   }> = getTopicWithLectures
 }
 
 export default TopicService
-

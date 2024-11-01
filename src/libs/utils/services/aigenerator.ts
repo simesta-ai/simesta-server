@@ -177,7 +177,7 @@ class AIGenerator {
 
   async generateIdeaContent(
     lectureTitle: string,
-    courseFiles?: string[],
+    courseFiles?: (string | undefined)[],
     learningMethod?: string
   ): Promise<IIdeaContent[]> {
     let prompt = `Generate a comprehensive and well-explained set of ideas to give a complete understanding of ${lectureTitle}, namely the text explaining the idea itself, (the text is the main explainer of the idea it was actually teaches a user) a short image description that tries to make the idea clearer (optional), do note that the image generated would be for an image model so it doesn't have to be so long, and an optional quiz section that tests the understanding of the idea. If an idea doesn't have an image or quiz section, just leave the section empty. The Quiz section should consisit of sections: question, options, explanation, and correct answer aslo ensure for every questions there is a minimum of 4 options, if you don't have sufficient you can as well leave the Quiz section blank. Ensure that every time every Idea is generated every content section(meaning that an Idea should look like this =  
@@ -251,7 +251,7 @@ class AIGenerator {
     topicTitle: string,
     courseFiles?: string
   ): Promise<string[]> {
-    let prompt = `generate a list of lectures only(not more than 15, in text only, numbered form without description or prelude or formatting and removing the sub lectures) needed to completely learn ${topicTitle} topic in ${courseTitle} course`
+    let prompt = `generate a list of lectures only(can be less than but not more than 15, in text only, numbered form without description, intro or prelude or formatting and removing the sub lectures, just the lecture list) needed to completely learn ${topicTitle} topic in ${courseTitle} course`
 
     if (courseFiles) {
       prompt += `. Go through these files to know what lectures should be included ${courseFiles}`

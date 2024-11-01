@@ -71,7 +71,7 @@ const createCourse = async ({
           error = fileError
         }
         if (fileUrl && data) {
-          await redisService.client.set(fileUrl, JSON.stringify(data))
+          await redisService.set(fileUrl, JSON.stringify(data))
 
         }
 
