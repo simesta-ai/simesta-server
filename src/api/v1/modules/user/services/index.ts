@@ -9,23 +9,34 @@
  */
 import { ideahub_v1alpha } from 'googleapis'
 import UserRepository from '../repository'
+import { redisService } from '../../../../../libs/utils/services/redis'
 import { ClientError } from '../../../../../libs/utils/handlers/error'
+import logger from '../../../../../libs/utils/logger'
 
 const userRepository = new UserRepository()
 
 class UserService {
   async getUserById(id: string) {
-    const user = await userRepository.findById(id)
-    if (!user) {
-      throw new ClientError('User not found')
+    try {
+      const cachedUser = await redisService.hgetall(`user:${id}`)
+      if (cachedUser && Object.keys(cachedUser).length > 0) {
+        return cachedUser
+      }
+      const user = await userRepository.findById(id)
+      if (!user) {
+        throw new ClientError('User not found')
+      }
+      const data = {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        emailVerified: user.emailVerified,
+      }
+      return data
+    } catch (error) {
+      logger.error('Failed to get user by id', error)
+      return null
     }
-    const data = {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      emailVerified: user.emailVerified,
-    }
-    return data
   }
 }
 

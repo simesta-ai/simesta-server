@@ -4,7 +4,6 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
-
 class RedisService {
   private client: RedisClientType
   constructor(
@@ -14,7 +13,7 @@ class RedisService {
   ) {
     this.client = createClient({
       password: password,
-      url: `redis://${host}:6379`
+      url: `redis://${host}:6379`,
     })
   }
 
@@ -32,6 +31,10 @@ class RedisService {
     }
   }
 
+  async keys(pattern: string) {
+    return this.client.keys(pattern)
+  }
+
   async get(key: string) {
     return this.client.get(key)
   }
@@ -43,16 +46,68 @@ class RedisService {
     return this.client.del(key)
   }
   async hset(key: string, object: Object) {
-    const entry = Object.entries(object).flat()
-    return this.client.hSet(key, entry)
+    try {
+      for (const [field, value] of Object.entries(object)) {
+        if (value == null || value == undefined) {
+          await this.client.hSet(key, field, 'null')
+        } else {
+          await this.client.hSet(key, field, JSON.stringify(value))
+        }
+      }
+      logger.info(`Successfully cached data for key: ${key}`)
+    } catch (error) {
+      logger.error(`Failed to cache data for key: ${key}`, error)
+    }
   }
   async hget(key: string, field: string) {
-    return this.client.hGet(key, field)
+    try {
+      const data = await this.client.hGet(key, field)
+      if (data == 'true') {
+        return true
+      } else if (data == 'false') {
+        return false
+      } else if (data == 'null') {
+        return null
+      } else if (Number(data)) {
+        return Number(data)
+      } else {
+        return data
+      }
+    } catch (error) {
+      logger.error(`Failed to get data for key: ${key}`, error)
+      return null
+    }
   }
   async hgetall(key: string) {
-    return this.client.hGetAll(key)
+    const result: Record<string, any> = {}
+    try {
+      const data = await this.client.hGetAll(key)
+      for (const [field, value] of Object.entries(data)) {
+        if (value == 'true') {
+          result[field] = true
+        } else if (value == 'false') {
+          result[field] = false
+        } else if (value == 'null') {
+          result[field] = null
+        } else if (Number(value)) {
+          result[field] = Number(value)
+        } else {
+          result[field] = JSON.parse(value)
+        }
+      }
+      return result
+    } catch (error) {
+      logger.error(`Failed to get data for key: ${key}`, error)
+      return null
+    }
   }
-
+  async updateField(key: string, field: string, value: any) {
+    try {
+      await this.client.hSet(key, field, value.toString())
+    } catch (error) {
+      logger.error(`Failed to update data for key: ${key}`, error)
+    }
+  }
 }
 const redisService = new RedisService(
   process.env.REDIS_SECRET,

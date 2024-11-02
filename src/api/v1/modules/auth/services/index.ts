@@ -66,6 +66,7 @@ class AuthService {
           setImmediate(async () => {
             try {
               await redisService.hset(`user:${email}`, createdUser)
+              await redisService.hset(`user:${createdUser.id}`, createdUser)
               logger.info(`User with email: ${email} cached successfully`)
             } catch (error) {
               logger.error('Failed to cache user:', error)
@@ -131,6 +132,7 @@ class AuthService {
             setImmediate(async () => {
               try {
                 await redisService.hset(`user:${email}`, existingUser)
+                await redisService.hset(`user:${existingUser.id}`, existingUser)
                 logger.info(`User with email: ${email} cached successfully`)
               } catch (error) {
                 logger.error('Failed to cache user:', error)
@@ -215,6 +217,23 @@ class AuthService {
             if (!updatedUser) {
               error = new ServerError('User could not be updated')
             } else {
+              setImmediate(async () => {
+                try {
+                  await redisService.updateField(
+                    `user:${email}`,
+                    'emailVerified',
+                    true
+                  )
+                  await redisService.updateField(
+                    `user:${updatedUser.id}`,
+                    'emailVerified',
+                    true
+                  )
+                  logger.info(`User with email: ${email} verified successfully`)
+                } catch (error) {
+                  logger.error('Failed to update user:', error)
+                }
+              })
               data = {
                 message: 'Email verified successfully',
                 user: {

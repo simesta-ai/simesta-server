@@ -15,6 +15,6 @@ router.route('/:userId/course').get(courseController.getAllCourses).post(
 
 router.get('/users/:userId', courseController.getUserCourses)
 
-router.route('/:courseId').get(courseController.getCourseById).put().delete()
+router.route('/:courseId/users/:userId').get(courseController.getCourseById).put().delete()
 
 export default router

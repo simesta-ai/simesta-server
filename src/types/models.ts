@@ -3,16 +3,28 @@ export interface ICourse {
   title: string
   description: string
   completed?: boolean
-  inProgress?: boolean
-  courseType?: string
-  difficultyLevel?: string
-  notes?: string
+  inProgress?: boolean | null
+  courseType?: string | null
+  difficultyLevel?: string | null
+  notes?: string | null
   courseFiles?: string[]
   image?: string
-  category: string
-  user: string | IUser
+  category: string | null
+  userId: string
   createdAt?: Date
   updatedAt?: Date
+}
+
+export interface ITopic {
+  id: string;
+  title: string;
+  position: number;
+  completed: boolean | null;
+  inProgress: boolean | null;
+  courseId: string;
+  lectureId: string | null;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface IUser {

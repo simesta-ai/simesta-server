@@ -1,7 +1,7 @@
 import createTopics from './createTopics'
 import createTopicLectures from './HandleTopicLecture'
 import { CustomError } from '../../../../../libs/utils/handlers/error'
-import { ITopicLecture } from '../../../../../types'
+import { ITopic, ITopicLecture } from '../../../../../types'
 import getTopicWithLectures from './getTopicLectures'
 
 class TopicService {
@@ -15,7 +15,7 @@ class TopicService {
     courseTitle: string,
     courseFiles?: any,
     subtopics?: string
-  ) => Promise<void> = createTopics
+  ) => Promise<ITopic[] | undefined> = createTopics
 
   //New methods
   createTopicLectures: (topicId: string) => Promise<{

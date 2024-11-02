@@ -1,4 +1,5 @@
 import prisma from '../../../../../config/db/prisma'
+import { ICourse } from '../../../../../types'
 
 class CourseRepository {
   model = prisma.course
@@ -17,24 +18,29 @@ class CourseRepository {
     image: string
     userId: string
     courseFiles?: any
-  }): Promise<any> => {
-    const course = await this.model.create({
-      data: {
-        title,
-        description,
-        category,
-        img: image,
-        userId,
-        courseFiles: courseFiles
-          ? {
-              create: courseFiles.map((file: string) => ({
-                url: file,
-              })),
-            }
-          : undefined,
-      },
-    })
-    return course
+  }): Promise<ICourse | null> => {
+    try {
+      const course = await this.model.create({
+        data: {
+          title,
+          description,
+          category,
+          img: image,
+          userId,
+          courseFiles: courseFiles
+            ? {
+                create: courseFiles.map((file: string) => ({
+                  url: file,
+                })),
+              }
+            : undefined,
+        },
+      })
+      return course
+    } catch (error) {
+      console.log(error)
+      return null
+    }
   }
 
   findById = async (id: string) => {
