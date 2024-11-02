@@ -35,6 +35,7 @@ const createCourse = async ({
 }> => {
   let error: CustomError | null = null
   try {
+    console.log(userId)
     const user = await userRepository.findById(userId)
     if (!user) {
       return {

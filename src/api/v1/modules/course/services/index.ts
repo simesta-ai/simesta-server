@@ -26,7 +26,7 @@ class CourseService {
 
   getAllCourses: () => Promise<any> = getAllCourses
 
-  getCourseById: (id: string, userId: string) => Promise<Course>  = getCourseById
+  getCourseById: (id: string, userId: string) => Promise<any>  = getCourseById
 }
 
 export default CourseService

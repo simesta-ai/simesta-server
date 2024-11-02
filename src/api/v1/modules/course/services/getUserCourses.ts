@@ -74,7 +74,7 @@ const getUserCourses = async (
                   i++
                 }
               }
-              coursesList.push({
+              courses.push({
                 id: courseData.id,
                 title: courseData.title,
                 img: courseData.img ? courseData.img : 'null',
