@@ -13,7 +13,6 @@ import logger from '../../../libs/utils/logger'
 import swaggerUi from 'swagger-ui-express'
 import { documentationSetup } from '../docs/setup'
 
-
 // CONFIGURE ENVIRONMENT VARIABLES
 dotenv.config()
 
@@ -26,10 +25,10 @@ interface IcorsOptions {
 
 class AppController {
   private app: express.Application
-  private port: string|number
+  private port: string | number
   private readonly corsOptions: IcorsOptions
 
-  constructor(app: express.Application, port: string|number) {
+  constructor(app: express.Application, port: string | number) {
     this.app = app
     this.port = port
     this.corsOptions = {
@@ -77,6 +76,7 @@ class AppController {
     appRouter.configUserRoutes()
     appRouter.configureCourseRoutes()
     appRouter.configureChatRoutes()
+    appRouter.configureNotificationRoutes()
   }
 
   // Setup Express Middlewares

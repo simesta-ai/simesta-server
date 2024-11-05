@@ -10,11 +10,13 @@ import { ICreateCourse } from '../../../../../types'
 import TopicService from '../../topic/services'
 import BucketManager from '../../../../../libs/utils/services/BucketManager'
 import { redisService } from '../../../../../libs/utils/services/redis'
+import NotificationService from '../../notifications/services/notifications'
 
 // Repositories
 import CourseRepository from '../repository'
 import UserRepository from '../../user/repository'
 import logger from '../../../../../libs/utils/logger'
+import randomReminder from '../../notifications/services/randomReminder'
 
 const AIGen = new AIGenerator()
 const fileService = new FileService()
@@ -23,6 +25,7 @@ const topicService = new TopicService()
 const userRepository = new UserRepository()
 const courseRepository = new CourseRepository()
 const bucketManager = new BucketManager()
+const notificationService = new NotificationService()
 
 const createCourse = async ({
   userId,
@@ -130,6 +133,24 @@ const createCourse = async ({
               )
             }
           })
+        }
+        if (newCourse && newCourse.id) {
+          try {
+            const notification = randomReminder(newCourse.title)
+            await notificationService.addNotificationJob(
+              userId,
+              newCourse.id,
+              'reminder',
+              notification.title,
+              notification.subtitle,
+              notification.body,
+              24 * 60 * 60 * 1000 // 24 hours
+            )
+          } catch (err) {
+            logger.error(
+              `Failed to cache course ${newCourse.id} for user ${userId}`
+            )
+          }
         }
       })
 
