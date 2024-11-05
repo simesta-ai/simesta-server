@@ -5,6 +5,7 @@ import courseRoutes from '../modules/course/routes'
 import topicRoutes from '../modules/topic/routes'
 import lectureRoutes from '../modules/lecture/routes'
 import chatRoutes from '../modules/chat/routes'
+import notificationRoutes from '../modules/notifications/routes'
 import JwtService, { IJwt } from '../../../libs/utils/services/jwt'
 import { errorHandler } from '../../../libs/utils/handlers/error'
 
@@ -19,7 +20,9 @@ class Router {
 
   public configRootRoutes() {
     this.app.get('/', (req: express.Request, res: express.Response) => {
-      res.send('Simesta API - Visit https://github.com/simesta-ai/simesta-server for usage.')
+      res.send(
+        'Simesta API - Visit https://github.com/simesta-ai/simesta-server for usage.'
+      )
     })
   }
 
@@ -33,9 +36,15 @@ class Router {
 
   public configureCourseRoutes() {
     this.app.use('/api/courses', this.jwtService.verifyToken, courseRoutes)
-    this.app.use('/api/courses',this.jwtService.verifyToken, topicRoutes)
-    this.app.use('/api/courses',this.jwtService.verifyToken, lectureRoutes)
-
+    this.app.use('/api/courses', this.jwtService.verifyToken, topicRoutes)
+    this.app.use('/api/courses', this.jwtService.verifyToken, lectureRoutes)
+  }
+  public configureNotificationRoutes() {
+    this.app.use(
+      '/api/notifications',
+      this.jwtService.verifyToken,
+      notificationRoutes
+    )
   }
   public configureChatRoutes() {
     this.app.use('/api/chat', chatRoutes)
