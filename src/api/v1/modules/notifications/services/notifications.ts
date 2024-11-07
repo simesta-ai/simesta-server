@@ -6,7 +6,6 @@ import logger from '../../../../../libs/utils/logger'
 import CourseRepository from '../../course/repository'
 import { redisService } from '../../../../../libs/utils/services/redis'
 
-
 const redisConnection = {
   host: process.env.REDIS_HOST,
   port: Number(process.env.REDIS_PORT),
@@ -30,11 +29,10 @@ class NotificationService {
     this.initializeNotificationWorker()
   }
 
-  private async sendNotification(
+  async sendNotification(
     notificationTitle: string,
     notificationSubtitle: string,
     notificationBody: string,
-
     expoPushToken: string
   ) {
     if (!Expo.isExpoPushToken(expoPushToken)) {
@@ -112,8 +110,6 @@ class NotificationService {
               `userId:${userId}:notification`,
               notificationDetails
             )
-          } else {
-            console.log('Na me dey run')
           }
         } catch (error) {
           console.error('Failed to send notification:', error)

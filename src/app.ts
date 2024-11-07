@@ -1,6 +1,6 @@
 import express from 'express'
 import dotenv from 'dotenv'
-import AppController from './api/v1/initiators/appContoller'
+import AppController from './api/v1/initiators/appController'
 import { Server } from 'socket.io'
 import SocketController from './api/v1/modules/chat/socket'
 import 'reflect-metadata'
