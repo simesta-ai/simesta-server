@@ -24,20 +24,21 @@ class AIGenerator {
     this.genAI = new GoogleGenerativeAI(
       process.env.GOOGLE_CLOUD_API_KEY as string
     )
-    this.textModel = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
+    this.textModel = this.genAI.getGenerativeModel({
+      model: 'gemini-1.5-flash',
+    })
     this.clarifaiModel = ClarifaiStub.grpc()
     this.clarifaiMetadata = new grpc.Metadata()
     this.clarifaiMetadata.set('authorization', 'Key ' + process.env.PAT)
     this.converter = new Converter()
     this.cloudinaryService = new CloudinaryService()
-
   }
 
   private async generateText(prompt: string): Promise<string> {
     try {
-      const result = await this.textModel.generateContent(prompt);
-      const response = result.response;
-      const text = response.text();
+      const result = await this.textModel.generateContent(prompt)
+      const response = result.response
+      const text = response.text()
       return text
 
       // const textResponse: string = await new Promise((resolve, reject) => {
@@ -201,7 +202,8 @@ class AIGenerator {
     therei no need to add json or any character to the response, just the JSON object
 
     Generate as much ideas as possible for the lecture ${lectureTitle} to give a comprehensive understanding of the topic.
-    
+    there could be as well one choice answer questions in that case the options should be an empty array like so - "options":[], make sure there 
+    is at least one idea content that has an open ended question(i.e without options)  .
 
  starting here-> {
     "ideaContent": [
@@ -226,7 +228,18 @@ class AIGenerator {
             }
         }
     ]
-}<-ending here`
+}<-ending here
+    NB: an empty option doesn't mean an empty quiz section, it means the question is open ended and doesn't require options, like so
+     {
+            "text": "Operators are special symbols that perform specific operations on values.",
+            "imageDescription": "A diagram showing different types of operators with their symbols and descriptions.",
+            "quiz": {
+                "question": "Which of the following is NOT a valid arithmetic operator?",
+                "options": [],
+                "explanation": "The caret symbol (^) is used for bitwise XOR.",
+                "correct_answer": "^"
+            }
+`
 
     if (courseFiles) {
       prompt += ` Reference these provided files as well when generating the lecture ideas: ${courseFiles.join(

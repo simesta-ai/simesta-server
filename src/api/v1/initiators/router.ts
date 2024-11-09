@@ -35,9 +35,9 @@ class Router {
   }
 
   public configureCourseRoutes() {
-    this.app.use('/api/courses', this.jwtService.verifyToken, courseRoutes)
-    this.app.use('/api/courses', this.jwtService.verifyToken, topicRoutes)
-    this.app.use('/api/courses', this.jwtService.verifyToken, lectureRoutes)
+    this.app.use('/api/courses', courseRoutes)
+    this.app.use('/api/courses', topicRoutes)
+    this.app.use('/api/courses', lectureRoutes)
   }
   public configureNotificationRoutes() {
     this.app.use(

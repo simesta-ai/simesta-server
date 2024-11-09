@@ -28,7 +28,7 @@ export interface ILectureContent {
 
 interface QuizSection {
   question?: string;
-  options?: string[];
+  options?: string[] | null;
   explanation?: string;
   correct_answer?: string;
 }
