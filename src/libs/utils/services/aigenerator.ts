@@ -230,6 +230,7 @@ class AIGenerator {
     ]
 }<-ending here
     NB: an empty option doesn't mean an empty quiz section, it means the question is open ended and doesn't require options, like so
+    make at least half the quiz present section have an open ended question.
      {
             "text": "Operators are special symbols that perform specific operations on values.",
             "imageDescription": "A diagram showing different types of operators with their symbols and descriptions.",
@@ -239,6 +240,7 @@ class AIGenerator {
                 "explanation": "The caret symbol (^) is used for bitwise XOR.",
                 "correct_answer": "^"
             }
+            
 `
 
     if (courseFiles) {
