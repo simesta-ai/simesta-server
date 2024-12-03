@@ -77,7 +77,6 @@ const createLectureContent = async ({
         courseFileContent.filter((content) => content !== undefined),
         learningMethod || undefined
       )
-      console.log(generatedIdeaContent)
 
       if (!generatedIdeaContent || generatedIdeaContent.length === 0) {
         error = new ServerError('Error generating lecture content')

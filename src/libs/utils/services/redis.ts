@@ -1,4 +1,4 @@
-import { createClient, RedisClientType } from '@redis/client'
+import { createClient, RedisClientType } from 'redis'
 import logger from '../logger'
 import dotenv from 'dotenv'
 
@@ -13,7 +13,10 @@ class RedisService {
   ) {
     this.client = createClient({
       password: password,
-      url: `redis://${host}:6379`,
+      socket: {
+        host: host,
+        port: port
+      }
     })
   }
 
@@ -106,6 +109,13 @@ class RedisService {
       await this.client.hSet(key, field, value.toString())
     } catch (error) {
       logger.error(`Failed to update data for key: ${key}`, error)
+    }
+  }
+  async setExpirationTime(key: string, time: number) {
+    try {
+      await this.client.expire(key, time)
+    } catch (error) {
+      logger.error(`Failed to set expiration time for key: ${key}`, error)
     }
   }
 }

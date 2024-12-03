@@ -5,7 +5,6 @@ import session from 'express-session'
 import cookiepParser from 'cookie-parser'
 import bodyParser from 'body-parser'
 import helmet from 'helmet'
-import passport from 'passport'
 import dotenv from 'dotenv'
 import ApiRouter from '../initiators/router'
 import { initializeRedis } from '../../../libs/utils/services/redis'
@@ -64,7 +63,7 @@ class AppController {
         secret: process.env.SESSION_SECRET as string,
         resave: false,
         saveUninitialized: true,
-        cookie: { secure: false },
+        cookie: { secure: true },
       })
     )
   }

@@ -67,6 +67,8 @@ class AuthService {
             try {
               await redisService.hset(`user:${email}`, createdUser)
               await redisService.hset(`user:${createdUser.id}`, createdUser)
+              await redisService.setExpirationTime(`user:${createdUser.id}`, 172800)
+              await redisService.setExpirationTime(`user:${email}`, 172800)
               logger.info(`User with email: ${email} cached successfully`)
             } catch (error) {
               logger.error('Failed to cache user:', error)
@@ -133,6 +135,8 @@ class AuthService {
               try {
                 await redisService.hset(`user:${email}`, existingUser)
                 await redisService.hset(`user:${existingUser.id}`, existingUser)
+              await redisService.setExpirationTime(`user:${existingUser.id}`, 172800)
+              await redisService.setExpirationTime(`user:${email}`, 172800)
                 logger.info(`User with email: ${email} cached successfully`)
               } catch (error) {
                 logger.error('Failed to cache user:', error)

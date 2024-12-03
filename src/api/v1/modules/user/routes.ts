@@ -18,4 +18,5 @@ const userController = new UserController()
 router.get('/:userId', userController.getUser)
 
 
+
 export default router
