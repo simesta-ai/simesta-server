@@ -8,6 +8,7 @@ router
   .post(lectureController.createLectureContent)
   .get(lectureController.getLectureContent)
 
+
 // router
 //   .route('/course/:courseId/topic/lecture/:lectureId')
 //   .get(userController.getLecture) => get lectureContent

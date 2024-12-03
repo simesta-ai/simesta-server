@@ -9,7 +9,7 @@ import logger from '../../../../../libs/utils/logger'
 import CourseRepository from '../../course/repository'
 import { redisService } from '../../../../../libs/utils/services/redis'
 
-const redisConnection = {
+export const redisConnection = {
   host: process.env.REDIS_HOST,
   port: Number(process.env.REDIS_PORT),
   password: process.env.REDIS_SECRET,

@@ -125,6 +125,14 @@ class RedisService {
       logger.error(`Failed to update data for key: ${key}`, error)
     }
   }
+
+  async setExpirationTime(key: string, time: number) {
+    try {
+      await this.client.expire(key, time)
+    } catch (error) {
+      logger.error(`Failed to set expiration time for key: ${key}`, error)
+    }
+  }
 }
 const redisService = new RedisService(
   process.env.REDIS_SECRET,

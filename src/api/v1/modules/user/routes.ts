@@ -16,6 +16,8 @@ const router = express.Router()
 const userController = new UserController()
 
 router.get('/:userId', userController.getUser)
+router.get('/:userId/streak', userController.getStreak)
+router.patch('/:userId/completed-a-lecture', userController.updateLastLearningDate)
 
 
 
