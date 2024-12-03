@@ -85,10 +85,21 @@ class LectureRepository {
               },
             },
           })
+
           await prisma.answer.create({
             data: {
               text: content.quiz?.correct_answer ?? '',
               quizId: createdQuiz.id,
+            },
+          })
+        }
+        if (content.oneChoice) {
+          await prisma.oneChoice.create({
+            data: {
+              question: content.oneChoice?.question ?? '',
+              explanation: content.oneChoice.explanation,
+              correct_answer: content.oneChoice.correct_answer,
+              ideaContentId: createdContent.id,
             },
           })
         }
@@ -110,6 +121,7 @@ class LectureRepository {
                 answer: true,
               },
             },
+            oneChoice: true,
           },
         },
         videos: true,

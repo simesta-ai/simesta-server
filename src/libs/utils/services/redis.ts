@@ -12,8 +12,11 @@ class RedisService {
     port: number
   ) {
     this.client = createClient({
-      password: password,
-      url: `redis://${host}:6379`,
+      password,
+      socket: {
+        host,
+        port,
+      },
     })
   }
 

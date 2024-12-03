@@ -202,45 +202,45 @@ class AIGenerator {
     therei no need to add json or any character to the response, just the JSON object
 
     Generate as much ideas as possible for the lecture ${lectureTitle} to give a comprehensive understanding of the topic.
-    there could be as well one choice answer questions in that case the options should be an empty array like so - "options":[], make sure there 
-    is at least one idea content that has an open ended question(i.e without options)  .
+    ensure the options are strictly an array of separate strings,
 
  starting here-> {
     "ideaContent": [
         {
             "text": "Operators are special symbols that perform specific operations on values.",
-            "imageDescription": "A diagram showing different types of operators with their symbols and descriptions.",||"imageDescription":"" (if an image isn't intended for the idea content)
+            "imageDescription": "A diagram showing different types of operators with their symbols and descriptions.",||"imageDescription":"" (if an image isn't intended for the idea content),
             "quiz": {
                 "question": "Which of the following is NOT a valid arithmetic operator?",
-                "options": ["+", "-", "*", "/", "%", "^"] || ""(if the question is open ended),
+                "options": ["+", "-", "*", "/", "%", "^"],
                 "explanation": "The caret symbol (^) is used for bitwise XOR.",
                 "correct_answer": "^"
-            }||"quiz":{""} (if the quiz section is not present)
+            }||"quiz":"" (if the quiz section is not present),
+            "oneChoice":{
+                "question": "Which of the following is NOT a valid arithmetic operator?",
+                "explanation": "The caret symbol (^) is used for bitwise XOR."
+                "correct_answer": "^"
+            }||"oneChoice":"" (if the one choice isn't present)
         }
         {
             "text": "Operators are special symbols that perform specific operations on values.",
             "imageDescription": "A diagram showing different types of operators with their symbols and descriptions.",
             "quiz": {
                 "question": "Which of the following is NOT a valid arithmetic operator?",
-                "options": ["+", "-", "*", "/", "%", "^"],
+                "options": ["+", "-", "*", "/", "%", "^"], 
                 "explanation": "The caret symbol (^) is used for bitwise XOR.",
                 "correct_answer": "^"
-            }
+            },
+            "oneChoice":{
+                "question": "Which of the following is NOT a valid arithmetic operator?",
+                "explanation": "The caret symbol (^) is used for bitwise XOR."
+                "correct_answer": "^"
+            }||"oneChoice":"" (if the one choice isn't present)
+        }
         }
     ]
 }<-ending here
-    NB: an empty option doesn't mean an empty quiz section, it means the question is open ended and doesn't require options, like so
-    make at least half the quiz present section have an open ended question.
-     {
-            "text": "Operators are special symbols that perform specific operations on values.",
-            "imageDescription": "A diagram showing different types of operators with their symbols and descriptions.",
-            "quiz": {
-                "question": "Which of the following is NOT a valid arithmetic operator?",
-                "options": [],
-                "explanation": "The caret symbol (^) is used for bitwise XOR.",
-                "correct_answer": "^"
-            }
-            
+
+    NB: There can be either a one choice section or a quiz section, but at least half of the idea contents should be one choice questions and the other half,  quiz questions. But then ensure the both sections are present in the idea content, if not present, leave the section as an empty string like so - "".
 `
 
     if (courseFiles) {
