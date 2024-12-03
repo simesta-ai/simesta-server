@@ -3,6 +3,7 @@ import NotificationService from './notifications'
 import { redisService } from '../../../../../libs/utils/services/redis'
 import logger from '../../../../../libs/utils/logger'
 import randomDailyNotification from './randomDailyNotifications'
+import { string } from 'joi'
 
 const notificationService = new NotificationService()
 
@@ -18,7 +19,7 @@ const fetchTokenAndTriggerNotification = async () => {
     const validTokens = tokens.filter(Boolean)
     for (const token of validTokens) {
       try {
-         const notification = randomDailyNotification()
+        const notification = randomDailyNotification()
         await notificationService.sendNotification(
           notification.title,
           notification.subtitle,

@@ -43,29 +43,25 @@ class LectureRepository {
     videos: { id: string }[],
     ideaContents: IIdeaContent[]
   ): Promise<any> => {
-    // Step 1: Use upsert to create or update videos (this will ensure the relationship exists properly)
     await Promise.all(
       videos.map(async (video) => {
         await prisma.video.upsert({
           where: { id: video.id },
-          update: { lectureId: id }, // Update if the video already exists
-          create: { id: video.id, lectureId: id }, // Create if the video doesn't exist
+          update: { lectureId: id },
+          create: { id: video.id, lectureId: id },
         })
       })
     )
 
-    // Step 2: Update the main entity with basic fields and connect the videos (ensure the videos exist first)
     const update = await this.model.update({
       where: { id },
       data: {
         videos: {
-          // If the videos already exist, use `connect` to establish the relationship
           connect: videos.map((video) => ({ id: video.id })),
         },
       },
     })
 
-    // Step 3: Use individual create operations for ideaContents and their nested quizzes
     await Promise.all(
       ideaContents.map(async (content) => {
         const createdContent = await prisma.ideaContent.create({
@@ -89,10 +85,21 @@ class LectureRepository {
               },
             },
           })
+
           await prisma.answer.create({
             data: {
               text: content.quiz?.correct_answer ?? '',
               quizId: createdQuiz.id,
+            },
+          })
+        }
+        if (content.oneChoice) {
+          await prisma.oneChoice.create({
+            data: {
+              question: content.oneChoice?.question ?? '',
+              explanation: content.oneChoice.explanation,
+              correct_answer: content.oneChoice.correct_answer,
+              ideaContentId: createdContent.id,
             },
           })
         }
@@ -114,6 +121,7 @@ class LectureRepository {
                 answer: true,
               },
             },
+            oneChoice: true,
           },
         },
         videos: true,

@@ -27,16 +27,23 @@ export interface ILectureContent {
 }
 
 interface QuizSection {
-  question?: string;
-  options?: string[];
-  explanation?: string;
-  correct_answer?: string;
+  question?: string
+  options?: string[] | null
+  explanation?: string
+  correct_answer?: string
+}
+
+interface OneChoice {
+  question?: string
+  explanation?: string
+  correct_answer?: string
 }
 
 export interface IIdeaContent {
-  text: string;
-  imageDescription?: string;
-  quiz?: QuizSection;
+  text: string
+  imageDescription?: string
+  quiz?: QuizSection
+  oneChoice?: OneChoice
 }
 
 export interface ITopicLecture {

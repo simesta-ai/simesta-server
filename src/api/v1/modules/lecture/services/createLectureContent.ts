@@ -70,7 +70,6 @@ const createLectureContent = async ({
         )
       }
 
-
       // Generate lecture Idea content
       const generatedIdeaContent = await aiGenerator.generateIdeaContent(
         lecture.title,
@@ -82,7 +81,6 @@ const createLectureContent = async ({
         error = new ServerError('Error generating lecture content')
         throw error
       }
-
       lectureContent.ideaContent = generatedIdeaContent
 
       // Generate video content
