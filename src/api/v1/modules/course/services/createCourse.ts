@@ -144,7 +144,7 @@ const createCourse = async ({
               notification.title,
               notification.subtitle,
               notification.body,
-              24 * 60 * 60 * 1000 // 24 hours
+              24 * 60 * 1000 // 24 hours
             )
           } catch (err) {
             logger.error(

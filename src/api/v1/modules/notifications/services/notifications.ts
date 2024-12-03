@@ -1,6 +1,9 @@
 import { Queue, Worker } from 'bullmq'
 import dotenv from 'dotenv'
-import { Expo, ExpoPushMessage } from 'expo-server-sdk'
+import {
+  Expo,
+  ExpoPushMessage,
+} from 'expo-server-sdk'
 dotenv.config()
 import logger from '../../../../../libs/utils/logger'
 import CourseRepository from '../../course/repository'
@@ -53,9 +56,13 @@ class NotificationService {
     ]
 
     try {
-      const ticketChunk = await this.expo.sendPushNotificationsAsync(messages)
-      console.log('Successfully sent notification:', ticketChunk)
-      logger.info('Successfully sent notification:', ticketChunk)
+      const ticketChunk = (await this.expo.sendPushNotificationsAsync(
+        messages
+      )) as any
+      if (ticketChunk[0].id) {
+        logger.info('Successfully sent notification:', ticketChunk)
+        return ticketChunk[0].id
+      }
     } catch (error) {
       console.error('Error sending Expo push notification:', error)
       logger.error('Error sending Expo push notification:', error)
@@ -67,6 +74,7 @@ class NotificationService {
     const options: Intl.DateTimeFormatOptions = {
       weekday: 'short',
       day: '2-digit',
+      month: 'short',
       year: 'numeric',
     }
     return date.toLocaleDateString('en-US', options)
@@ -89,7 +97,7 @@ class NotificationService {
           const course = await courseRepository.findById(courseId)
           console.log('course:', course)
           if (course && !course?.completed) {
-            await this.sendNotification(
+            const notificationId = await this.sendNotification(
               notificationTitle,
               notificationSubtitle,
               notificationBody,
@@ -107,7 +115,7 @@ class NotificationService {
             }
             //Save notification to cache
             await redisService.hset(
-              `userId:${userId}:notification`,
+              `userId:${userId}:notification:${notificationId}`,
               notificationDetails
             )
           }
