@@ -128,6 +128,26 @@ class UserService {
       logger.error('Failed to monitor user streak', error)
     }
   }
+
+  async updateLastLearning(userId: string) {
+    try {
+      let data = null;
+      let error = null;
+      const user = await userRepository.findById(userId)
+      if (!user) {
+        error = new ClientError('User not found')
+        return { data, error }
+      }
+      const updatedUser = await userRepository.updateLastLearning(userId)
+      if (!updatedUser) {
+        error =  new ClientError('Failed to update user last learning date')
+      }
+      return { data: updatedUser, error: null}
+    } catch (error) {
+      logger.error('Failed to update last learning date', error)
+      return { data: null, error }
+    }
+  }
 }
 
 export default UserService

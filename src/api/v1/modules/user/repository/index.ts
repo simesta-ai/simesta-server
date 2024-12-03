@@ -92,6 +92,17 @@ class UserRepository {
       return null
     }
   }
+  updateLastLearning = async (userId: string) => {
+    try {
+      const updatedUser = await this.model.update({
+        where: { id: userId },
+        data: { lastLearningDate: new Date() },
+      })
+      return updatedUser
+    } catch (error) {
+      return null
+    }
+  }
 }
 
 export default UserRepository
