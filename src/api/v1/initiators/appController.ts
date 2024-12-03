@@ -15,6 +15,7 @@ import {
   dailyNotifications,
   triDailyNotifications,
 } from '../modules/notifications/services/notificationCron'
+import { dailyStreakMonitoring } from '../modules/user/services/streaksCron'
 
 // CONFIGURE ENVIRONMENT VARIABLES
 dotenv.config()
@@ -84,6 +85,7 @@ class AppController {
   private setupCronJobs() {
     dailyNotifications.start()
     triDailyNotifications.start()
+    dailyStreakMonitoring.start()
   }
 
   // Setup Express Middlewares

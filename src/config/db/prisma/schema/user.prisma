@@ -4,8 +4,10 @@ model User {
   password                String
   name                    String
   roleId                  String?
-  emailVerified Boolean  @default(false)
+  emailVerified           Boolean         @default(false)
   role                    Role?           @relation(fields: [roleId], references: [id])
+  lastLearningDate        DateTime        @default(now())
+  streakCount             Int             @default(0)
   createdAt               DateTime        @default(now())
   updatedAt               DateTime        @default(now()) @updatedAt
   age                     Int?
@@ -14,7 +16,5 @@ model User {
   primaryLearningMethod   LearningMethod? @relation("UserLearningMethod")
   courses                 Course[]
 
-  @@index([email]) 
+  @@index([email])
 }
-
-

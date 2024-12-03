@@ -26,7 +26,7 @@ class UserRepository {
     password: string
   }): Promise<IUser | null> => {
     try {
-      const newUser = await prisma.$transaction(async (prisma:any) => {
+      const newUser = await prisma.$transaction(async (prisma: any) => {
         const foundUser = await prisma.user.findUnique({ where: { email } })
         if (foundUser)
           throw new Error(`User with email ${email} already exists`)
@@ -64,20 +64,32 @@ class UserRepository {
     return foundUser
   }
 
-  findByEmail = async(email: string) => {
+  findByEmail = async (email: string) => {
     const foundUser = await this.model.findUnique({ where: { email } })
     return foundUser
   }
 
-  updateEmailVerified = async(email: string) => {
+  updateEmailVerified = async (email: string) => {
     try {
       const updatedUser = await this.model.update({
         where: { email },
         data: { emailVerified: true },
-      });
-      return updatedUser;
+      })
+      return updatedUser
     } catch (error) {
-      return null;
+      return null
+    }
+  }
+
+  updateStreak = async (userId: string, streak: number) => {
+    try {
+      const updatedUser = await this.model.update({
+        where: { id: userId },
+        data: { streakCount: streak },
+      })
+      return updatedUser
+    } catch (error) {
+      return null
     }
   }
 }

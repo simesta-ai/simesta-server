@@ -65,10 +65,10 @@ class AuthService {
         } else {
           setImmediate(async () => {
             try {
-              await redisService.hset(`user:${email}`, createdUser)
-              await redisService.hset(`user:${createdUser.id}`, createdUser)
-              await redisService.setExpirationTime(`user:${createdUser.id}`, 172800)
-              await redisService.setExpirationTime(`user:${email}`, 172800)
+              await redisService.hset(`user:email:${email}`, createdUser)
+              await redisService.hset(`user:id:${createdUser.id}`, createdUser)
+              await redisService.setExpirationTime(`user:id:${createdUser.id}`, 172800)
+              await redisService.setExpirationTime(`user:email:${email}`, 172800)
               logger.info(`User with email: ${email} cached successfully`)
             } catch (error) {
               logger.error('Failed to cache user:', error)
@@ -106,7 +106,7 @@ class AuthService {
       let error = null
       let data = null
 
-      const cachedUser = await redisService.hgetall(`user:${email}`)
+      const cachedUser = await redisService.hgetall(`user:email:${email}`)
       if (cachedUser && Object.keys(cachedUser).length > 0) {
         const isCorrect = await bcrypt.compare(password, cachedUser.password)
         if (!isCorrect) {
@@ -133,10 +133,10 @@ class AuthService {
           } else {
             setImmediate(async () => {
               try {
-                await redisService.hset(`user:${email}`, existingUser)
-                await redisService.hset(`user:${existingUser.id}`, existingUser)
-              await redisService.setExpirationTime(`user:${existingUser.id}`, 172800)
-              await redisService.setExpirationTime(`user:${email}`, 172800)
+                await redisService.hset(`user:email:${email}`, existingUser)
+                await redisService.hset(`user:id:${existingUser.id}`, existingUser)
+              await redisService.setExpirationTime(`user:id:${existingUser.id}`, 172800)
+              await redisService.setExpirationTime(`user:email:${email}`, 172800)
                 logger.info(`User with email: ${email} cached successfully`)
               } catch (error) {
                 logger.error('Failed to cache user:', error)
