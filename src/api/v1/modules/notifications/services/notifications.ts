@@ -32,7 +32,7 @@ class NotificationService {
     this.initializeNotificationWorker()
   }
 
-  private async sendNotification(
+  async sendNotification(
     notificationTitle: string,
     notificationSubtitle: string,
     notificationBody: string,
@@ -118,8 +118,6 @@ class NotificationService {
               `userId:${userId}:notification:${notificationId}`,
               notificationDetails
             )
-          } else {
-            console.log('Na me dey run')
           }
         } catch (error) {
           console.error('Failed to send notification:', error)

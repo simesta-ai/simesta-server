@@ -16,7 +16,7 @@ import NotificationService from '../../notifications/services/notifications'
 import CourseRepository from '../repository'
 import UserRepository from '../../user/repository'
 import logger from '../../../../../libs/utils/logger'
-import randomReminder from '../../notifications/services/randomReminder'
+import randomReminder from '../../notifications/services/randomCourseReminder'
 
 const AIGen = new AIGenerator()
 const fileService = new FileService()

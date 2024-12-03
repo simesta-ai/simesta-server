@@ -6,11 +6,15 @@ import cookiepParser from 'cookie-parser'
 import bodyParser from 'body-parser'
 import helmet from 'helmet'
 import dotenv from 'dotenv'
-import ApiRouter from '../initiators/router'
+import ApiRouter from './router'
 import { initializeRedis } from '../../../libs/utils/services/redis'
 import logger from '../../../libs/utils/logger'
 import swaggerUi from 'swagger-ui-express'
 import { documentationSetup } from '../docs/setup'
+import {
+  dailyNotifications,
+  triDailyNotifications,
+} from '../modules/notifications/services/notificationCron'
 
 // CONFIGURE ENVIRONMENT VARIABLES
 dotenv.config()
@@ -77,6 +81,10 @@ class AppController {
     appRouter.configureChatRoutes()
     appRouter.configureNotificationRoutes()
   }
+  private setupCronJobs() {
+    dailyNotifications.start()
+    triDailyNotifications.start()
+  }
 
   // Setup Express Middlewares
   private enableMiddlewares() {
@@ -103,6 +111,7 @@ class AppController {
   public startApp() {
     this.enableMiddlewares()
     this.configureRouting()
+    this.setupCronJobs()
     this.setupDocumentation()
     this.setupRedis()
     return this.app.listen(this.port, () => {
