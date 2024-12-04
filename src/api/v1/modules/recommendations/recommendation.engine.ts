@@ -27,7 +27,7 @@ export class RecommendationEngine {
     const contentBasedRecommendations = await this.contentBasedFiltering(userCourses);
 
     // 4. Combine and rank recommendations
-    const combinedRecommendations = this.rankRecommendations(
+    const combinedRecommendations = this.combineRecommendations(
       collaborativeRecommendations,
       contentBasedRecommendations
     );
@@ -103,8 +103,8 @@ export class RecommendationEngine {
     const recommendedCourses = await prisma.course.findMany({
       where: {
         OR: [
-          { category: { in: categories } },
-          { difficultyLevel: { in: difficultyLevels } }
+          { category: { in: categories as string[] } },
+          { difficultyLevel: { in: difficultyLevels as string[] } }
         ],
         id: { notIn: userCourses.map(course => course.id) }
       },
@@ -114,25 +114,23 @@ export class RecommendationEngine {
     return recommendedCourses;
   }
 
-  private rankRecommendations(collaborative: Course[], contentBased: Course[]): Course[] {
+  private combineRecommendations(collaborative: Course[], contentBased: Course[]): Course[] {
     // Combine recommendations, remove duplicates, and rank
     const combinedRecommendations = new Map<string, Course>();
 
     // Add collaborative recommendations with higher initial score
     collaborative.forEach(course => {
-      combinedRecommendations.set(course.id, { ...course, score: 0.7 });
+      combinedRecommendations.set(course.id, { ...course });
     });
 
     // Add content-based recommendations with lower initial score
     contentBased.forEach(course => {
       if (!combinedRecommendations.has(course.id)) {
-        combinedRecommendations.set(course.id, { ...course, score: 0.3 });
+        combinedRecommendations.set(course.id, { ...course });
       }
     });
 
     // Convert to sorted array
     return Array.from(combinedRecommendations.values())
-      .sort((a, b) => (b.score || 0) - (a.score || 0))
-      .slice(0, 10); // Top 10 recommendations
   }
 }
