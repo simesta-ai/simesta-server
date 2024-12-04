@@ -8,6 +8,7 @@ import chatRoutes from '../modules/chat/routes'
 import notificationRoutes from '../modules/notifications/routes'
 import JwtService, { IJwt } from '../../../libs/utils/services/jwt'
 import { errorHandler } from '../../../libs/utils/handlers/error'
+import recommendationsRouter from '../modules/recommendations/recommendations.router'
 
 class Router {
   private app: express.Application
@@ -45,6 +46,9 @@ class Router {
       this.jwtService.verifyToken,
       notificationRoutes
     )
+  }
+  public configureRecommendationRoutes() {
+    this.app.use('/api/recommendations', recommendationsRouter)
   }
   public configureChatRoutes() {
     this.app.use('/api/chat', chatRoutes)

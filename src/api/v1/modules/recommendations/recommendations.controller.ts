@@ -1,11 +1,12 @@
 import { Request, Response } from "express"
-import { RecommendationEngine } from "./recommendation.engine"
+import { RecommendationEngine } from "./recommendations.engine"
+import { generateJsonSuccessResponse } from "@/shared/utils/generateJsonResponse"
 
-export class RecommendationController {
+export class RecommendationsController {
   private recommendationEngine = new RecommendationEngine()
-  async getRecommendations(req: Request, res: Response) {
+  public getRecommendations = async (req: Request, res: Response) => {
     const userId = req.user?.id!
     const recommendations = await this.recommendationEngine.generateRecommendations(userId)
-    res.json({ recommendations })
+    res.json(generateJsonSuccessResponse('Recommendations fetched successfully', recommendations))
   }
 }
