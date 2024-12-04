@@ -6,8 +6,11 @@
     "scripts": {
         "start": "npx prisma generate && node dist/app.js",
         "test": "mocha --exit",
-        "build": "tsc",
-        "start:dev": "npx prisma generate && nodemon ./src/app.ts"
+        "build": "tsc && tsc-alias",
+        "dev": "ts-node-dev -r tsconfig-paths/register --respawn --transpile-only ./src/app.ts",
+        "start:dev": "npx prisma generate && nodemon ./src/app.ts",
+        "postinstall": "npx prisma generate",
+        "db:push": "npx prisma db push"
     },
     "keywords": [],
     "author": "",
@@ -71,7 +74,9 @@
         "swagger-jsdoc": "^6.2.8",
         "swagger-ui-express": "^5.0.1",
         "tesseract.js": "^5.1.0",
-        "winston": "^3.13.1"
+        "tsconfig-paths": "^4.2.0",
+        "winston": "^3.13.1",
+        "zod": "^3.23.8"
     },
     "devDependencies": {
         "@types/bcryptjs": "^2.4.6",
@@ -99,6 +104,7 @@
         "prisma": "^5.22.0",
         "supertest": "^7.0.0",
         "ts-node": "10.9.1",
+        "ts-node-dev": "^2.0.0",
         "typescript": "^5.6.2"
     },
     "prisma": {
