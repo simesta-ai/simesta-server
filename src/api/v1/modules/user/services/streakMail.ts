@@ -1,58 +1,69 @@
-const streakCongratulatoryEmail = (name: string, streak: number) => {
-    return `<!DOCTYPE html>
+function generateBadgeEmail(name: string, streak: number, title: string) {
+  return `
+    <!DOCTYPE html>
     <html lang="en">
       <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Congratulations on Your Streak!</title>
+        <title>Congratulations on Earning a Badge!</title>
       </head>
       <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f9f9f9;">
         <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; border-collapse: collapse;">
           <tr>
             <td align="center" style="padding: 20px; background-color: #ffffff;">
               <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                <!-- Header Section -->
                 <tr>
-                  <td align="center" style="padding: 10px; display: flex; align-items: center; justify-content: center;">
-                    <img src="https://res.cloudinary.com/di1uklizr/image/upload/v1730229077/simesta_logo_colored-2d_cxva11.png" alt="Simesta AI Logo" style="width: 50px; height: 50px;" />
-                    <p style="font-weight: 600; margin-left: 10px; color: #333333;">Simesta AI</p>
+                  <td align="center" style="padding: 10px;">
+                    <img src="https://res.cloudinary.com/di1uklizr/image/upload/v1730229077/simesta_logo_colored-2d_cxva11.png" alt="Simesta AI Logo" style="width: 60px; height: 60px;" />
                   </td>
                 </tr>
                 <tr>
-                  <td align="center" style="font-size: 24px; font-weight: bold; color: #333333; padding-top: 30px;">
-                    Congratulations, ${name}! 🎉
+                  <td align="center" style="font-size: 28px; font-weight: bold; color: #333333; padding-top: 20px;">
+                    ${title}
                   </td>
                 </tr>
+
+                <!-- Badge Section -->
+                <tr>
+                  <td align="center" style="padding: 30px 0; border-radius: 50px;">
+                    <img src="https://res.cloudinary.com/di1uklizr/image/upload/v1733323151/3-day-badge-banner_xnqoge.png" alt="Badge Earned" style="width: 90%;" />
+                  </td>
+                </tr>
+                <tr>
+                  <td align="center" style="font-size: 20px; font-weight: bold; color: #7c4cf4;">
+                    You've earned the ${streak}-day streak badge!
+                  </td>
+                </tr>
+
+                <!-- Message Section -->
                 <tr>
                   <td style="font-size: 16px; color: #333333; padding: 20px;">
-                    <p style="text-align: start;">Hi ${name},</p>
-                    <p>You're on an incredible streak! You've maintained your learning streak for <strong>${streak} days</strong> in a row. Keep up the amazing momentum! 🌟</p>
-                    <p>Your dedication to learning is inspiring, and every step you take brings you closer to achieving your goals. Simesta AI is here to support you every step of the way.</p>
+                    <p>Hi ${name},</p>
+                    <p>Congratulations on reaching an amazing milestone in your learning journey! This badge celebrates your <strong>${streak} consecutive days of learning</strong>.</p>
+                    <p>Your dedication is truly inspiring, and we can't wait to see what you'll achieve next. Keep up the fantastic work and continue striving for greatness with Simesta AI!</p>
                   </td>
                 </tr>
+
+                <!-- Call-to-Action Section -->
                 <tr>
                   <td align="center" style="padding: 20px;">
                     <a href="https://simesta.ai" style="text-decoration: none;">
-                      <div style="display: inline-block; padding: 15px 50px; background-color: #7c4cf4; color: #ffffff; font-size: 16px; font-weight: bold; border-radius: 5px; text-transform: uppercase;">
-                        Continue Learning Now
+                      <div style="display: inline-block; padding: 15px 40px; background-color: #7c4cf4; color: #ffffff; font-size: 16px; font-weight: bold; border-radius: 5px;">
+                        View My Achievements
                       </div>
                     </a>
                   </td>
                 </tr>
-                <tr>
-                  <td style="font-size: 16px; color: #333333; padding: 20px;">
-                    <p>Remember, consistency is key! Keep going, and let’s see how far your streak can go!</p>
-                    <p>Keep shining,<br /><strong>The Simesta AI Team</strong></p>
-                  </td>
-                </tr>
+
+                <!-- Footer Section -->
                 <tr>
                   <td align="center" style="border-top: 1px solid #cccccc; padding-top: 20px;">
                     <table border="0" cellpadding="0" cellspacing="0" width="100%">
                       <tr>
                         <td align="center" style="padding: 10px;">
                           <a href="https://www.linkedin.com/company/104287897/" style="text-decoration: none; color: #7c4cf4;">
-                            <span style="display: inline-block; width: 40px; height: 40px; border: 2px solid #7c4cf4; border-radius: 50%; text-align: center; line-height: 38px; color: #7c4cf4; font-weight: 900; font-size: 18px;">
-                              <strong>in</strong>
-                            </span>
+                            <span style="display: inline-block; width: 40px; height: 40px; border: 2px solid #7c4cf4; border-radius: 50%; text-align: center; line-height: 38px; font-weight: 900; font-size: 18px;">in</span>
                           </a>
                         </td>
                       </tr>
@@ -74,8 +85,9 @@ const streakCongratulatoryEmail = (name: string, streak: number) => {
           </tr>
         </table>
       </body>
-    </html>`;
-  };
-  
-  export default streakCongratulatoryEmail;
-  
+    </html>
+  `;
+}
+
+
+export default generateBadgeEmail
