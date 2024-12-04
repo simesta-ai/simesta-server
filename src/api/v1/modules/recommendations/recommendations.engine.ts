@@ -60,8 +60,18 @@ export class RecommendationEngine {
   }
 
   private async collaborativeFiltering(userId: string, userCourses: Course[]): Promise<Course[]> {
+    // Check if user is new (no completed courses)
+    if (userCourses.length === 0) {
+      return this.getPopularCourses();
+    }
+
     // Find users who have completed similar courses
     const similarUserIds = await this.findSimilarUsers(userId, userCourses);
+
+    // If no similar users found, fall back to popular courses
+    if (similarUserIds.length === 0) {
+      return this.getPopularCourses();
+    }
 
     // Get courses completed by similar users that the current user hasn't taken
     const recommendedCourses = await prisma.course.findMany({
@@ -71,6 +81,15 @@ export class RecommendationEngine {
       },
       take: 10 // Limit recommendations
     });
+
+    // If not enough recommendations, supplement with popular courses
+    if (recommendedCourses.length < 10) {
+      const popularCourses = await this.getPopularCourses();
+      return [
+        ...recommendedCourses,
+        ...popularCourses.slice(0, 10 - recommendedCourses.length)
+      ];
+    }
 
     return recommendedCourses;
   }
@@ -112,6 +131,44 @@ export class RecommendationEngine {
     });
 
     return recommendedCourses;
+  }
+
+  private async getPopularCourses(): Promise<Course[]> {
+    try {
+      // Fetch courses with the most completions using a raw query
+      const popularCourses = await prisma.$queryRaw`
+      SELECT 
+        c.id, 
+        c.title, 
+        c.category, 
+        c.description, 
+        c.img, 
+        c."difficultyLevel",
+        COUNT(DISTINCT u.id) as completion_count
+      FROM 
+        "Course" c
+      JOIN 
+        "User" u ON u.id = c."userId"
+      WHERE 
+        c.completed = true
+      GROUP BY 
+        c.id, 
+        c.title, 
+        c.category, 
+        c.description, 
+        c.img, 
+        c."difficultyLevel"
+      ORDER BY 
+        completion_count DESC
+      LIMIT 20
+    `;
+
+      // Cast the result to the expected type
+      return popularCourses as Course[];
+    } catch (error) {
+      console.error('Error fetching popular courses:', error);
+      return []; // Return empty array if there's an error
+    }
   }
 
   private combineRecommendations(collaborative: Course[], contentBased: Course[]): Course[] {
