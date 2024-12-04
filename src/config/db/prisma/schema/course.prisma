@@ -1,0 +1,18 @@
+model Course {
+  id              String       @id @default(uuid())
+  title           String       @unique
+  description     String       @default("")
+  completed       Boolean      @default(false)
+  inProgress      Boolean?     @default(false)
+  courseType      String?      @default("")
+  difficultyLevel String?      @default("")
+  notes           String?      @default("")
+  img             String?
+  category        String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @default(now()) @updatedAt
+  courseFiles     CourseFile[]
+  topics          Topic[]
+  userId          String
+  user            User         @relation(fields: [userId], references: [id])
+}

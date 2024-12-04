@@ -1,0 +1,10 @@
+model Otp {
+    id        String   @id @default(uuid())
+    email     String
+    otp       String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @default(now()) @updatedAt
+    expiresAt DateTime
+
+    @@index([email])
+}

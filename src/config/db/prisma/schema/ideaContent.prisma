@@ -1,0 +1,11 @@
+model IdeaContent {
+  id        String   @id() @default(uuid())
+  text      String
+  image     String?  @default("")
+  lectureId String?
+  lecture   Lecture? @relation(fields: [lectureId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  quiz      Quiz?
+  oneChoice oneChoice?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}

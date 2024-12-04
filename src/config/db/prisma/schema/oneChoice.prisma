@@ -1,0 +1,12 @@
+model oneChoice {
+  id            String       @id() @default(uuid())
+  question      String       @db.NVarChar(255)
+  response      String       @default("")
+  simesta_ai_response String  @default("")
+  explanation   String?      @default("")
+  correct_answer String?     @default("")
+  ideaContentId String?      @unique
+  ideaContent   IdeaContent? @relation(fields: [ideaContentId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @default(now()) @updatedAt
+}
