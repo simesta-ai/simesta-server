@@ -38,6 +38,11 @@ class UserRepository {
             name,
             password,
             roleId: baseRole ? baseRole.id : null,
+            preference: {
+              create: {
+                speech_sythesis_voice_name: 'en-US-AvaMultilingualNeural',
+              },
+            },
             // other user fields...
           },
         })
