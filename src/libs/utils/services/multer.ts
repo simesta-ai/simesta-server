@@ -50,6 +50,7 @@ const audioFileFilter = (
   const allowedMimeTypes = [
     'audio/mpeg', // mp3
     'audio/wav', // wav
+    'audio/m4a', // m4a
     'audio/mp4', // mp4
   ]
 

@@ -9,6 +9,9 @@ const sdk = require('microsoft-cognitiveservices-speech-sdk')
 import AIGenerator from '../../../../../libs/utils/services/aigenerator'
 import convertFileFormat from '../../../../../libs/utils/services/audioconverter'
 import dotenv from 'dotenv'
+import PreferenceRepository from '../preferenceRepository'
+import { ServerError } from '../../../../../libs/utils/handlers/error'
+import { redisService } from '../../../../../libs/utils/services/redis'
 
 dotenv.config()
 
@@ -19,6 +22,7 @@ const speechConfig = sdk.SpeechConfig.fromSubscription(
 speechConfig.speechRecognitionLanguage = 'en-US'
 
 const aiGenerator = new AIGenerator()
+const preferenceRepository = new PreferenceRepository()
 
 async function fromFile(path: string) {
   convertFileFormat(path, './public/uploads/text.wav')
@@ -62,11 +66,14 @@ async function fromFile(path: string) {
   return text
 }
 
-async function handleTextToSpeech(message: string) {
+async function handleTextToSpeech(message: string, userId: string) {
   const audioPath = `./public/uploads/${Date.now()}.wav`
   const audioConfig = sdk.AudioConfig.fromAudioFileOutput(audioPath)
 
-  speechConfig.speechSynthesisVoiceName = 'en-US-AvaMultilingualNeural'
+  const preference = await preferenceRepository.getUserPreference(userId)
+  if (!preference) throw new ServerError("Something went wrong")
+
+  speechConfig.speechSynthesisVoiceName = preference.speech_sythesis_voice_name
 
   // Create the speech synthesizer.
   let synthesizer = new sdk.SpeechSynthesizer(speechConfig, audioConfig)
@@ -101,9 +108,9 @@ class ChatService {
   }
   async sendMessage(message: string) {}
 
-  async textToSpeech(text: string) {
+  async textToSpeech(text: string, userId:string) {
     try {
-      const audioPath = await handleTextToSpeech(text)
+      const audioPath = await handleTextToSpeech(text, userId)
       if (typeof audioPath === 'string') {
         return audioPath
       } else {
@@ -121,6 +128,20 @@ class ChatService {
       } else {
         return ''
       }
+    } catch (error) {
+      throw error
+    }
+  }
+  async setSpeechNamePreference(
+    speechSythesisVoiceName: string,
+    userId: string
+  ) {
+    try {
+      const response = await preferenceRepository.setSpeechPreference(
+        speechSythesisVoiceName,
+        userId
+      )
+      return response
     } catch (error) {
       throw error
     }

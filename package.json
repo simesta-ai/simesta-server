@@ -14,9 +14,10 @@
     "license": "ISC",
     "dependencies": {
         "@azure/storage-blob": "^12.24.0",
+        "@ffmpeg-installer/ffmpeg": "^1.1.0",
         "@google-cloud/vertexai": "^1.0.0",
         "@google/generative-ai": "^0.7.1",
-        "@prisma/client": "^5.22.0",
+        "@prisma/client": "^6.0.1",
         "@redis/client": "^1.6.0",
         "@types/bcrypt": "^5.0.2",
         "@types/express-session": "^1.18.0",
@@ -96,7 +97,7 @@
         "@types/swagger-ui-express": "^4.1.6",
         "@types/validator": "^13.12.1",
         "nodemon": "^3.1.0",
-        "prisma": "^5.22.0",
+        "prisma": "^6.0.1",
         "supertest": "^7.0.0",
         "ts-node": "10.9.1",
         "typescript": "^5.6.2"

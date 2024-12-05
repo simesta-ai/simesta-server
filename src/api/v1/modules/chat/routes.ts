@@ -6,8 +6,7 @@
  * @created [2024-09-09]
  * @lastModified [2024-09-15]
  * @module api/v1/modules/chat
- */
-
+ */
 
 import express from 'express'
 import ChatController from './controllers'
@@ -21,13 +20,11 @@ router.post(
   uploadAudio.single('audio'),
   chatController.speechToText
 )
-router.post(
-  '/text-to-speech',
-  chatController.textToSpeech
-)
-router.post(
-  '/text-to-image',
-  chatController.textToImage
+router.post('/text-to-speech', chatController.textToSpeech)
+router.post('/text-to-image', chatController.textToImage)
+router.put(
+  '/set-speech-name-preference',
+  chatController.setSpeechNamePreference
 )
 
 export default router

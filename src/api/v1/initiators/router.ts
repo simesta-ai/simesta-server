@@ -7,7 +7,6 @@ import lectureRoutes from '../modules/lecture/routes'
 import chatRoutes from '../modules/chat/routes'
 import notificationRoutes from '../modules/notifications/routes'
 import JwtService, { IJwt } from '../../../libs/utils/services/jwt'
-import { errorHandler } from '../../../libs/utils/handlers/error'
 
 class Router {
   private app: express.Application
@@ -48,7 +47,6 @@ class Router {
   }
   public configureChatRoutes() {
     this.app.use('/api/chat', chatRoutes)
-    this.app.use(errorHandler)
   }
 }
 
