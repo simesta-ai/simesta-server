@@ -11,6 +11,8 @@ import TopicService from '../../topic/services'
 import BucketManager from '../../../../../libs/utils/services/BucketManager'
 import { redisService } from '../../../../../libs/utils/services/redis'
 import NotificationService from '../../notifications/services/notifications'
+import EmailService from '../../email/services'
+import generateCourseCreationEmail from './newCourseMail'
 
 // Repositories
 import CourseRepository from '../repository'
@@ -26,6 +28,7 @@ const userRepository = new UserRepository()
 const courseRepository = new CourseRepository()
 const bucketManager = new BucketManager()
 const notificationService = new NotificationService()
+const emailService = new EmailService()
 
 const createCourse = async ({
   userId,
@@ -136,6 +139,8 @@ const createCourse = async ({
         }
         if (newCourse && newCourse.id) {
           try {
+            const html = generateCourseCreationEmail(user.name, newCourse.title)
+            await emailService.sendMail(user.email, 'New Course Created!',undefined, html)
             const notification = randomReminder(newCourse.title)
             await notificationService.addNotificationJob(
               userId,
