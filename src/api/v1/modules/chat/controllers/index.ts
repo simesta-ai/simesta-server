@@ -20,8 +20,10 @@ class ChatController {
   constructor() {}
   async speechToText(req: Request, res: Response, next: NextFunction) {
     try {
+      console.log(req.file) 
       if (req.file) {
         const file = req.file
+        console.log(file)
         const response = await chatService.speechToText(file)
         if (response && response.length > 0) {
           res.status(200).json({
