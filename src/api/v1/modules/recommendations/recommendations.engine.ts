@@ -135,36 +135,23 @@ export class RecommendationEngine {
 
   private async getPopularCourses(): Promise<Course[]> {
     try {
-      // Fetch courses with the most completions using a raw query
-      const popularCourses = await prisma.$queryRaw`
-      SELECT 
-        c.id, 
-        c.title, 
-        c.category, 
-        c.description, 
-        c.img, 
-        c."difficultyLevel",
-        COUNT(DISTINCT u.id) as completion_count
-      FROM 
-        "Course" c
-      JOIN 
-        "User" u ON u.id = c."userId"
-      WHERE 
-        c.completed = true
-      GROUP BY 
-        c.id, 
-        c.title, 
-        c.category, 
-        c.description, 
-        c.img, 
-        c."difficultyLevel"
-      ORDER BY 
-        completion_count DESC
-      LIMIT 20
-    `;
+      // Fetch courses with the most completions using Prisma
+      const popularCourses = await prisma.course.findMany({
+        where: {
+          completed: true
+        },
+        include: {
+          user: true
+        },
+        orderBy: {
+          user: {
+            email: 'desc'
+          }
+        },
+        take: 20
+      });
 
-      // Cast the result to the expected type
-      return popularCourses as Course[];
+      return popularCourses;
     } catch (error) {
       console.error('Error fetching popular courses:', error);
       return []; // Return empty array if there's an error
