@@ -52,7 +52,6 @@ class Router {
   }
   public configureChatRoutes() {
     this.app.use('/api/chat', chatRoutes)
-    this.app.use(errorHandler)
   }
 }
 

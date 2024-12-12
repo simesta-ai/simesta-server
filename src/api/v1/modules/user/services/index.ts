@@ -14,8 +14,11 @@ import { ClientError } from '../../../../../libs/utils/handlers/error'
 import logger from '../../../../../libs/utils/logger'
 import NotificationService from '../../notifications/services/notifications'
 import EmailService from '../../email/services'
-import { getRandomStreakMessage, generateRandomStreakmailSubject} from './randomStreakMessage'
-import streakCongratulatoryEmail from './streakMail'
+import {
+  getRandomStreakMessage,
+  generateRandomStreakmailSubject,
+} from './randomStreakMessage'
+import generateBadgeEmail from './streakMail'
 
 const userRepository = new UserRepository()
 const notificationService = new NotificationService()
@@ -108,19 +111,22 @@ class UserService {
             userToken
           )
         }
-        const html = streakCongratulatoryEmail(user.name, newStreak)
-        const subject = generateRandomStreakmailSubject()
-        const sentResult = await emailService.sendMail(
-          user.email,
-          subject,
-          undefined,
-          html
-        )
-        if (!sentResult) {
-          logger.error('Could not send streak email')
-          return
+        const badgeStreaks = [1, 3, 7, 14, 21, 30, 50, 75, 100, 150, 200]
+        if (badgeStreaks.indexOf(newStreak) >= 0) {
+          const html = generateBadgeEmail(user.name, newStreak, message.title)
+          const subject = generateRandomStreakmailSubject()
+          const sentResult = await emailService.sendMail(
+            user.email,
+            subject,
+            undefined,
+            html
+          )
+          if (!sentResult) {
+            logger.error('Could not send streak email')
+            return
+          }
         }
-        await userRepository.updateStreak(user.id, user.streakCount + 1)
+        await userRepository.updateStreak(user.id, newStreak)
       } else {
         await userRepository.updateStreak(user.id, 0)
       }
@@ -131,8 +137,8 @@ class UserService {
 
   async updateLastLearning(userId: string) {
     try {
-      let data = null;
-      let error = null;
+      let data = null
+      let error = null
       const user = await userRepository.findById(userId)
       if (!user) {
         error = new ClientError('User not found')
@@ -140,9 +146,9 @@ class UserService {
       }
       const updatedUser = await userRepository.updateLastLearning(userId)
       if (!updatedUser) {
-        error =  new ClientError('Failed to update user last learning date')
+        error = new ClientError('Failed to update user last learning date')
       }
-      return { data: updatedUser, error: null}
+      return { data: updatedUser, error: null }
     } catch (error) {
       logger.error('Failed to update last learning date', error)
       return { data: null, error }

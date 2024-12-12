@@ -26,15 +26,25 @@ const getRandomStreakMessage = (streakNumber: number) => {
       body: `Your 14-day streak is incredible! Keep smashing those goals! 🏅`,
     },
     {
+      title: 'Three Weeks of Growth! 🌱',
+      subtitle: 'Keep the momentum going! 🚀',
+      body: `You're on a 21-day streak! You're unstoppable! Keep up the fantastic work! 🌟`,
+    },
+    {
       title: 'A Whole Month! 🗓️',
       subtitle: '30 Days of Growth 🌟',
       body: `30 days of streaking! Celebrate your hard work and keep aiming higher! 🏆`,
     },
     {
+      title: 'Half a Century! 🎉',
+      subtitle: '50 Days of Dedication 🚀',
+      body: `You've hit a 50-day streak! You're unstoppable! Keep up the amazing work! 🌟`,
+    },
+    {
       title: 'Streak Legend in the Making! 🔥',
       subtitle: 'Keep the fire alive! 🔥',
       body: `You're on a blazing streak of ${streakNumber} days! Keep striving for greatness! 🚀`,
-    },
+    }
   ]
 
   let selectedMessage
@@ -54,11 +64,17 @@ const getRandomStreakMessage = (streakNumber: number) => {
     case 14:
       selectedMessage = streakMessages[4]
       break
-    case 30:
+    case 21:
       selectedMessage = streakMessages[5]
       break
-    default:
+    case 30:
       selectedMessage = streakMessages[6]
+      break
+    case 50:
+      selectedMessage = streakMessages[7]
+      break
+    default:
+      selectedMessage = streakMessages[8]
       break
   }
   return selectedMessage

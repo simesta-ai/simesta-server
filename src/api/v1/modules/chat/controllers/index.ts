@@ -41,11 +41,11 @@ class ChatController {
   }
   async textToSpeech(req: Request, res: Response, next: NextFunction) {
     try {
-      const { text } = req.body
-      if (!text) {
+      const { text, userId } = req.body
+      if (!text || !userId) {
         throw new ValidateError('Invalid value')
       }
-      const response = await chatService.textToSpeech(text)
+      const response = await chatService.textToSpeech(text, userId)
       if (response && response.length > 0) {
         res.download(response, (err) => {
           if (err) {
@@ -81,7 +81,36 @@ class ChatController {
         })
       }
     } catch (error) {
-     next(error) 
+      next(error)
+    }
+  }
+  async setSpeechNamePreference(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { speechSythesisVoiceName, userId } = req.body
+      if (!speechSythesisVoiceName || !userId) {
+        throw new ValidateError('Invalid value')
+      }
+      const response = await chatService.setSpeechNamePreference(
+        speechSythesisVoiceName,
+        userId
+      )
+      if (response) {
+        res.status(200).json({
+          message: 'Speech name preference set successfully',
+          data: response,
+        })
+      } else {
+        res.status(400).json({
+          message: 'Speech name preference set failed',
+          data: null,
+        })
+      }
+    } catch (error) {
+      next(error)
     }
   }
 }

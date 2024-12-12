@@ -16,6 +16,7 @@ import {
   triDailyNotifications,
 } from '../modules/notifications/services/notificationCron'
 import { dailyStreakMonitoring } from '../modules/user/services/streaksCron'
+import { errorHandler } from '../../../libs/utils/handlers/error'
 
 // CONFIGURE ENVIRONMENT VARIABLES
 dotenv.config()
@@ -82,6 +83,8 @@ class AppController {
     appRouter.configureChatRoutes()
     appRouter.configureNotificationRoutes()
     appRouter.configureRecommendationRoutes()
+    this.app.use(errorHandler)
+
   }
   private setupCronJobs() {
     dailyNotifications.start()
