@@ -82,7 +82,9 @@ class AppController {
     appRouter.configureCourseRoutes()
     appRouter.configureChatRoutes()
     appRouter.configureNotificationRoutes()
+    appRouter.configureRecommendationRoutes()
     this.app.use(errorHandler)
+
   }
   private setupCronJobs() {
     dailyNotifications.start()

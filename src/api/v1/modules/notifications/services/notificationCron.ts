@@ -3,7 +3,7 @@ import NotificationService from './notifications'
 import { redisService } from '../../../../../libs/utils/services/redis'
 import logger from '../../../../../libs/utils/logger'
 import randomDailyNotification from './randomDailyNotifications'
-import { string } from 'joi'
+// import { string } from 'joi'
 
 const notificationService = new NotificationService()
 
