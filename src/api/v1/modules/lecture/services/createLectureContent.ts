@@ -11,6 +11,7 @@ import { ICreateLecture, ILectureContent } from '../../../../../types'
 import { redisService } from '../../../../../libs/utils/services/redis'
 import BucketManager from '../../../../../libs/utils/services/BucketManager'
 import { FileService } from '../../../../../libs/utils/services/parseFile'
+import { createAndPopulateLectureIndex } from '../../../../..//libs/utils/search/algolia'
 
 const bucketManager = new BucketManager()
 const aiGenerator = new AIGenerator()
@@ -22,6 +23,7 @@ const fileService = new FileService()
 const createLectureContent = async ({
   courseId,
   lectureId,
+  userId,
 }: ICreateLecture): Promise<{
   lectureContent: ILectureContent | null
   error: null | CustomError
@@ -96,6 +98,10 @@ const createLectureContent = async ({
         generatedIdeaContent
       )
       lectureContent.videos = filteredVideos
+
+      //add lecture content to index
+      await createAndPopulateLectureIndex(lectureId, lectureContent, userId)
+      console.log(userId)
     } else {
       error = new ServerError('Lecture not found')
     }

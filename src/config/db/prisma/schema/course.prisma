@@ -7,7 +7,7 @@ model Course {
   courseType      String?      @default("")
   difficultyLevel String?      @default("")
   notes           String?      @default("")
-  img             String?
+  image             String?
   category        String?
   createdAt       DateTime     @default(now())
   updatedAt       DateTime     @default(now()) @updatedAt

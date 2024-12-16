@@ -313,6 +313,7 @@ class AIGenerator {
             const imageBuffer = response.outputs[0].data.image.base64
             const secureImageUrl =
               await this.cloudinaryService.uploadImageBufferToCloud(imageBuffer)
+            console.log(secureImageUrl)
             resolve(secureImageUrl)
           }
         )

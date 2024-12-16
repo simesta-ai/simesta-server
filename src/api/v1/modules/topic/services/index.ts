@@ -13,6 +13,7 @@ class TopicService {
   createTopics: (
     courseId: string,
     courseTitle: string,
+    userId: string,
     courseFiles?: any,
     subtopics?: string
   ) => Promise<ITopic[] | undefined> = createTopics
