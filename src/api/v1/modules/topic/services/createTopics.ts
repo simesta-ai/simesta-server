@@ -2,12 +2,14 @@ import TopicRepository from '../repository/index'
 import AIGenerator from '../../../../../libs/utils/services/aigenerator'
 import { ITopic } from '../../../../../types'
 
+
 const AIGen = new AIGenerator()
 const topicRepository = new TopicRepository()
 
 const createTopics = async (
   courseId: string,
   courseTitle: string,
+  userId: string,
   courseFiles?: any,
   subtopics?: string
 ) => {
@@ -17,7 +19,7 @@ const createTopics = async (
       courseFiles,
       subtopics
     )
-  
+
     const createdTopics: ITopic[] = await new Promise((resolve, reject) => {
       try {
         const topics: ITopic[] = []
@@ -36,6 +38,7 @@ const createTopics = async (
         reject(error)
       }
     })
+
     return createdTopics
   } catch (error) {
     throw error

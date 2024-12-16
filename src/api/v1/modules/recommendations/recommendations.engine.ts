@@ -1,6 +1,6 @@
 import { Course, User } from '@prisma/client';
-import prisma from '@/config/db/prisma';
-import { redisService } from '@/libs/utils/services/redis';
+import prisma from '../../../../config/db/prisma';
+import { redisService } from '../../../../libs/utils/services/redis';
 
 interface CourseRecommendation {
   courseId: string;
