@@ -59,6 +59,7 @@ const createCourse = async ({
     const courseDescription = await AIGen.generateCourseDescription(title)
     const courseCategory = await AIGen.generateCoursecategory(title)
     const courseImage = await AIGen.generateCourseImage(title)
+    console.log(courseImage)
 
     let fileUrls: string[] = []
     let fileContent: string[] = []
@@ -143,6 +144,7 @@ const createCourse = async ({
         if (newCourse && newCourse.id) {
           //Add courses to algolia
           try {
+            console.log(newCourse)
             await createAndPopulateCourseIndex(newCourse, userId)
           } catch (err) {
             logger.error(

@@ -124,7 +124,7 @@ const getUserCourses = async (
         coursesList.push({
           id: course.id,
           title: course.title,
-          img: course.img ? course.img : 'null',
+          img: course.image ? course.image : 'null',
           progress: (i / numberOfTopics) * 100,
           topicsCompleted: `${i} / ${numberOfTopics}`,
         })

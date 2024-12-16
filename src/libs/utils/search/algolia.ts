@@ -1,12 +1,12 @@
 import { algoliasearch } from 'algoliasearch'
 import { ICourse, ITopic, ILectureContent } from '../../../types'
 
-
 const client = algoliasearch(
   process.env.ALGOLIA_APP_ID as string,
   process.env.ALGOLIA_WRITE_API_KEY as string
 )
 
+// Create and populate the course index
 export const createAndPopulateCourseIndex = async (
   course: ICourse,
   userId: string
@@ -20,6 +20,7 @@ export const createAndPopulateCourseIndex = async (
         userId: userId,
         title: course.title,
         description: course.description,
+        image: course.image,
         category: course.category,
         difficultyLevel: course.difficultyLevel,
         createdAt: course.createdAt,
