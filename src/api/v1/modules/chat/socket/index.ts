@@ -8,7 +8,7 @@
  * @module api/v1/modules/chat
  */
 
-import { io } from '../../../../../..'
+import { io } from '../../../../../app'
 import AIMessenger from './aimessaging';
 
 
