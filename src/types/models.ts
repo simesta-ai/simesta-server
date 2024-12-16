@@ -1,5 +1,7 @@
+import { IIdeaContent } from "./requests"
+
 export interface ICourse {
-  id?: string
+  id: string
   title: string
   description: string
   completed?: boolean
@@ -45,7 +47,7 @@ export interface ILecture {
   id: string
   title: string
   videos: string[]
-  ideas: any[] //IdeaContent[]
+  ideas: IIdeaContent[] //IdeaContent[]
 }
 
 export interface IQuiz {

@@ -19,6 +19,7 @@ export interface ICreateCourse {
 export interface ICreateLecture {
   courseId: string
   lectureId: string
+  userId: string
 }
 
 export interface ILectureContent {

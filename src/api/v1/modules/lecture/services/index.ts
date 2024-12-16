@@ -6,7 +6,7 @@ import getLecture from './getLecture'
 
 class LectureService {
   //new method
-  create: ({ courseId, lectureId}: ICreateLecture) => Promise<{
+  create: ({ courseId, lectureId, userId}: ICreateLecture) => Promise<{
     lectureContent: ILectureContent | null
     error: null | CustomError
   }> = createLectureContent

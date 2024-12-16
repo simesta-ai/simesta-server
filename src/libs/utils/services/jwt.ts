@@ -11,7 +11,7 @@ export interface IJwt {
 
 class JwtService implements IJwt {
   // CHECK TOKEN BLACKLIST
-  public checkBlacklist(token: string){
+  public checkBlacklist(token: string) {
     console.log(token)
     const result = redisService.get(token)
     return result
@@ -36,7 +36,11 @@ class JwtService implements IJwt {
   }
 
   // VERIFY TOKEN
-  public async verifyToken(req: Request, res: Response, next: NextFunction) {
+  public async verifyToken(
+    req: RequestWithUser,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
       const token = req.headers.authorization?.split(' ')[1]
       if (!token) {
@@ -62,7 +66,7 @@ class JwtService implements IJwt {
 
   //  INVALIDATE TOKEN
   public async invalidateToken(
-    req: Request,
+    req: RequestWithUser,
     res: Response,
     next: NextFunction
   ) {
