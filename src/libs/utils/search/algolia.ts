@@ -6,6 +6,7 @@ const client = algoliasearch(
   process.env.ALGOLIA_WRITE_API_KEY as string
 )
 
+// Create and populate the course index
 export const createAndPopulateCourseIndex = async (
   course: ICourse,
   userId: string
