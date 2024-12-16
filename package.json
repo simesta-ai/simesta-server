@@ -4,7 +4,7 @@
     "description": "",
     "main": "./src/app.ts",
     "scripts": {
-        "start": "npx prisma generate && node dist/app.js",
+        "start": "node dist/app.js",
         "test": "mocha --exit",
         "build": "tsc && tsc-alias",
         "dev": "ts-node-dev -r tsconfig-paths/register --respawn --transpile-only ./src/app.ts",
