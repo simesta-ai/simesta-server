@@ -25,7 +25,7 @@ class CourseRepository {
           title,
           description,
           category,
-          img: image,
+          image,
           userId,
           courseFiles: courseFiles
             ? {

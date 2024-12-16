@@ -10,7 +10,7 @@ export interface ICourse {
   difficultyLevel?: string | null
   notes?: string | null
   courseFiles?: string[]
-  image?: string
+  image?: string | null
   category: string | null
   userId: string
   createdAt?: Date
