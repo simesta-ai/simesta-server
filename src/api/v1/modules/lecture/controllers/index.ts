@@ -1,15 +1,27 @@
 import { NextFunction, Request, Response } from 'express'
 import LectureService from '../services'
+import { RequestWithUser } from '@/types'
 
 const lectureService = new LectureService()
 
 class LectureController {
-
-  async createLectureContent(req: Request, res: Response, next: NextFunction) {
+  async createLectureContent(
+    req: RequestWithUser,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
       const { courseId, lectureId } = req.params
-      const { lectureContent, error } =
-        await lectureService.create({courseId, lectureId})
+      const {
+        user: {
+          user: { id },
+        },
+      } = req.user
+      const { lectureContent, error } = await lectureService.create({
+        courseId,
+        lectureId,
+        userId: id,
+      })
       if (error) {
         throw error
       } else {
@@ -19,12 +31,14 @@ class LectureController {
       next(error)
     }
   }
-  async getLectureContent(req: Request, res: Response, next: NextFunction) {
+  async getLectureContent(
+    req: RequestWithUser,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
       const { lectureId } = req.params
-      const { lectureContent, error } = await lectureService.get(
-        lectureId
-      )
+      const { lectureContent, error } = await lectureService.get(lectureId)
       if (error) {
         throw error
       } else {

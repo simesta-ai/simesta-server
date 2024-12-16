@@ -11,6 +11,10 @@ import TopicService from '../../topic/services'
 import BucketManager from '../../../../../libs/utils/services/BucketManager'
 import { redisService } from '../../../../../libs/utils/services/redis'
 import NotificationService from '../../notifications/services/notifications'
+import {
+  createAndPopulateCourseIndex,
+  createAndPopulateTopicIndex,
+} from '../../../../../libs/utils/search/algolia'
 
 // Repositories
 import CourseRepository from '../repository'
@@ -100,11 +104,13 @@ const createCourse = async ({
       courseFiles: fileUrls,
     })
     if (newCourse && newCourse.id) {
+      console.log('creating topics')
       const topics = await topicService.createTopics(
         newCourse!.id,
         newCourse!.title,
         fileContent.join(' '),
-        subtopics
+        subtopics,
+        userId
       )
 
       setImmediate(async () => {
@@ -135,6 +141,31 @@ const createCourse = async ({
           })
         }
         if (newCourse && newCourse.id) {
+          //Add courses to algolia
+          try {
+            await createAndPopulateCourseIndex(newCourse, userId)
+          } catch (err) {
+            logger.error(
+              `Failed to add course ${newCourse.id} to course index for user ${userId}`
+            )
+          }
+
+          // Add topics to algolia
+          if (topics) {
+            try {
+              await Promise.all(
+                topics.map(async (topic) => {
+                  await createAndPopulateTopicIndex(topic, userId)
+                })
+              )
+            } catch (err) {
+              logger.error(
+                `Failed to add topics to topic index for course ${newCourse.id} for user ${userId}`
+              )
+            }
+          }
+
+          // Add reminder notification for course
           try {
             const notification = randomReminder(newCourse.title)
             await notificationService.addNotificationJob(
