@@ -126,7 +126,7 @@ class AuthController {
             `Please verify email address: ${data.user.email} to continue`
           )
         } else {
-          req['user'] = data
+          req['user'] = data.user
         }
         next()
       }
