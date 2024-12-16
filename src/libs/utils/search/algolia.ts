@@ -1,16 +1,16 @@
 import { algoliasearch } from 'algoliasearch'
-import { ICourse, IIdeaContent, ITopic, ILectureContent } from '../../../types'
+import { ICourse, ITopic, ILectureContent } from '../../../types'
 
-
-const ALGOLIA_APP_ID = '2F211F81T2'
-const ALGOLIA_WRITE_API_KEY = 'cd236d7df20fc64a96c9339de89d7228'
 
 const client = algoliasearch(
-  ALGOLIA_APP_ID as string,
-  ALGOLIA_WRITE_API_KEY as string
+  process.env.ALGOLIA_APP_ID as string,
+  process.env.ALGOLIA_WRITE_API_KEY as string
 )
 
-export const createAndPopulateCourseIndex = async (course: ICourse, userId: string) => {
+export const createAndPopulateCourseIndex = async (
+  course: ICourse,
+  userId: string
+) => {
   try {
     const response = await client.addOrUpdateObject({
       indexName: 'courseIndex',
@@ -31,7 +31,10 @@ export const createAndPopulateCourseIndex = async (course: ICourse, userId: stri
   }
 }
 
-export const createAndPopulateTopicIndex = async (topic: ITopic, userId: string) => {
+export const createAndPopulateTopicIndex = async (
+  topic: ITopic,
+  userId: string
+) => {
   try {
     const response = await client.addOrUpdateObject({
       indexName: 'topicIndex',
@@ -54,7 +57,11 @@ export const createAndPopulateTopicIndex = async (topic: ITopic, userId: string)
   }
 }
 
-export const createAndPopulateLectureIndex = async (lectureId: string, lectureContent:ILectureContent, userId: string) => {
+export const createAndPopulateLectureIndex = async (
+  lectureId: string,
+  lectureContent: ILectureContent,
+  userId: string
+) => {
   try {
     const response = await client.addOrUpdateObject({
       indexName: 'lectureIndex',
@@ -71,4 +78,3 @@ export const createAndPopulateLectureIndex = async (lectureId: string, lectureCo
     console.error('Error adding lecture to Algolia:', error)
   }
 }
-
