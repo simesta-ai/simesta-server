@@ -2,9 +2,9 @@
     "name": "simesta-server",
     "version": "1.0.0",
     "description": "",
-    "main": "./src/app.ts",
+    "main": "./dist/app.js",
     "scripts": {
-        "start": "node dist/app.js",
+        "start": "node ./dist/app.js",
         "test": "mocha --exit",
         "build": "tsc",
         "dev": "ts-node-dev -r tsconfig-paths/register --respawn --transpile-only ./src/app.ts",
