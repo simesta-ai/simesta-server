@@ -20,7 +20,7 @@ const courseRepository = new CourseRepository()
 export interface ICourseResponse {
   id: string
   title: string
-  img: string
+  image: string
   progress: number
   topicsCompleted: string
 }
@@ -77,7 +77,7 @@ const getUserCourses = async (
               courses.push({
                 id: courseData.id,
                 title: courseData.title,
-                img: courseData.img ? courseData.img : 'null',
+                image: courseData.image ? courseData.image : 'null',
                 progress: (i / numberOfTopics) * 100,
                 topicsCompleted: `${i} / ${numberOfTopics}`,
               })
@@ -124,7 +124,7 @@ const getUserCourses = async (
         coursesList.push({
           id: course.id,
           title: course.title,
-          img: course.image ? course.image : 'null',
+          image: course.image ? course.image : 'null',
           progress: (i / numberOfTopics) * 100,
           topicsCompleted: `${i} / ${numberOfTopics}`,
         })

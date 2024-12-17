@@ -21,6 +21,14 @@ class UserController {
     const { userId } = req.params
     try {
       const fetchedUser = await user.getUserById(userId)
+      if(!fetchedUser) {
+        res.status(404).json({
+          message: 'User not found',
+          success: false,
+          data: null,
+        })
+        return
+      }
       res.status(200).json({
         message: 'User fetched successfully',
         success: true,

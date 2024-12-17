@@ -7,6 +7,7 @@
 
 import { NextFunction, Request, RequestHandler, Response } from 'express'
 import CourseService from '../services'
+import { ServerError } from '../../../../../libs/utils/handlers/error'
 
 const courseService = new CourseService()
 
@@ -26,6 +27,9 @@ class CourseController {
       })
       if (error) {
         throw error
+      }
+      if(!courseId) {
+        throw new ServerError('Course not created')
       }
       res.status(200).json({ courseId: courseId })
     } catch (error) {
@@ -48,6 +52,7 @@ class CourseController {
     try {
       const userId = req.params.userId
       const { coursesList, error } = await courseService.getUserCourses(userId)
+      console.log(coursesList)
       if (error) {
         throw error
       } else {
@@ -62,6 +67,10 @@ class CourseController {
     try {
       const {courseId, userId} = req.params
       const course = await courseService.getCourseById(courseId, userId)
+      if(!course) {
+        throw new ServerError('Course not found')
+      }
+      console.log(course)
       res.status(200).json({
           message: 'Successfully Gotten a Course',
           success: true,

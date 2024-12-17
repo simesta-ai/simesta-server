@@ -36,6 +36,7 @@ const createLectureContent = async ({
   let courseFileContent: (string | undefined)[] = []
   try {
     const lecture = await lectureRepository.findById(lectureId)
+    console.log(lecture)
     const course = await courseRepository.findWithFilesAndLearningMethod(
       courseId
     )

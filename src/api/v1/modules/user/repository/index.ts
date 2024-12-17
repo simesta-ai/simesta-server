@@ -60,17 +60,17 @@ class UserRepository {
   }
 
   findOne = async (q: any) => {
-    const foundUser = await this.model.findUnique({ where: q })
+    const foundUser = await prisma.user.findUnique({ where: q })
     return foundUser
   }
 
   findById = async (id: string) => {
-    const foundUser = await this.model.findUnique({ where: { id } })
+    const foundUser = await prisma.user.findUnique({ where: { id } })
     return foundUser
   }
 
   findByEmail = async (email: string) => {
-    const foundUser = await this.model.findUnique({ where: { email } })
+    const foundUser = await prisma.user.findUnique({ where: { email } })
     return foundUser
   }
 

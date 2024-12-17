@@ -188,7 +188,7 @@ class AIGenerator {
     ##Quiz Section : A section that tests the understanding of the idea that is optional(if you don't deem it necessary you can leave it blank,on an occasion where it is blank, it should be left as an object with just an empty string like so - ""  however if it is present, 
     the Quiz Section must look like this
     #Question : The question that is being asked
-    #Options : The options for the question separated by a semicolon(;) minimum of 4 options
+    #Options : The options for the question (an array of the options) minimum of 4 options
     #Explanation : The explanation for the question
     #Correct Answer : The correct answer for the question
     ) but ensure the section is present) 

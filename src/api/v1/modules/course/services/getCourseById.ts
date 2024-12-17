@@ -41,7 +41,7 @@ const getCourseById = async (id: string, userId: string) => {
               id: courseData.id,
               title: courseData.title,
               description: courseData.description,
-              img: courseData.img,
+              image: courseData.image,
               category: courseData.category,
               userId: courseData.userId,
               progress: (i / numberOfTopics) * 100,
@@ -66,7 +66,8 @@ const getCourseById = async (id: string, userId: string) => {
       }
     }
     const cachedCourse = await getCachedCourse(id, userId)
-    if (cachedCourse) {
+    console.log(cachedCourse)
+    if (cachedCourse && cachedCourse.course.id) {
       return cachedCourse
     }
 
@@ -89,7 +90,7 @@ const getCourseById = async (id: string, userId: string) => {
           id: course.id,
           title: course.title,
           description: course.description,
-          img: course.image,
+          image: course.image,
           category: course.category,
           userId: course.userId,
           completed: course.completed,
@@ -115,7 +116,7 @@ const getCourseById = async (id: string, userId: string) => {
         id: course.id,
         title: course.title,
         description: course.description,
-        img: course.image,
+        image: course.image,
         category: course.category,
         userId: course.userId,
         progress: (i / numberOfTopics) * 100,

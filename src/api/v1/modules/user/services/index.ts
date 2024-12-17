@@ -32,6 +32,7 @@ class UserService {
         return cachedUser
       }
       const user = await userRepository.findById(id)
+      console.log(user)
       if (!user) {
         throw new ClientError('User not found')
       }
