@@ -65,10 +65,11 @@ const getCourseById = async (id: string, userId: string) => {
         return null
       }
     }
-    const cachedCourse = await getCachedCourse(id, userId)
-    if (cachedCourse) {
-      return cachedCourse
-    }
+    // const cachedCourse = await getCachedCourse(id, userId)
+    // console.log(cachedCourse)
+    // if (cachedCourse) {
+    //   return cachedCourse
+    // }
 
     // If not in cache, fetch from database
     const course = await courseRepository.findCourseWithTopics(id)
