@@ -94,13 +94,13 @@ const getUserCourses = async (
         return []
       }
     }
-    const cachedCourses = await getCachedUserCourses(userId)
-    if (cachedCourses.length > 0) {
-      return {
-        coursesList: cachedCourses,
-        error: null,
-      }
-    }
+    // const cachedCourses = await getCachedUserCourses(userId)
+    // if (cachedCourses.length > 0) {
+    //   return {
+    //     coursesList: cachedCourses,
+    //     error: null,
+    //   }
+    // }
 
     // If not in cache, fetch from database
     const user = await userRepository.findById(userId)
