@@ -14,7 +14,7 @@ class LectureController {
       const { courseId, lectureId } = req.params
       const {
         user: { id },
-      } = req.user
+      } = req.user    
 
       const { lectureContent, error } = await lectureService.create({
         courseId,
