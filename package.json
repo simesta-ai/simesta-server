@@ -6,7 +6,7 @@
     "scripts": {
         "start": "node dist/app.js",
         "test": "mocha --exit",
-        "build": "tsc && tsc-alias",
+        "build": "tsc",   
         "dev": "ts-node-dev -r tsconfig-paths/register --respawn --transpile-only ./src/app.ts",
         "start:dev": "npx prisma generate && nodemon ./src/app.ts",
         "postinstall": "npx prisma generate",
