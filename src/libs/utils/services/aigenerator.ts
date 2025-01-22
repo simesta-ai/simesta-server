@@ -2,6 +2,7 @@ import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai'
 
 // Check the clarifai-nodejs module and include these classes in the index.d.ts file
 const { ClarifaiStub, grpc } = require('clarifai-nodejs-grpc')
+import { AzureOpenAI } from 'openai'
 
 import CloudinaryService from './cloudinary'
 import { ServerError } from '../handlers/error'
@@ -15,6 +16,7 @@ dotenv.config()
 class AIGenerator {
   private readonly genAI: GoogleGenerativeAI
   private readonly textModel: GenerativeModel
+  private readonly imageModel: AzureOpenAI
   private readonly clarifaiModel: typeof ClarifaiStub
   private readonly clarifaiMetadata
   private converter: Converter
@@ -27,11 +29,21 @@ class AIGenerator {
     this.textModel = this.genAI.getGenerativeModel({
       model: 'gemini-1.5-flash',
     })
+    this.imageModel = this.getClient()
     this.clarifaiModel = ClarifaiStub.grpc()
     this.clarifaiMetadata = new grpc.Metadata()
     this.clarifaiMetadata.set('authorization', 'Key ' + process.env.PAT)
     this.converter = new Converter()
     this.cloudinaryService = new CloudinaryService()
+  }
+
+  private getClient(): AzureOpenAI {
+    return new AzureOpenAI({
+      endpoint: process.env.AZURE_OPENAI_ENDPOINT,
+      apiKey: process.env.AZURE_OPENAI_API_KEY,
+      apiVersion: process.env.OPENAI_API_VERSION,
+      deployment: process.env.AZURE_OPENAI_DEPLOYMENT_NAME,
+    })
   }
 
   private async generateText(prompt: string): Promise<string> {
@@ -64,6 +76,38 @@ class AIGenerator {
       const message = error.message
       throw new ServerError(message)
     }
+  }
+
+  async generateImageOpenAI(
+    prompt: string,
+    size:
+      | '256x256'
+      | '512x512'
+      | '1024x1024'
+      | '1792x1024'
+      | '1024x1792'
+      | null
+      | undefined,
+    style: "vivid" | "natural" | null | undefined
+  ): Promise<string | undefined> {
+    try {
+      const imageUrls: string[] = []
+      const results = await this.imageModel.images.generate({
+        prompt,
+        size: size,
+        n: 1,
+        model: '',
+        style: style, // or "natural"
+      })
+
+      for (const image of results.data) {
+        if(image.url) {
+          imageUrls.push(image.url)
+        }
+      }
+      // const secureImageUrl = await this.cloudinaryService.uploadImageFromUrlToSloud(imageUrls[0])
+      return imageUrls[0]
+    } catch (error) {}
   }
 
   generateImageFromText = async (text: string) => {
@@ -299,25 +343,11 @@ class AIGenerator {
   async generateCourseImage(courseTitle: string): Promise<string> {
     try {
       const prompt = `generate an graphical illustration that represents the concept of ${courseTitle}`
-      const imageResponse = await new Promise((resolve, reject) => {
-        this.clarifaiModel.PostModelOutputs(
-          this.clarifaiImageModelConfig(prompt),
-          this.clarifaiMetadata,
-          async (err: any, response: any) => {
-            if (err) {
-              reject(err)
-            }
-            if (response.status.code !== 10000) {
-              reject(err)
-            }
-            const imageBuffer = response.outputs[0].data.image.base64
-            const secureImageUrl =
-              await this.cloudinaryService.uploadImageBufferToCloud(imageBuffer)
-            console.log(secureImageUrl)
-            resolve(secureImageUrl)
-          }
-        )
-      })
+      const imageResponse = await this.generateImageOpenAI(
+        prompt,
+        '1024x1024',
+        'vivid'
+      )
       if (typeof imageResponse === 'string') {
         return imageResponse
       }
