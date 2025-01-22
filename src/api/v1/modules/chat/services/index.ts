@@ -122,7 +122,11 @@ class ChatService {
   }
   async textToImage(text: string) {
     try {
-      const imageUrl = await aiGenerator.generateImageFromText(text)
+      const imageUrl = await aiGenerator.generateImageOpenAI(
+        text,
+        '1792x1024',
+        'vivid'
+      )
       if (typeof imageUrl === 'string') {
         return imageUrl
       } else {

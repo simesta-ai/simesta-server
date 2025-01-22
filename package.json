@@ -10,12 +10,14 @@
         "dev": "ts-node-dev -r tsconfig-paths/register --respawn --transpile-only ./src/app.ts",
         "start:dev": "npx prisma generate && nodemon ./src/app.ts",
         "postinstall": "npx prisma generate",
-        "db:push": "npx prisma db push"
+        "db:push": "npx prisma db push",
+        "test:az": "nodemon testaz.ts"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "dependencies": {
+        "@azure/identity": "^4.6.0",
         "@azure/storage-blob": "^12.24.0",
         "@ffmpeg-installer/ffmpeg": "^1.1.0",
         "@google-cloud/vertexai": "^1.0.0",
@@ -57,7 +59,7 @@
         "multer": "^1.4.5-lts.1",
         "node-cron": "^3.0.3",
         "nodemailer": "^6.9.16",
-        "openai": "^4.52.0",
+        "openai": "^4.79.4",
         "passport": "^0.7.0",
         "passport-apple": "^2.0.2",
         "passport-facebook": "^3.0.0",
