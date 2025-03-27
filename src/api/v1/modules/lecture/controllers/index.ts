@@ -37,6 +37,7 @@ class LectureController {
   ) {
     try {
       const { lectureId } = req.params
+      console.log(req.params)
       const { lectureContent, error } = await lectureService.get(lectureId)
       if (error) {
         throw error

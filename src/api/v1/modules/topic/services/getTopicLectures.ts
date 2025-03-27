@@ -23,6 +23,7 @@ const getTopicWithLectures = async (topicId: string) => {
       // If the topic has lectures already return them
       if (existingLectures.length > 0) {
         for (const lecture of existingLectures) {
+          console.log(lecture)
           topicLectures.push({
             id: lecture.id,
             title: lecture.title,

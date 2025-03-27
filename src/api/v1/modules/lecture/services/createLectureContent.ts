@@ -28,6 +28,7 @@ const createLectureContent = async ({
   lectureContent: ILectureContent | null
   error: null | CustomError
 }> => {
+  console.log(courseId, lectureId, userId)
   let error: CustomError | null = null
   const lectureContent: ILectureContent = {
     ideaContent: [],
@@ -36,6 +37,7 @@ const createLectureContent = async ({
   let courseFileContent: (string | undefined)[] = []
   try {
     const lecture = await lectureRepository.findById(lectureId)
+    console.log(lecture)
     const course = await courseRepository.findWithFilesAndLearningMethod(
       courseId
     )
