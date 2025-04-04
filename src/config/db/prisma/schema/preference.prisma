@@ -1,0 +1,6 @@
+model Preference {
+  id                    String @id @default(uuid())
+  speech_sythesis_voice_name String @default("")
+  userId                String @unique
+  user                  User   @relation(fields: [userId], references: [id])
+}
