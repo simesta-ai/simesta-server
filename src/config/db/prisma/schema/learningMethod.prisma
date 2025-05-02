@@ -1,6 +1,6 @@
 model LearningMethod {
   id        String   @id @default(uuid())
-  name      String?  @db.NVarChar(255)
+  name      String?  
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
   userId    String   @unique

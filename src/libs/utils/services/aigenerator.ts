@@ -100,6 +100,10 @@ class AIGenerator {
         style: style, // or "natural"
       })
 
+      if(!results.data) {
+        return undefined;
+      }
+
       for (const image of results.data) {
         if(image.url) {
           imageUrls.push(image.url)

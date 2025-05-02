@@ -42,7 +42,6 @@ const createCourse = async ({
 }> => {
   let error: CustomError | null = null
   try {
-    console.log(userId)
     const user = await userRepository.findById(userId)
     if (!user) {
       return {
@@ -54,12 +53,11 @@ const createCourse = async ({
     if (!validCourseTitle)
       return {
         courseId: null,
-        error: new AuthError('User does not exist, cannot create course'),
+        error: new AuthError('Invalid course title'),
       }
     const courseDescription = await AIGen.generateCourseDescription(title)
     const courseCategory = await AIGen.generateCoursecategory(title)
     const courseImage = await AIGen.generateCourseImage(title)
-    console.log(courseImage)
 
     let fileUrls: string[] = []
     let fileContent: string[] = []

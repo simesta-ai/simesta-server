@@ -1,4 +1,4 @@
-import { createClient, RedisClientType } from '@redis/client'
+import { createClient, RedisClientType } from 'redis'
 import logger from '../logger'
 import dotenv from 'dotenv'
 

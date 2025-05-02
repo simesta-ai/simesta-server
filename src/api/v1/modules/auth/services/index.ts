@@ -43,13 +43,6 @@ class AuthService {
       let error = null
       let data = null
 
-      const cachedUser = await redisService.hgetall(`user:${email}`)
-
-      if (cachedUser && Object.keys(cachedUser).length > 0) {
-        error = new ClientError('User already exists')
-        return { error, data: null }
-      }
-
       const existingUser = await userRepository.findByEmail(email)
       if (existingUser) {
         error = new ClientError('User already exists')
@@ -106,20 +99,6 @@ class AuthService {
       let error = null
       let data = null
 
-      const cachedUser = await redisService.hgetall(`user:email:${email}`)
-      if (cachedUser && Object.keys(cachedUser).length > 0) {
-        const isCorrect = await bcrypt.compare(password, cachedUser.password)
-        if (!isCorrect) {
-          error = new ClientError('Incorrect credentials')
-        } else {
-          data = {
-            id: cachedUser.id,
-            name: cachedUser.name,
-            email: cachedUser.email,
-            emailVerified: cachedUser.emailVerified,
-          }
-        }
-      } else {
         const existingUser = await userRepository.findByEmail(email)
         if (!existingUser) {
           error = new ClientError('User does not exist')
@@ -150,7 +129,6 @@ class AuthService {
             }
           }
         }
-      }
       return { error, data }
     } catch (error: any) {
       return { error, data: null }

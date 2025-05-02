@@ -1,0 +1,186 @@
+model Answer {
+  id        String   @id() @default(uuid())
+  text      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  quizId    String   @unique
+  quiz      Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model Course {
+  id              String       @id @default(uuid())
+  title           String       @unique
+  description     String       @default("")
+  completed       Boolean      @default(false)
+  inProgress      Boolean?     @default(false)
+  courseType      String?      @default("")
+  difficultyLevel String?      @default("")
+  notes           String?      @default("")
+  image           String?
+  category        String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @default(now()) @updatedAt
+  courseFiles     CourseFile[]
+  topics          Topic[]
+  userId          String
+  user            User         @relation(fields: [userId], references: [id])
+}
+
+model CourseFile {
+  id        String   @id() @default(uuid())
+  url       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id], onUpdate: NoAction)
+}
+
+model IdeaContent {
+  id        String     @id() @default(uuid())
+  text      String
+  image     String?    @default("")
+  lectureId String?
+  lecture   Lecture?   @relation(fields: [lectureId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  quiz      Quiz?
+  oneChoice oneChoice?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @default(now()) @updatedAt
+}
+
+model LearningMethod {
+  id        String   @id @default(uuid())
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  userId    String   @unique
+  user      User     @relation("UserLearningMethod", fields: [userId], references: [id])
+}
+
+model Lecture {
+  id           String        @id() @default(uuid())
+  title        String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @default(now()) @updatedAt
+  ideaContents IdeaContent[]
+  position     Int
+  videos       Video[]
+  topicId      String
+  topic        Topic         @relation(fields: [topicId], references: [id])
+}
+
+model oneChoice {
+  id                  String       @id() @default(uuid())
+  question            String
+  response            String       @default("")
+  simesta_ai_response String       @default("")
+  explanation         String?      @default("")
+  correct_answer      String?      @default("")
+  ideaContentId       String?      @unique
+  ideaContent         IdeaContent? @relation(fields: [ideaContentId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @default(now()) @updatedAt
+}
+
+model Option {
+  id        String   @id() @default(uuid())
+  text      String
+  quizId    String
+  quiz      Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model Otp {
+  id        String   @id @default(uuid())
+  email     String
+  otp       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  expiresAt DateTime
+
+  @@index([email])
+}
+
+model Preference {
+  id                         String @id @default(uuid())
+  speech_sythesis_voice_name String @default("")
+  userId                     String @unique
+  user                       User   @relation(fields: [userId], references: [id])
+}
+
+model Quiz {
+  id            String       @id() @default(uuid())
+  question      String
+  explanation   String?      @default("")
+  options       Option[]
+  ideaContentId String?      @unique
+  ideaContent   IdeaContent? @relation(fields: [ideaContentId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @default(now()) @updatedAt
+  answer        Answer?
+}
+
+model Role {
+  id    String @id() @default(uuid())
+  name  String @unique
+  users User[]
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/simestadb"
+}
+
+datasource db {
+  provider = "postgres"
+  url      = env("DATABASE_URL")
+  // shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+model Topic {
+  id         String    @id() @default(uuid())
+  title      String
+  position   Int
+  completed  Boolean?  @default(false)
+  inProgress Boolean?  @default(false)
+  //   nextTopicId Int
+  //   nextTopic   Topic @relation("NextTopics",fields: [nextTopicId], references: [id])
+  //   prevTopicId Int
+  //   prevTopic   Topic @relation("PreviousTopics",fields: [prevTopicId], references: [id])
+  courseId   String
+  course     Course    @relation(fields: [courseId], references: [id])
+  lectureId  String?
+  lecture    Lecture[]
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @default(now()) @updatedAt
+}
+
+model User {
+  id                      String          @id @default(uuid())
+  email                   String          @unique()
+  password                String
+  name                    String
+  roleId                  String?
+  emailVerified           Boolean         @default(false)
+  role                    Role?           @relation(fields: [roleId], references: [id])
+  lastLearningDate        DateTime        @default(now())
+  streakCount             Int             @default(0)
+  createdAt               DateTime        @default(now())
+  updatedAt               DateTime        @default(now()) @updatedAt
+  age                     Int?
+  avatar                  String          @default("")
+  primaryLearningMethodId String?
+  primaryLearningMethod   LearningMethod? @relation("UserLearningMethod")
+  courses                 Course[]
+  preference              Preference?
+
+  @@index([email])
+}
+
+model Video {
+  id        String   @id() @default(uuid())
+  lectureId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  lecture   Lecture  @relation(fields: [lectureId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
