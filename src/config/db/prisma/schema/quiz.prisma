@@ -1,6 +1,6 @@
 model Quiz {
   id            String       @id() @default(uuid())
-  question      String       @db.NVarChar(255)
+  question      String       
   explanation   String?      @default("")
   options       Option[]
   ideaContentId String?      @unique

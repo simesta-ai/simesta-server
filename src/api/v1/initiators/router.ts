@@ -7,7 +7,6 @@ import lectureRoutes from '../modules/lecture/routes'
 import chatRoutes from '../modules/chat/routes'
 import notificationRoutes from '../modules/notifications/routes'
 import JwtService, { IJwt } from '../../../libs/utils/services/jwt'
-import { errorHandler } from '../../../libs/utils/handlers/error'
 import recommendationsRouter from '../modules/recommendations/recommendations.router'
 
 class Router {
