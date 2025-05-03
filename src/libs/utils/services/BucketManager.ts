@@ -6,6 +6,7 @@ import fs from 'fs'
 import path from 'path'
 import { CustomError, ServerError } from '../handlers/error'
 import dotenv from 'dotenv'
+import logger from '../logger'
 
 dotenv.config()
 
@@ -46,13 +47,13 @@ class BucketManager {
 
       if (uploadResponse._response.status !== 201) {
         UploadError = new ServerError('Error uploading file')
-        throw UploadError
+        return { fileUrl, UploadError }
       }
 
-      console.log(`Upload completed: ${uploadResponse.requestId}`)
+      logger.info(`Upload completed: ${uploadResponse.requestId}`)
       fileUrl = blockBlobClient.url
     } catch (error) {
-      console.error('Error uploading file: ', error)
+      logger.error('Error uploading file: ', error)
       UploadError = UploadError || new ServerError('Unknown error occurred')
     }
 
@@ -80,7 +81,7 @@ class BucketManager {
         throw downloadError
       }
 
-      console.log(`Download completed: ${downloadResponse.requestId}`)
+      logger.info(`Download completed: ${downloadResponse.requestId}`)
       
     } catch (error) {
       console.error('Error downloading file: ', error)
