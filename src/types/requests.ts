@@ -8,11 +8,9 @@ export interface ICreateCourse {
   userId: string
   title: string
   files:
-    | File[]
-    | { [fieldname: string]: File[] }
+    | { [fieldname: string]:  Express.Multer.File[] }
     | undefined
     | Express.Multer.File[]
-    | any
   subtopics: string
 }
 

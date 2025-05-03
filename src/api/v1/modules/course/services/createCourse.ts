@@ -3,6 +3,7 @@ import fs from 'fs'
 import {
   AuthError,
   CustomError,
+  ServerError,
 } from '../../../../../libs/utils/handlers/error'
 import AIGenerator from '../../../../../libs/utils/services/aigenerator'
 import { FileService } from '../../../../../libs/utils/services/parseFile'
@@ -64,33 +65,77 @@ const createCourse = async ({
 
     if (files) {
       // Add files to course and generate course topics
-      const filePaths = files.map((file: any) => file.path)
-      const fileData = await Promise.all(
-        filePaths.map(async (filePath: string) => {
-          const { fileUrl, UploadError } = await bucketManager.uploadFiles(
-            filePath
-          )
-          if (UploadError) {
-            error = UploadError
-          }
-          const { data, fileError } = await fileService.parseFile(filePath)
-          if (fileError) {
-            error = fileError
-          }
-          if (fileUrl && data) {
-            await redisService.set(fileUrl, JSON.stringify(data))
-          }
+      const filePaths = Array.isArray(files) ? files.map((file) => file.path) : []
 
-          return { data, fileUrl }
+      const fileData: {
+        filePath: string
+        success: boolean
+        data: string | null
+        fileUrl: string | null
+        error: CustomError | null
+      }[] = await Promise.all(
+        filePaths.map(async (filePath: string) => {
+          try {
+            const { fileUrl, UploadError } = await bucketManager.uploadFiles(
+              filePath
+            )
+            if (UploadError) {
+              throw new ServerError(
+                `Upload failed for ${filePath}: ${UploadError.message}`
+              )
+            }
+
+            const { data, fileError } = await fileService.parseFile(filePath)
+            if (fileError) {
+              throw new ServerError(
+                `Parsing failed for ${filePath}: ${fileError.message}`
+              )
+            }
+
+            if (fileUrl && data) {
+              await redisService.set(fileUrl, JSON.stringify(data))
+            }
+            return {
+              filePath,
+              success: true,
+              data,
+              fileUrl,
+              error: null,
+            }
+          } catch (error: any) {
+            logger.error(`Error processing ${filePath}:`, error)
+            return {
+              filePath,
+              success: false,
+              data: null,
+              fileUrl: null,
+              error: new ServerError(
+                `Failed to process ${filePath}: ${error.message}`
+              ),
+            }
+          }
         })
       )
+
+      const failedFiles = fileData.filter((file) => !file.success)
+      if (failedFiles.length == filePaths.length) {
+        error = new ServerError(
+          `Failed to process files: ${failedFiles
+            .map((file: any) => file.filePath)
+            .join(', ')}`
+        )
+        return { courseId: null, error }
+      }
 
       filePaths.forEach((filePath: string) => {
         fs.unlinkSync(filePath)
       })
 
-      fileUrls = fileData.map((file: any) => file.fileUrl)
-      fileContent = fileData.map((file: any) => file.data)
+      const validFileData = fileData.filter((file) => file.success && file.fileUrl && file.data)
+
+      fileUrls = validFileData.map((file) => file.fileUrl as string)
+
+      fileContent = validFileData.map((file) => file.data as string)
     }
 
     // Add files to course
